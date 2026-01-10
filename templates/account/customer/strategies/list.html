@@ -1,0 +1,147 @@
+{% extends "../../base/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .strategy-card {
+        border-radius: 14px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .strategy-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    }
+</style>
+
+<div class="container-fluid mb-5 mt-2">
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-1">Investment Strategies</h4>
+            <p class="text-muted mb-0">
+                Choose a fully managed strategy. Our system trades automatically on your behalf.
+            </p>
+        </div>
+        <div class="col">
+            <div class="card p-3 shadow-sm">
+                <small class="text-muted">Total Balance</small>
+                <h4 class="fw-bold">${{request.user.portfolio.cash_balance}}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- Conservative Strategy -->
+    {% for strategy in strategies %}
+    <div class="col-xl-4 col-lg-6">
+        <div class="card strategy-card h-100">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-0">Capital Preservation{{ strategy.name }}</h5>
+                        <small class="text-muted">{{ strategy.risk_level }} Risk</small>
+                    </div>
+                    <span class="badge bg-success-subtle text-success">
+                        Conservative
+                    </span>
+                </div>
+
+                <p class="text-muted">
+                    {{ strategy.description }}
+                </p>
+
+                <ul class="list-unstyled small mb-4">
+                    <li>• Target return: {{strategy.target_return_min}}-{{strategy.target_return_max}}% annually</li>
+                    <li>• Assets: {{ strategy.asset_types|join:", " }}</li>
+                    <li>• Drawdown tolerance: {{ strategy.risk_level }}</li>
+                </ul>
+
+                <div class="d-grid">
+                    <a href="{% url 'select-strategy' strategy.id %}" class="btn btn-primary btn-sm">
+                        Activate Strategy
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Balanced Strategy -->
+    <!-- <div class="col-xl-4 col-lg-6">
+        <div class="card strategy-card h-100 border-primary">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-0">Balanced Growth</h5>
+                        <small class="text-muted">Medium Risk</small>
+                    </div>
+                    <span class="badge bg-primary">
+                        Most Popular
+                    </span>
+                </div>
+
+                <p class="text-muted">
+                    A diversified strategy balancing growth and income through active rebalancing.
+                </p>
+
+                <ul class="list-unstyled small mb-4">
+                    <li>• Target return: 10-14% annually</li>
+                    <li>• Assets: Stocks, ETFs, REITs</li>
+                    <li>• Drawdown tolerance: Medium</li>
+                </ul>
+
+                <div class="d-grid">
+                    <button class="btn btn-primary">
+                        Select Strategy
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Aggressive Strategy -->
+    <!-- <div class="col-xl-4 col-lg-6">
+        <div class="card strategy-card h-100">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-0">Aggressive Alpha</h5>
+                        <small class="text-muted">High Risk</small>
+                    </div>
+                    <span class="badge bg-danger-subtle text-danger">
+                        Aggressive
+                    </span>
+                </div>
+
+                <p class="text-muted">
+                    Seeks higher returns through active trading and volatility-based allocation.
+                </p>
+
+                <ul class="list-unstyled small mb-4">
+                    <li>• Target return: 18%+ annually</li>
+                    <li>• Assets: Stocks, ETFs</li>
+                    <li>• Drawdown tolerance: High</li>
+                </ul>
+
+                <div class="d-grid">
+                    <button class="btn btn-outline-primary">
+                        Select Strategy
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div> -->
+
+</div>
+
+
+{% endblock %}
