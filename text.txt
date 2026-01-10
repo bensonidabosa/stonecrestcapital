@@ -1,0 +1,8 @@
+django-admin startapp users
+django-admin startapp portfolios
+django-admin startapp assets
+django-admin startapp trading
+django-admin startapp strategies
+django-admin startapp copytrading
+django-admin startapp dividends
+django-admin startapp analytics

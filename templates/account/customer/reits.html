@@ -1,0 +1,94 @@
+{% extends "../base/base.html" %}
+
+{% block title %}REITs{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-semibold mb-0">REITs</h5>
+        <small class="text-muted">Real Estate Investment Trusts</small>
+    </div>
+
+    <a href="#" class="btn btn-primary btn-sm">
+        <i class="bi bi-building me-1"></i>
+        Invest in REIT
+    </a>
+</div>
+
+<!-- Income Summary -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Total REIT Value</small>
+            <h5 class="fw-bold">$9,450.00</h5>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Annual Yield</small>
+            <h5 class="fw-bold text-success">6.8%</h5>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Dividend Income (Monthly)</small>
+            <h5 class="fw-bold">$112.00</h5>
+        </div>
+    </div>
+</div>
+
+<!-- REIT Holdings -->
+<div class="card p-4">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Symbol</th>
+                    <th>REIT Name</th>
+                    <th class="text-end">Units</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-end">Value</th>
+                    <th class="text-end">Yield</th>
+                    <th class="text-end">Income</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>VNQ</strong></td>
+                    <td>Vanguard Real Estate ETF</td>
+                    <td class="text-end">30</td>
+                    <td class="text-end">$82.50</td>
+                    <td class="text-end">$2,475.00</td>
+                    <td class="text-end text-success">4.2%</td>
+                    <td class="text-end">$8.70</td>
+                </tr>
+
+                <tr>
+                    <td><strong>O</strong></td>
+                    <td>Realty Income Corp</td>
+                    <td class="text-end">50</td>
+                    <td class="text-end">$56.80</td>
+                    <td class="text-end">$2,840.00</td>
+                    <td class="text-end text-success">5.6%</td>
+                    <td class="text-end">$13.30</td>
+                </tr>
+
+                <tr>
+                    <td><strong>PLD</strong></td>
+                    <td>Prologis Inc.</td>
+                    <td class="text-end">20</td>
+                    <td class="text-end">$86.70</td>
+                    <td class="text-end">$1,734.00</td>
+                    <td class="text-end text-success">3.1%</td>
+                    <td class="text-end">$4.48</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

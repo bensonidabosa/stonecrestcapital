@@ -1,0 +1,120 @@
+{% extends "../base/base.html" %}
+
+{% block title %}Stock Detail{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-semibold mb-0">Apple Inc. (AAPL)</h5>
+        <small class="text-muted">Equity · NASDAQ</small>
+    </div>
+
+    <a href="#" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-circle me-1"></i>
+        Buy / Sell
+    </a>
+</div>
+
+<!-- Metrics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card p-3">
+            <small class="text-muted">Current Price</small>
+            <h5 class="fw-bold">$172.50</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3">
+            <small class="text-muted">Shares Owned</small>
+            <h5 class="fw-bold">20</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3">
+            <small class="text-muted">Avg Purchase Price</small>
+            <h5 class="fw-bold">$145.00</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3">
+            <small class="text-muted">Unrealized P&L</small>
+            <h5 class="fw-bold text-success">+ $550.00</h5>
+        </div>
+    </div>
+</div>
+
+<!-- Price History Chart -->
+<div class="card p-4 mb-4">
+    <h6 class="fw-semibold mb-3">Price History</h6>
+    <div class="chart-container-sm">
+        <canvas id="stockPriceChart"></canvas>
+    </div>
+</div>
+
+<!-- Stock Details and Dividend History -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <h6 class="fw-semibold mb-3">Stock Metrics</h6>
+            <ul class="list-unstyled mb-0">
+                <li class="d-flex justify-content-between mb-2">
+                    <span>Market Cap</span>
+                    <strong>$2.8T</strong>
+                </li>
+                <li class="d-flex justify-content-between mb-2">
+                    <span>P/E Ratio</span>
+                    <strong>28.5</strong>
+                </li>
+                <li class="d-flex justify-content-between mb-2">
+                    <span>52-Week High / Low</span>
+                    <strong>$182.50 / $145.00</strong>
+                </li>
+                <li class="d-flex justify-content-between mb-2">
+                    <span>Dividend Yield</span>
+                    <strong class="text-success">0.6%</strong>
+                </li>
+                <li class="d-flex justify-content-between">
+                    <span>Average Volume</span>
+                    <strong>75M</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <h6 class="fw-semibold mb-3">Recent Dividends</h6>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-11-05</td>
+                            <td class="text-end">$0.24</td>
+                        </tr>
+                        <tr>
+                            <td>2025-08-05</td>
+                            <td class="text-end">$0.24</td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-07</td>
+                            <td class="text-end">$0.22</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

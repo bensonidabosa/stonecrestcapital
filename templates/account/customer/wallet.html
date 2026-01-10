@@ -1,0 +1,97 @@
+{% extends "../base/base.html" %}
+
+{% block title %}Wallet{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-semibold mb-0">Wallet</h5>
+        <small class="text-muted">Manage your cash and transactions</small>
+    </div>
+
+    <div>
+        <a href="#" class="btn btn-success btn-sm me-2">
+            <i class="bi bi-plus-circle me-1"></i>
+            Deposit
+        </a>
+        <a href="#" class="btn btn-danger btn-sm">
+            <i class="bi bi-dash-circle me-1"></i>
+            Withdraw
+        </a>
+    </div>
+</div>
+
+<!-- Balance Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Total Balance</small>
+            <h5 class="fw-bold">$18,320.00</h5>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Available Cash</small>
+            <h5 class="fw-bold">$6,120.00</h5>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Invested Capital</small>
+            <h5 class="fw-bold">$12,200.00</h5>
+        </div>
+    </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-semibold mb-0">Recent Wallet Transactions</h6>
+        <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th class="text-end">Amount</th>
+                    <th class="text-end">Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2026-01-06</td>
+                    <td><span class="badge bg-success">Deposit</span></td>
+                    <td class="text-end">$2,000.00</td>
+                    <td class="text-end">$18,320.00</td>
+                    <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+
+                <tr>
+                    <td>2026-01-04</td>
+                    <td><span class="badge bg-danger">Withdrawal</span></td>
+                    <td class="text-end">$500.00</td>
+                    <td class="text-end">$16,320.00</td>
+                    <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+
+                <tr>
+                    <td>2026-01-02</td>
+                    <td><span class="badge bg-primary">Investment</span></td>
+                    <td class="text-end">$1,200.00</td>
+                    <td class="text-end">$16,820.00</td>
+                    <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
