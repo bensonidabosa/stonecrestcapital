@@ -1,5 +1,6 @@
 from django.db import models
 from decimal import Decimal
+from django.core.exceptions import ValidationError
 
 class Asset(models.Model):
     ASSET_TYPES = (
@@ -44,6 +45,16 @@ class Asset(models.Model):
         null=True,
         blank=True
     )
+
+    class Meta:
+        ordering = ['symbol']
+
+    def clean(self):
+        if self.asset_type != 'REIT':
+            if self.annual_yield is not None or self.dividend_frequency is not None:
+                raise ValidationError(
+                    "Annual yield and dividend frequency are only applicable to REIT assets."
+                )
 
     def __str__(self):
         return f"{self.symbol} ({self.asset_type})"
