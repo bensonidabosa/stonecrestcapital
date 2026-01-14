@@ -27,23 +27,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // chartjs
-    // ===== PORTFOLIO SNAPSHOT CHART =====
-    const portfolioCanvas = document.getElementById("portfolioChart");
-    const portfolioLabelsEl = document.getElementById("snapshot-labels");
-    const portfolioValuesEl = document.getElementById("snapshot-values");
-    console.log("Portfolio labels element:", document.getElementById("portfolio-labels"));
+    const ctx = document.getElementById("portfolioChart");
 
-    if (portfolioCanvas && portfolioLabelsEl && portfolioValuesEl) {
-        const labels = JSON.parse(portfolioLabelsEl.textContent);
-        const values = JSON.parse(portfolioValuesEl.textContent);
-
-        new Chart(portfolioCanvas, {
+    if (ctx) {
+        new Chart(ctx, {
             type: "line",
             data: {
-                labels: labels,
+                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
                 datasets: [{
                     label: "Portfolio Value",
-                    data: values,
+                    data: [24000, 24200, 24150, 24500, 24800, 24750, 25430],
                     borderColor: getComputedStyle(document.documentElement)
                         .getPropertyValue("--color-primary"),
                     backgroundColor: "transparent",
@@ -75,21 +68,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ===== ALLOCATION CHART =====
-    const allocationCanvas = document.getElementById("allocationChart");
-    const allocationLabelsEl = document.getElementById("allocation-labels");
-    const allocationValuesEl = document.getElementById("allocation-values");
 
-    if (allocationCanvas && allocationLabelsEl && allocationValuesEl) {
-        const labels = JSON.parse(allocationLabelsEl.textContent);
-        const values = JSON.parse(allocationValuesEl.textContent);
+    const allocationCtx = document.getElementById("allocationChart");
 
-        new Chart(allocationCanvas, {
+    if (allocationCtx) {
+        new Chart(allocationCtx, {
             type: "doughnut",
             data: {
-                labels: labels,
+                labels: ["Stocks", "REITs", "Copy Trading"],
                 datasets: [{
-                    data: values,
+                    data: [55, 30, 15],
                     backgroundColor: [
                         getComputedStyle(document.documentElement)
                             .getPropertyValue("--color-primary"),
@@ -111,7 +99,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
 
 
     const reitCtx = document.getElementById("reitPriceChart");

@@ -1,9 +1,14 @@
 {% extends "../base/base.html" %}
 {% load humanize %}
+{% load humanize extras %}
 
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
+{{ allocation_labels|json_script:"allocation-labels" }}
+{{ allocation_values|json_script:"allocation-values" }}
+{{ snapshot_labels|json_script:"snapshot-labels" }}
+{{ snapshot_values|json_script:"snapshot-values" }}
 
 <div class="row g-4">
     <div class="col-md-3">
@@ -47,8 +52,8 @@
 
                 <div class="btn-group btn-group-sm">
                     <button class="btn btn-outline-secondary active">7D</button>
-                    <button class="btn btn-outline-secondary">30D</button>
-                    <button class="btn btn-outline-secondary">90D</button>
+                    <!-- <button class="btn btn-outline-secondary">30D</button>
+                    <button class="btn btn-outline-secondary">90D</button> -->
                 </div>
             </div>
 
@@ -70,30 +75,37 @@
             </div>
 
             <ul class="list-unstyled mb-0">
+                {% if allocation_percentages.STOCK %}
                 <li class="d-flex justify-content-between mb-2">
                     <span>
                         <span class="legend-dot bg-primary me-2"></span>
                         Stocks
                     </span>
-                    <strong>55%</strong>
+                    <strong>{{ allocation_percentages.STOCK }}%</strong>
                 </li>
+                {% endif %}
 
+                {% if allocation_percentages.REIT %}
                 <li class="d-flex justify-content-between mb-2">
                     <span>
                         <span class="legend-dot bg-success me-2"></span>
                         REITs
                     </span>
-                    <strong>30%</strong>
+                    <strong>{{ allocation_percentages.REIT }}%</strong>
                 </li>
+                {% endif %}
 
+                {% if allocation_percentages.ETF %}
                 <li class="d-flex justify-content-between">
                     <span>
                         <span class="legend-dot bg-warning me-2"></span>
-                        Copy Trading
+                        ETFs
                     </span>
-                    <strong>15%</strong>
+                    <strong>{{ allocation_percentages.ETF }}%</strong>
                 </li>
+                {% endif %}
             </ul>
+
         </div>
     </div>
 
@@ -105,20 +117,24 @@
             <div class="row text-center">
                 <div class="col-md-4 mb-3 mb-md-0">
                     <small class="text-muted">Largest Allocation</small>
-                    <h6 class="fw-semibold mb-0">Stocks</h6>
-                    <span class="text-success fw-bold">55%</span>
+                    <h6 class="fw-semibold mb-0">
+                        {{ largest_allocation_label|default:"—" }}
+                    </h6>
+                    <span class="text-success fw-bold">
+                        {{ largest_allocation_percent }}%
+                    </span>
                 </div>
 
                 <div class="col-md-4 mb-3 mb-md-0">
                     <small class="text-muted">Best Performing</small>
-                    <h6 class="fw-semibold mb-0">Copy Trading</h6>
-                    <span class="text-success fw-bold">+21.3%</span>
+                    <h6 class="fw-semibold mb-0">{{ best_asset_label|default:"—" }}</h6>
+                    <span class="text-success fw-bold">+{{ best_asset_roi }}%</span>
                 </div>
 
                 <div class="col-md-4">
                     <small class="text-muted">Lowest Exposure</small>
-                    <h6 class="fw-semibold mb-0">REITs</h6>
-                    <span class="fw-bold">30%</span>
+                    <h6 class="fw-semibold mb-0">{{ lowest_allocation_label|default:"—" }}</h6>
+                    <span class="fw-bold">{{ lowest_allocation_percent }}%</span>
                 </div>
             </div>
 
@@ -127,12 +143,12 @@
             <div class="row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
                     <small class="text-muted">Risk Profile</small>
-                    <h6 class="fw-semibold">Moderate</h6>
+                    <h6 class="fw-semibold">{{ risk_profile }}</h6>
                 </div>
 
                 <div class="col-sm-6">
                     <small class="text-muted">Diversification Score</small>
-                    <h6 class="fw-semibold text-success">8.4 / 10</h6>
+                    <h6 class="fw-semibold text-success">{{ diversification_score }} / 10</h6>
                 </div>
             </div>
         </div>
@@ -162,53 +178,45 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for trade in recent_trades %}
                         <tr>
-                            <td>2026-01-05</td>
-                            <td>
-                                <span class="badge bg-primary">Buy</span>
-                            </td>
-                            <td>AAPL</td>
-                            <td class="text-end">$1,200.00</td>
-                            <td>
-                                <span class="badge bg-success">Completed</span>
-                            </td>
-                        </tr>
+                            <td>{{ trade.timestamp|date:"Y-m-d" }}</td>
 
-                        <tr>
-                            <td>2026-01-04</td>
                             <td>
-                                <span class="badge bg-warning text-dark">Dividend</span>
+                                <span class="badge {{ trade_badges|get_item:trade.trade_type }}">
+                                    {{ trade.get_trade_type_display }}
+                                </span>
                             </td>
-                            <td>REIT Fund</td>
-                            <td class="text-end">$85.40</td>
-                            <td>
-                                <span class="badge bg-success">Paid</span>
-                            </td>
-                        </tr>
 
-                        <tr>
-                            <td>2026-01-03</td>
                             <td>
-                                <span class="badge bg-info text-dark">Copy</span>
+                                {% if trade.asset %}
+                                {{ trade.asset.symbol|default:trade.asset.name }}
+                                {% else %}
+                                —
+                                {% endif %}
                             </td>
-                            <td>Trader Alpha</td>
-                            <td class="text-end">$540.00</td>
-                            <td>
-                                <span class="badge bg-secondary">Pending</span>
-                            </td>
-                        </tr>
 
-                        <tr>
-                            <td>2026-01-02</td>
-                            <td>
-                                <span class="badge bg-danger">Sell</span>
+                            <td class="text-end">
+                                ${{ trade.total_value|floatformat:2|intcomma }}
                             </td>
-                            <td>MSFT</td>
-                            <td class="text-end">$2,100.00</td>
+
                             <td>
-                                <span class="badge bg-success">Completed</span>
+                                <span class="badge bg-success">
+                                    {% if trade.trade_type == "DIVIDEND" %}
+                                    Paid
+                                    {% else %}
+                                    Completed
+                                    {% endif %}
+                                </span>
                             </td>
                         </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                No recent transactions
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
