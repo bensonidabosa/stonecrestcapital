@@ -25,7 +25,6 @@ def admin_dashboard_view(request):
 @admin_staff_only
 def add_asset_view(request):
     if request.method == 'POST':
-        time.sleep(3)
         form = AssetForm(request.POST)
         if form.is_valid():
             form.save()
@@ -39,6 +38,30 @@ def add_asset_view(request):
     }
     return render(request, 'account/admin/add_asset.html', context )
 
+
+@login_required
+@admin_staff_only
+def edit_asset_view(request, asset_id):
+    # Get the asset or 404
+    asset = get_object_or_404(Asset, id=asset_id)
+
+    if request.method == 'POST':
+        form = AssetForm(request.POST, instance=asset)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Asset updated successfully.")
+            return redirect('staff:edit_asset', asset_id=asset.id)
+    else:
+        form = AssetForm(instance=asset)
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "form": form,
+        "asset": asset,  # optional, in case template wants asset info
+    }
+
+    # Reuse the same template as add_asset
+    return render(request, 'account/admin/add_asset.html', context)
 
 @login_required
 @admin_staff_only

@@ -34,7 +34,8 @@
                     <th>Price</th>
                     <th>Volatility</th>
                     <th>Created At</th>
-                    <th>Action</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -47,6 +48,7 @@
                     <td>${{ asset.price }}</td>
                     <td>{{ asset.volatility }}%</td>
                     <td>{{ asset.created_at|date:"Y-m-d H:i" }}</td>
+                    <td><a href="{% url 'staff:edit_asset' asset.id %}" class="btn btn-info">Edit</a></td>
                     <td>
                         <form method="post" action="{% url 'staff:delete_asset' asset.id %}" class="pinner-form">
                             {% csrf_token %}

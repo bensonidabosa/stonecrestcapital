@@ -1,4 +1,5 @@
 {% extends "../base/base.html" %}
+{% load humanize %}
 
 {% block title %}Stocks{% endblock %}
 
@@ -7,38 +8,34 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h5 class="fw-semibold mb-0">Stocks</h5>
-        <small class="text-muted">Your equity investments</small>
+        <!-- <small class="text-muted">Your equity investments</small> -->
     </div>
 
     <a href="#" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-circle me-1"></i>
-        Buy Stock
+        Start Trading
     </a>
 </div>
 
 <!-- Summary Cards -->
 <div class="row g-4 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card p-3">
             <small class="text-muted">Total Stock Value</small>
-            <h5 class="fw-bold">$14,820.00</h5>
+            <h5 class="fw-bold">${{ total_stock_value|floatformat:2|intcomma }}</h5>
         </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card p-3">
             <small class="text-muted">Unrealized P&L</small>
-            <h5 class="fw-bold text-success">+ $1,420.50</h5>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card p-3">
-            <small class="text-muted">Dividend Income (YTD)</small>
-            <h5 class="fw-bold">$380.00</h5>
+            <h5 class="fw-bold {% if total_unrealized_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                {% if total_unrealized_pnl >= 0 %}+{% endif %}${{ total_unrealized_pnl|floatformat:2|intcomma }}
+            </h5>
         </div>
     </div>
 </div>
+
 
 <!-- Stocks Table -->
 <div class="card p-4">
@@ -47,44 +44,36 @@
             <thead class="table-light">
                 <tr>
                     <th>Symbol</th>
-                    <th>Company</th>
-                    <th class="text-end">Shares</th>
-                    <th class="text-end">Avg Price</th>
+                    <th>Stock Name</th>
+                    <th class="text-end">Units</th>
+                    <th class="text-end">AVG Price</th>
                     <th class="text-end">Current Price</th>
-                    <th class="text-end">Value</th>
-                    <th class="text-end">P&L</th>
+                    <th class="text-end">Market Value</th>
+                    <th class="text-end">P/L</th>
                 </tr>
             </thead>
             <tbody>
+                {% for holding in stock_holdings %}
                 <tr>
-                    <td><strong>AAPL</strong></td>
-                    <td>Apple Inc.</td>
-                    <td class="text-end">20</td>
-                    <td class="text-end">$145.00</td>
-                    <td class="text-end">$172.50</td>
-                    <td class="text-end">$3,450.00</td>
-                    <td class="text-end text-success">+ $550.00</td>
+                    <td><strong>{{ holding.asset.symbol }}</strong></td>
+                    <td>{{ holding.asset.name }}</td>
+                    <td class="text-end">{{ holding.quantity }}</td>
+                    <td class="text-end">${{ holding.average_price|intcomma }}</td>
+                    <td class="text-end">${{ holding.asset.price|floatformat:2 }}</td>
+                    <td class="text-end">${{ holding.market_value|floatformat:2 }}</td>
+                    <td class="text-end">
+                        {% with pnl=holding.unrealized_pnl %}
+                        <span class="{% if pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ pnl|floatformat:2|intcomma }}
+                        </span>
+                        {% endwith %}
+                    </td>
                 </tr>
-
+                {% empty %}
                 <tr>
-                    <td><strong>MSFT</strong></td>
-                    <td>Microsoft Corp.</td>
-                    <td class="text-end">10</td>
-                    <td class="text-end">$310.00</td>
-                    <td class="text-end">$335.20</td>
-                    <td class="text-end">$3,352.00</td>
-                    <td class="text-end text-success">+ $252.00</td>
+                    <td colspan="5" class="text-center">No stock holdings found.</td>
                 </tr>
-
-                <tr>
-                    <td><strong>TSLA</strong></td>
-                    <td>Tesla Inc.</td>
-                    <td class="text-end">8</td>
-                    <td class="text-end">$260.00</td>
-                    <td class="text-end">$242.10</td>
-                    <td class="text-end">$1,936.80</td>
-                    <td class="text-end text-danger">- $143.20</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

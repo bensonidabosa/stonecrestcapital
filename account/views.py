@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from decimal import Decimal
 
 from assets.models import Asset 
 from portfolios.models import Portfolio
@@ -217,10 +219,25 @@ def portfolio_view(request):
     })
 
 def assets_view(request):
-    assets = Asset.objects.all().order_by('asset_type', 'symbol')
+    asset_type = request.GET.get("type")
+    query = request.GET.get("q")
+
+    assets = Asset.objects.all()
+
+    if asset_type in dict(Asset.ASSET_TYPES):
+        assets = assets.filter(asset_type=asset_type)
+
+    # if query:
+    #     assets = assets.filter(
+    #         Q(name__icontains=query) |
+    #         Q(symbol__icontains=query)
+    #     )
+
     return render(request, "account/customer/assets.html", {
         "current_url": request.resolver_match.url_name,
-        'assets': assets
+        'assets': assets,
+        "asset_types": Asset.ASSET_TYPES,
+        "selected_type": asset_type,
     })
 
 def asset_detail(request, symbol):
@@ -231,21 +248,81 @@ def asset_detail(request, symbol):
         "current_url": "assets"
     })
 
+@login_required
 def stocks_view(request):
-    return render(request, "account/customer/stocks.html", {
-        "current_url": request.resolver_match.url_name
-    })
+    portfolio = request.user.portfolio
+
+    # Get all stock holdings for this portfolio
+    stock_holdings = portfolio.holdings.filter(asset__asset_type='STOCK').select_related('asset')
+
+    # Calculate total stock value
+    total_stock_value = sum([h.market_value() for h in stock_holdings])
+
+    # Calculate total unrealized P&L
+    total_unrealized_pnl = sum([h.unrealized_pnl() for h in stock_holdings])
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "stock_holdings": stock_holdings,
+        "total_stock_value": total_stock_value,
+        "total_unrealized_pnl": total_unrealized_pnl,
+    }
+    return render(request, "account/customer/stocks.html", context)
+
 
 def stock_detail_view(request):
     return render(request, "account/customer/stock_detail.html", {
         "current_url": "stocks"
     })
 
-    
+
 def reits_view(request):
-    return render(request, "account/customer/reits.html", {
-        "current_url": request.resolver_match.url_name
-    })
+    # Get the user's portfolio
+    portfolio = get_object_or_404(Portfolio, user=request.user)
+
+    # Filter REIT holdings
+    reit_holdings = portfolio.holdings.filter(asset__asset_type='REIT').select_related('asset')
+
+    total_value = Decimal('0')
+    total_yield_weighted = Decimal('0')
+    holdings_data = []
+
+    for holding in reit_holdings:
+        asset = holding.asset
+        value = holding.market_value()
+        total_value += value
+
+        annual_yield = asset.annual_yield or Decimal('0')
+        total_yield_weighted += value * annual_yield
+
+        # Prepare table data
+        income = value * annual_yield / 100
+        holdings_data.append({
+            'symbol': asset.symbol,
+            'name': asset.name,
+            'units': holding.quantity,
+            'price': asset.price,
+            'value': value,
+            'yield': annual_yield,
+            'income': income,
+        })
+
+    # Weighted average annual yield
+    avg_annual_yield = (total_yield_weighted / total_value) if total_value else Decimal('0')
+
+    # Monthly dividend income
+    monthly_income = total_value * avg_annual_yield / 100 / 12
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "reit_holdings": holdings_data,
+        "total_value": total_value,
+        "avg_annual_yield": avg_annual_yield,
+        "monthly_income": monthly_income,
+    }
+
+    return render(request, "account/customer/reits.html", context)
+
 
 def reit_detail_view(request):
     return render(request, "account/customer/reit_detail.html", {

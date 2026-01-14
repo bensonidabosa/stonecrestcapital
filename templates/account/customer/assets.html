@@ -14,24 +14,30 @@
 
 <!-- Asset Filters -->
 <div class="card p-3 mb-4">
-    <div class="row g-2">
-        <div class="col-md-3">
-            <select class="form-select form-select-sm">
-                <option selected>All Asset Types</option>
-                <option>Stock</option>
-                <option>ETF</option>
-                <option>REIT</option>
-            </select>
-        </div>
+    <form method="get">
+        <div class="row g-2">
 
-        <div class="col-md-4">
-            <input type="text"
-                   class="form-control form-control-sm"
-                   placeholder="Search by name or symbol">
+            <!-- Asset Type Filter -->
+            <div class="col-md-3">
+                <select name="type" class="form-select form-select-sm text-dark" onchange="this.form.submit()">
+
+                    <option value="">All Asset Types</option>
+
+                    {% for key, label in asset_types %}
+                    <option value="{{ key }}" {% if selected_type|default:'' == key %}selected{% endif %}>{{label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Search -->
+            <!-- <div class="col-md-4">
+                <input type="text" name="q" value="{{ request.GET.q }}" class="form-control form-control-sm"
+                    placeholder="Search by name or symbol">
+            </div> -->
+
         </div>
-    </div>
+    </form>
 </div>
-
 <!-- Assets Table -->
 <div class="card p-4">
     <div class="table-responsive">
@@ -41,26 +47,34 @@
                     <th>Symbol</th>
                     <th>Name</th>
                     <th>Type</th>
-                    <th class="text-end">Price</th>
-                    <th class="text-end">Volatility</th>
-                    <th></th>
+                    <th>Price</th>
+                    <th>Volatility</th>
+                    <th>Yield</th>
                 </tr>
             </thead>
             <tbody>
                 {% for asset in assets %}
-                    <tr>
-                        <td><strong>{{asset.symbol}}</strong></td>
-                        <td>{{asset.name}}.</td>
-                        <td><span class="badge bg-primary">{{asset.asset_type}}</span></td>
-                        <td class="text-end">${{asset.price}}</td>
-                        <td class="text-end">{{asset.volatility}}</td>
-                        <td class="text-end">
-                            <a href=""
-                            class="btn btn-sm btn-outline-primary">
-                                View
-                            </a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td><strong>{{asset.symbol}}</strong></td>
+                    <td>{{asset.name}}.</td>
+                    <td><span class="badge bg-primary">{{asset.asset_type}}</span></td>
+                    <td>${{asset.price}}</td>
+                    <td>
+                        {% if asset.asset_type == "REIT" %}
+                            —
+                        {% else %}
+                            {{asset.volatility}}
+                        {% endif %}
+                        
+                    </td>
+                    <td>
+                        {% if asset.asset_type == "REIT" %}
+                        {{ asset.annual_yield }}%
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>

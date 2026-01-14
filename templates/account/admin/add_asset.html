@@ -9,7 +9,7 @@
 
       <div class="card">
         <div class="card-body">
-          <h4 class="text-center">Create Asset</h4>
+          <h4 class="text-center">{% if asset %}Edit Asset{% else %}Create Asset{% endif %}</h4>
           <hr>
 
           {% include "../../notification/messages.html" %}
@@ -37,7 +37,7 @@
                     class="btn btn-primary w-100 btn-sm fw-bold"
                     data-spinner-text="Creating Asset..."
                     data-spinner-class="btn-secondary w-100">
-              Create
+              {% if asset %}Update{% else %}Create{% endif %}
             </button>
           </form>
 
