@@ -151,7 +151,7 @@ def unwind_portfolio(portfolio):
 
         if holding.quantity > 0:
             holding.sell_value(holding.market_value())
-
+    
     portfolio.holdings.filter(quantity=0).delete()
 
 

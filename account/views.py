@@ -353,9 +353,12 @@ def reit_detail_view(request):
     })
 
 def copy_trading_view(request):
-    portfolios = Portfolio.objects.annotate(
-        followers_count=Count('followers')
-        ).exclude(user=request.user)
+    portfolios = (
+        Portfolio.objects
+        .annotate(followers_count=Count('followers'))
+        .exclude(user=request.user)
+        .exclude(user__is_staff=True)
+    )
     active_traders = portfolios.count()
     
     # Convert to list so we can sort in Python

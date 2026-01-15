@@ -9,6 +9,9 @@ from assets.models import Asset
 from trading.models import Trade
 from strategies.models import Strategy
 from strategies import forms 
+from account.models import User
+from account.forms import AdminCustomerEditForm
+
 
 @login_required
 @admin_staff_only
@@ -20,6 +23,57 @@ def admin_dashboard_view(request):
         'all_assets':all_assets
     }
     return render(request, 'account/admin/admin_dashboard.html', context )
+
+
+@login_required
+@admin_staff_only
+def admin_customer_list_view(request):
+    customers = User.objects.filter(is_staff=False)
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "customers": customers,
+    }
+
+    return render(request, 'account/admin/customer_list.html', context)
+
+
+@login_required
+@admin_staff_only
+def admin_customer_detail_view(request, user_id):
+    customer = get_object_or_404(User, id=user_id, is_staff=False)
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "customer": customer,
+    }
+
+    return render(request, 'account/admin/customer_detail.html', context)
+
+
+@login_required
+@admin_staff_only
+def admin_edit_customer_view(request, user_id):
+    customer = get_object_or_404(User, id=user_id, is_staff=False)
+
+    if request.method == "POST":
+        form = AdminCustomerEditForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            alert_msg = f"{customer.full_name}'s information is updated successfuly."
+            messages.success(request,  alert_msg)
+            return redirect("staff:admin_customer_list")
+    else:
+        form = AdminCustomerEditForm(instance=customer)
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "customer": customer,
+        "form": form,
+    }
+
+    return render(request, "account/admin/edit_customer.html", context)
+
 
 @login_required
 @admin_staff_only
@@ -80,7 +134,7 @@ def admin_trade_list_view(request):
     trades = Trade.objects.select_related(
         'portfolio',
         'asset'
-    ).order_by('-executed_at')
+    ).order_by('-timestamp')
 
     context = {
         "current_url": request.resolver_match.url_name,

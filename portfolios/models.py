@@ -15,11 +15,11 @@ class Portfolio(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # def total_value(self):
-    #     holdings_value = sum(
-    #         h.market_value() for h in self.holdings.all()
-    #     )
-    #     return holdings_value
+    def total_holding_value(self):
+        holdings_value = sum(
+            h.market_value() for h in self.holdings.all()
+        )
+        return holdings_value
     
     def total_value(self):
         holdings_value = sum(
