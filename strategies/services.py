@@ -1,11 +1,13 @@
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+from django.db import transaction
 
 from .models import PortfolioStrategy
 from trading.services import execute_buy
 from portfolios.models import Portfolio, PortfolioSnapshot
 from portfolios.services import unwind_portfolio
 from trading.models import Trade
+from copytrading.utils import is_copy_trading
 
 def execute_strategy(portfolio, strategy):
     allocations = strategy.allocations.select_related('asset')
@@ -59,7 +61,10 @@ def switch_strategy(portfolio, new_strategy):
     """
     Safely switch a portfolio from one strategy to another
     """
-
+    # 🔒 HARD LOCK
+    if is_copy_trading(portfolio):
+        raise ValueError("Stop copy trading before selecting a strategy")
+    
     # STEP 14.3 — Safety guard (EDGE CASE)
     if portfolio.holdings.filter(quantity__gt=0).exists():
         unwind_portfolio(portfolio)
@@ -94,4 +99,18 @@ def switch_strategy(portfolio, new_strategy):
 
     return portfolio_strategy
 
+
+def liquidate_strategy(portfolio):
+    """
+    Exit strategy mode safely:
+    - Sell all holdings
+    - Convert to cash
+    - Remove PortfolioStrategy
+    """
+    with transaction.atomic():
+        # 1️⃣ Sell everything
+        unwind_portfolio(portfolio)
+
+        # 2️⃣ Remove strategy link
+        PortfolioStrategy.objects.filter(portfolio=portfolio).delete()
 

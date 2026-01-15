@@ -6,3 +6,20 @@ django-admin startapp strategies
 django-admin startapp copytrading
 django-admin startapp dividends
 django-admin startapp analytics-+
+
+
+<td>
+                    {% if user.is_authenticated and portfolio != request.user.portfolio %}
+                        {% if portfolio.id in followed_portfolios %}
+                            <a href="{% url 'unfollow_portfolio' portfolio.id %}"
+                               class="btn btn-sm btn-outline-danger">
+                               Unfollow
+                            </a>
+                        {% else %}
+                            <a href="{% url 'follow_portfolio' portfolio.id %}"
+                               class="btn btn-sm btn-outline-primary">
+                               Copy
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </td>

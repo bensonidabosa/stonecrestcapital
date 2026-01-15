@@ -2,10 +2,8 @@ from decimal import Decimal
 from django.db import transaction
 from portfolios.models import Holding
 from .models import Trade
-from copytrading.services import mirror_trade
 
-
-def execute_buy(portfolio, asset, quantity, note="Strategy allocation"):
+def execute_buy(portfolio, asset, quantity):
     price = asset.price
     cost = price * quantity
 
@@ -26,7 +24,10 @@ def execute_buy(portfolio, asset, quantity, note="Strategy allocation"):
         )
 
         if not created:
-            total_cost = (holding.quantity * holding.average_price) + cost
+            total_cost = (
+                holding.quantity * holding.average_price
+            ) + cost
+
             new_quantity = holding.quantity + quantity
             holding.average_price = total_cost / new_quantity
             holding.quantity = new_quantity
@@ -37,21 +38,11 @@ def execute_buy(portfolio, asset, quantity, note="Strategy allocation"):
             asset=asset,
             trade_type=Trade.BUY,
             quantity=quantity,
-            price=price,
-            note=note
+            price=price
         )
 
-    # 🔁 COPY TRADING MIRROR (AFTER LEADER TRADE)
-    print('going to mirrow trade')
-    mirror_trade(
-        leader_portfolio=portfolio,
-        asset=asset,
-        trade_type=Trade.BUY,
-        quantity=quantity
-    )
 
-
-def execute_sell(portfolio, asset, quantity, note="Strategy unwind or rebalancing"):
+def execute_sell(portfolio, asset, quantity):
     holding = Holding.objects.get(
         portfolio=portfolio,
         asset=asset
@@ -79,14 +70,5 @@ def execute_sell(portfolio, asset, quantity, note="Strategy unwind or rebalancin
             asset=asset,
             trade_type=Trade.SELL,
             quantity=quantity,
-            price=price,
-            note=note
+            price=price
         )
-    print('going to mirrow trade')
-    # 🔁 COPY TRADING MIRROR (AFTER LEADER TRADE)
-    mirror_trade(
-        leader_portfolio=portfolio,
-        asset=asset,
-        trade_type=Trade.SELL,
-        quantity=quantity
-    )

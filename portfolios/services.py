@@ -3,6 +3,8 @@ from decimal import Decimal
 from portfolios.models import Portfolio, PortfolioSnapshot, Holding, RebalanceLog, DividendLog
 from strategies.models import PortfolioStrategy
 from trading.models import Trade
+from trading.services import execute_sell
+from copytrading.utils import is_copy_trading
 
 def calculate_portfolio_value(portfolio):
     holdings_value = sum(
@@ -20,6 +22,9 @@ def rebalance_portfolio(portfolio):
     """
     Rebalance a single portfolio based on its assigned strategy
     """
+    # 🔒 HARD LOCK
+    if is_copy_trading(portfolio):
+        return  # silently skip
     try:
         portfolio_strategy = PortfolioStrategy.objects.select_related(
             'strategy'
@@ -148,6 +153,28 @@ def unwind_portfolio(portfolio):
             holding.sell_value(holding.market_value())
 
     portfolio.holdings.filter(quantity=0).delete()
+
+
+def liquidate_portfolio(portfolio):
+    """
+    Sell all holdings in a portfolio
+    """
+    for holding in portfolio.holdings.select_related('asset'):
+        if holding.quantity > 0:
+            execute_sell(
+                portfolio=portfolio,
+                asset=holding.asset,
+                quantity=holding.quantity,
+                note="Copy trading liquidation"
+            )
+    # Step 3 — snapshot
+    PortfolioSnapshot.objects.create(
+        portfolio=portfolio,
+        total_value=portfolio.total_value(),
+        cash_balance=portfolio.cash_balance
+    )
+
+
 
 
 

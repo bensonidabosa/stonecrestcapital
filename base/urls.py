@@ -11,4 +11,5 @@ urlpatterns = [
     path('trading/', include('trading.urls', namespace='trading')),
     path('strategy/', include('strategies.urls', namespace='strategy')),
     path('portfolio/', include('portfolios.urls', namespace='portfolio')),
+    path('copytrading/', include('copytrading.urls', namespace='copytrading')),
 ]

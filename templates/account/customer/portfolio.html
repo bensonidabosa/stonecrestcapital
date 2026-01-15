@@ -12,24 +12,62 @@
             <strong>${{ portfolio.cash_balance|floatformat:2|intcomma }}</strong>
         </span>
         <!-- <span class="text-muted">
-            Total Value:
-            <strong>${{ total_value|floatformat:2 }}</strong>
+            Your Active Strategy:
+            <strong></strong>
         </span> -->
     </div>
 
-    <div class="row g-4 mb-4">
+    <div class="row g-5 mb-4">
         <div class="col-md-3">
             <div class="card p-3 shadow-sm">
-                <small class="text-muted">Total Value:</small>
+                <small class="text-muted">Total Investment Value:</small>
                 <h4 class="fw-bold">${{ portfolio.total_value|floatformat:2|intcomma }}</h4>
             </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-8">
+            <div class="mt-5">
+                <span class="text-muted ">
+                    Active Strategy:
+                    {% if active_strategy %}
+                    <strong class="text-primary">
+                        {{ active_strategy.strategy.name }}
+                    </strong>
+
+                    <a href="{% url 'strategy:stop_strategy' %}" class="btn btn-sm btn-outline-danger ms-2"
+                        onclick="return confirm('This will sell all holdings and convert them to cash. Continue?');">
+                        Stop & Liquidate
+                    </a>
+                    {% else %}
+                    <strong class="text-muted">None</strong>
+                    {% endif %}
+                </span>
+            </div>
+            <!-- Copy Trading -->
+            <span>
+                Copy Trading:
+                {% if active_copy %}
+                <strong class="text-success">
+                    {{ active_copy.leader.user.email }}
+                </strong>
+
+                <a href="{% url 'copytrading:stop_copying' active_copy.leader.id %}"
+                    class="btn btn-sm btn-outline-warning ms-2 text-dark" onclick="return confirm('Stop copying this trader?');">
+                    Stop Copying
+                </a>
+                {% else %}
+                <strong>None</strong>
+                {% endif %}
+            </span>
         </div>
     </div>
     {% include "../../notification/messages.html" %}
     <!-- Holdings Table -->
     <div class="card">
         <div class="card-header">
-            Holdings
+            <div class="col-6">
+                Holdings
+            </div>
         </div>
 
         <div class="table-responsive">

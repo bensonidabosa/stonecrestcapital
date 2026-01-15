@@ -2,12 +2,13 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from decimal import Decimal
+from django.db.models import Count
 
 from assets.models import Asset 
 from portfolios.models import Portfolio
 from portfolios.services import calculate_portfolio_value
 from strategies.models import PortfolioStrategy
-
+from copytrading.models import CopyRelationship
 
 def customer_dashboard_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
@@ -139,13 +140,19 @@ def customer_dashboard_view(request):
     snapshot_labels = [s.created_at.strftime("%Y-%m-%d") for s in snapshots]
     snapshot_values = [float(s.total_value) for s in snapshots]
 
+    todays_pnl = Decimal("0")
+    todays_pnl_percent = Decimal("0")
+
     if snapshots.count() >= 2:
-        today_value = snapshots.last().total_value
-        yesterday_value = snapshots.reverse()[1].total_value
+        today, yesterday = snapshots.order_by("-created_at")[:2]
+
+        today_value = today.total_value
+        yesterday_value = yesterday.total_value
+
         todays_pnl = today_value - yesterday_value
-        todays_pnl_percent = (todays_pnl / yesterday_value) * 100
-    else:
-        todays_pnl = todays_pnl_percent = 0
+
+        if yesterday_value != Decimal("0"):
+            todays_pnl_percent = (todays_pnl / yesterday_value) * Decimal("100")
 
     # --------------------------------------------------
     # ROI
@@ -211,11 +218,27 @@ def customer_dashboard_view(request):
 def portfolio_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
     total_value = calculate_portfolio_value(portfolio)
+
+    active_strategy = (
+        PortfolioStrategy.objects
+        .select_related('strategy')
+        .filter(portfolio=portfolio)
+        .first()
+    )
+
+    active_copy = (
+        CopyRelationship.objects
+        .select_related('leader__user')
+        .filter(follower=portfolio, is_active=True)
+        .first()
+    )
     
     return render(request, "account/customer/portfolio.html", {
         "current_url": request.resolver_match.url_name,
         'portfolio': portfolio,
         'total_value': total_value,
+        "active_strategy": active_strategy,
+        "active_copy": active_copy,
     })
 
 def assets_view(request):
@@ -330,9 +353,37 @@ def reit_detail_view(request):
     })
 
 def copy_trading_view(request):
+    portfolios = Portfolio.objects.annotate(
+        followers_count=Count('followers')
+        ).exclude(user=request.user)
+    active_traders = portfolios.count()
+    
+    # Convert to list so we can sort in Python
+    portfolios = list(portfolios)
+
+    
+
+    # Sort by computed total_value
+    portfolios.sort(
+        key=lambda p: p.total_value(),
+        reverse=True
+    )
+
+    followed_portfolios = set()
+    if request.user.is_authenticated:
+        followed_portfolios = set(
+            CopyRelationship.objects.filter(
+                follower=request.user.portfolio,
+                is_active=True
+            ).values_list('leader_id', flat=True)
+        )
     return render(request, "account/customer/copy_trading.html", {
-        "current_url": "copy_trading"
+        "current_url": "copy_trading",
+        'portfolios': portfolios,
+        'followed_portfolios': followed_portfolios,
+        'active_traders': active_traders
     })
+
 
 def wallet_view(request):
     return render(request, "account/customer/wallet.html", {

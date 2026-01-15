@@ -5,7 +5,7 @@ from django.contrib import messages
 
 from portfolios.models import Portfolio
 from .models import Strategy, PortfolioStrategy
-from .services import execute_strategy, strategy_average_return, switch_strategy
+from .services import execute_strategy, strategy_average_return, switch_strategy, liquidate_strategy
 
 @login_required
 def activate_strategy_view(request, strategy_id):
@@ -33,8 +33,14 @@ def activate_strategy_view(request, strategy_id):
 @login_required
 def strategy_list_view(request):
     strategies = Strategy.objects.filter(is_active=True)
+
+    try:
+        portfolio = Portfolio.objects.get(user=request.user)
+    except Portfolio.DoesNotExist:
+        portfolio = None
     return render(request, 'account/customer/strategies/list.html', {
-        'strategies': strategies
+        'strategies': strategies,
+        'portfolio': portfolio,
     })
 
 
@@ -60,4 +66,21 @@ def strategy_leaderboard(request):
         'account/customer/strategies/leaderboard.html',
         {'leaderboard': leaderboard}
     )
+
+
+@login_required
+def stop_strategy_view(request):
+    portfolio = request.user.portfolio
+
+    if not PortfolioStrategy.objects.filter(portfolio=portfolio).exists():
+        messages.info(request, "No active strategy to stop.")
+        return redirect('account:strategies')
+
+    liquidate_strategy(portfolio)
+
+    messages.success(
+        request,
+        "Strategy stopped. All assets sold and credited to cash balance."
+    )
+    return redirect('account:portfolio')
 

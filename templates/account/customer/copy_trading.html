@@ -1,4 +1,5 @@
 {% extends "../base/base.html" %}
+{% load humanize %}
 
 {% block title %}Copy Trading{% endblock %}
 
@@ -17,7 +18,7 @@
     <div class="col-md-4">
         <div class="card p-3">
             <small class="text-muted">Active Traders</small>
-            <h5 class="fw-bold">24</h5>
+            <h5 class="fw-bold">{{active_traders}}</h5>
         </div>
     </div>
 
@@ -35,22 +36,28 @@
         </div>
     </div>
 </div>
-
+{% include "../../notification/messages.html" %}
 <!-- Trader Cards -->
 <div class="row g-4">
+    {% for portfolio in portfolios %}
     <div class="col-lg-4 col-md-6">
         <div class="card p-4 h-100">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong>Trader Alpha</strong>
+                <strong>Trader {{ portfolio.user.email }}</strong>
                 <span class="badge bg-success">Low Risk</span>
             </div>
 
-            <small class="text-muted">Swing Trading · FX & Stocks</small>
+            <small class="text-muted">Value: ${{ portfolio.total_value|floatformat:2|intcomma }}</small>
 
             <div class="row text-center mt-3">
                 <div class="col-4">
                     <small class="text-muted">ROI</small>
-                    <div class="fw-bold text-success">+24.1%</div>
+                     {% if portfolio.return_percentage >= 0 %}
+                        <div class="fw-bold text-success">+{{ portfolio.return_percentage|floatformat:1 }}%</div>
+                    {% else %}
+                        <div class="fw-bold text-success">{{ portfolio.return_percentage|floatformat:1 }}%</div>
+                    {% endif %}
+                    
                 </div>
                 <div class="col-4">
                     <small class="text-muted">Win Rate</small>
@@ -66,124 +73,23 @@
 
             <div class="d-flex justify-content-between align-items-center">
                 <small class="text-muted">Copiers</small>
-                <strong>312</strong>
+                <strong>{{ portfolio.followers_count }}</strong>
             </div>
 
-            <a href="#" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                View Trader
-            </a>
+            {% if user.is_authenticated and portfolio != request.user.portfolio %}
+                {% if portfolio.id in followed_portfolios %}
+                    <a href="{% url 'copytrading:stop_copying' portfolio.id %}" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                        Stop Copying - Liquidate
+                    </a>
+                {% else %}
+                    <a href="{% url 'copytrading:follow_portfolio' portfolio.id %}" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                        Copy
+                    </a>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
-
-    <div class="col-lg-4 col-md-6">
-        <div class="card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong>Trader Beta</strong>
-                <span class="badge bg-warning text-dark">Medium Risk</span>
-            </div>
-
-            <small class="text-muted">Scalping · Crypto</small>
-
-            <div class="row text-center mt-3">
-                <div class="col-4">
-                    <small class="text-muted">ROI</small>
-                    <div class="fw-bold text-success">+38.9%</div>
-                </div>
-                <div class="col-4">
-                    <small class="text-muted">Win Rate</small>
-                    <div class="fw-bold">64%</div>
-                </div>
-                <div class="col-4">
-                    <small class="text-muted">Drawdown</small>
-                    <div class="fw-bold text-warning">-14%</div>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <small class="text-muted">Copiers</small>
-                <strong>118</strong>
-            </div>
-
-            <a href="#" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                View Trader
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-6">
-        <div class="card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong>Trader Gamma</strong>
-                <span class="badge bg-danger">High Risk</span>
-            </div>
-
-            <small class="text-muted">High-frequency · Indices</small>
-
-            <div class="row text-center mt-3">
-                <div class="col-4">
-                    <small class="text-muted">ROI</small>
-                    <div class="fw-bold text-success">+52.4%</div>
-                </div>
-                <div class="col-4">
-                    <small class="text-muted">Win Rate</small>
-                    <div class="fw-bold">58%</div>
-                </div>
-                <div class="col-4">
-                    <small class="text-muted">Drawdown</small>
-                    <div class="fw-bold text-danger">-29%</div>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <small class="text-muted">Copiers</small>
-                <strong>64</strong>
-            </div>
-
-            <a href="#" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                View Trader
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-6">
-        <div class="card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong>Trader Gamma</strong>
-                <span class="badge bg-danger">High Risk</span>
-            </div>
-
-            <small class="text-muted">High-frequency · Indices</small>
-
-            <div class="row text-center mt-3">
-                <div class="col-4">
-                    <small class="text-muted">ROI</small>
-                    <div class="fw-bold text-success">+52.4%</div>
-                </div>
-                <div class="col-4">
-                    <small class="text-muted">Win Rate</small>
-                    <div class="fw-bold">58%</div>
-                </div>
-                <div class="col-4">
-                    <small class="text-muted">Drawdown</small>
-                    <div class="fw-bold text-danger">-29%</div>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <small class="text-muted">Copiers</small>
-                <strong>64</strong>
-            </div>
-
-            <a href="#" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                View Trader
-            </a>
-        </div>
-    </div>
+    {% endfor %}
 </div>
 
 {% endblock %}

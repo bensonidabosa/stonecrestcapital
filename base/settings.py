@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'staff',
     'trading',
     'strategies',
+    'copytrading',
 ]
 
 MIDDLEWARE = [
