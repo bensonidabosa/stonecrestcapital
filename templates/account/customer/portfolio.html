@@ -27,6 +27,31 @@
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-8">
+            <div class="mb-4">
+                <h5>Active Strategies</h5>
+                {% if active_strategies %}
+                <ul class="list-group">
+                    {% for ps in active_strategies %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            <strong>{{ ps.strategy.name }}</strong> — Allocated: ${{ ps.allocated_cash|intcomma }}
+                        </span>
+                        <form method="post" action="{% url 'strategy:stop_strategy' ps.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Stop & Liquidate
+                            </button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No active strategies</p>
+                {% endif %}
+            </div>
+
+        </div>
+        <!-- <div class="col-md-8">
             <div class="mt-5">
                 <span class="text-muted ">
                     Active Strategy:
@@ -44,7 +69,7 @@
                     {% endif %}
                 </span>
             </div>
-            <!-- Copy Trading -->
+
             <span>
                 Copy Trading:
                 {% if active_copy %}
@@ -60,7 +85,7 @@
                 <strong>None</strong>
                 {% endif %}
             </span>
-        </div>
+        </div> -->
     </div>
     {% include "../../notification/messages.html" %}
     <!-- Holdings Table -->
@@ -122,3 +147,5 @@
 
 </div>
 {% endblock %}
+
+<!-- {% url 'strategy:stop_strategy' ps.id %} -->

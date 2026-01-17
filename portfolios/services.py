@@ -1,7 +1,7 @@
 from decimal import Decimal
-
+from django.db import transaction
 from portfolios.models import Portfolio, PortfolioSnapshot, Holding, RebalanceLog, DividendLog
-from strategies.models import PortfolioStrategy
+from strategies.models import PortfolioStrategy, StrategyHolding
 from trading.models import Trade
 from trading.services import execute_sell
 from copytrading.utils import is_copy_trading
@@ -154,29 +154,91 @@ def take_daily_snapshots():
     
 #     portfolio.holdings.filter(quantity=0).delete()
 
+# def unwind_portfolio(portfolio):
+#     """
+#     Sell all holdings in the portfolio and register trades.
+#     Used when stopping a strategy.
+#     """
+#     for holding in portfolio.holdings.select_related('asset'):
+#         price = holding.asset.price
+
+#         if price is None or price <= 0:
+#             continue  # Skip invalid-priced assets
+
+#         if holding.quantity > 0:
+#             # Sell the full market value using execute_sell so a Trade is created
+#             execute_sell(
+#                 portfolio=portfolio,
+#                 asset=holding.asset,
+#                 quantity=holding.quantity,
+#                 note="Strategy liquidation"
+#             )
+
+#     # Clean up holdings with zero quantity (though execute_sell deletes automatically)
+#     portfolio.holdings.filter(quantity=0).delete()
+
+
+# def unwind_strategy_holdings(portfolio, strategy_allocation):
+#     """
+#     Sell all holdings linked to a specific strategy allocation and register trades.
+#     """
+#     # Assuming we have a way to track which holdings came from which strategy allocation.
+#     # For now, let's assume all holdings belong to this strategy allocation.
+#     for holding in portfolio.holdings.select_related('asset'):
+#         price = holding.asset.price
+#         if price is None or price <= 0:
+#             continue
+
+#         if holding.quantity > 0:
+#             execute_sell(
+#                 portfolio=portfolio,
+#                 asset=holding.asset,
+#                 quantity=holding.quantity,
+#                 note=f"Strategy ({strategy_allocation.strategy.name}) liquidation"
+#             )
+
+#     portfolio.holdings.filter(quantity=0).delete()
+
+def unwind_strategy_holdings(portfolio, strategy_allocation):
+    """
+    Sell all holdings associated with a specific strategy allocation
+    """
+    holdings = StrategyHolding.objects.filter(
+        strategy_allocation=strategy_allocation
+    ).select_related('holding', 'asset')  # correct select_related
+
+    for sh in holdings:
+        holding = sh.holding
+        asset = sh.asset
+        price = asset.price
+
+        if price is None or sh.quantity <= 0:
+            continue
+
+        execute_sell(
+            portfolio=portfolio,
+            asset=asset,
+            quantity=sh.quantity,
+            strategy_allocation=strategy_allocation,
+            note=f"Liquidating strategy: {strategy_allocation.strategy.name}"
+        )
+
+
+    # Remove empty strategy holdings
+    holdings.filter(quantity__lte=0).delete()
+
+
+
 def unwind_portfolio(portfolio):
     """
-    Sell all holdings in the portfolio and register trades.
-    Used when stopping a strategy.
+    Liquidate all active strategies for a portfolio.
+    Useful for stopping all strategies.
     """
-    for holding in portfolio.holdings.select_related('asset'):
-        price = holding.asset.price
-
-        if price is None or price <= 0:
-            continue  # Skip invalid-priced assets
-
-        if holding.quantity > 0:
-            # Sell the full market value using execute_sell so a Trade is created
-            execute_sell(
-                portfolio=portfolio,
-                asset=holding.asset,
-                quantity=holding.quantity,
-                note="Strategy liquidation"
-            )
-
-    # Clean up holdings with zero quantity (though execute_sell deletes automatically)
-    portfolio.holdings.filter(quantity=0).delete()
-
+    active_strategies = portfolio.strategy_allocations.filter(status='ACTIVE')
+    for sa in active_strategies:
+        unwind_strategy_holdings(portfolio, sa)
+        sa.status = 'STOPPED'
+        sa.save(update_fields=['status'])
 
 
 def liquidate_portfolio(portfolio):

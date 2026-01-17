@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from assets.models import Asset
-from portfolios.models import Portfolio
+from portfolios.models import Portfolio, Holding
 
 class Strategy(models.Model):
     RISK_LEVELS = (
@@ -91,10 +91,64 @@ class StrategyAllocation(models.Model):
 
 
 class PortfolioStrategy(models.Model):
-    portfolio = models.OneToOneField(
+    STATUS_CHOICES = (
+        ('ACTIVE', 'Active'),
+        ('STOPPED', 'Stopped'),
+    )
+
+    portfolio = models.ForeignKey(
+        Portfolio,
+        on_delete=models.CASCADE,
+        related_name='strategy_allocations'
+    )
+
+    strategy = models.ForeignKey(
+        Strategy,
+        on_delete=models.CASCADE
+    )
+
+    allocated_cash = models.DecimalField(
+        max_digits=15,
+        decimal_places=2
+    )
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='ACTIVE'
+    )
+
+    activated_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.strategy.name} ({self.allocated_cash})"
+
+
+class StrategyHolding(models.Model):
+    portfolio = models.ForeignKey(
         Portfolio,
         on_delete=models.CASCADE
     )
-    strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
-    activated_at = models.DateTimeField(auto_now_add=True)
+
+    strategy_allocation = models.ForeignKey(
+        PortfolioStrategy,
+        on_delete=models.CASCADE,
+        related_name='strategy_holdings'
+    )
+
+    holding = models.ForeignKey(
+        Holding,
+        on_delete=models.CASCADE,
+        related_name='strategy_slices'
+    )
+
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=4
+    )
+
+    class Meta:
+        unique_together = ('strategy_allocation', 'asset')
 

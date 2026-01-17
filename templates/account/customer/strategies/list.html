@@ -82,9 +82,15 @@
                         Stop copy trading to select strategy
                     </button>
                     {% else %}
-                    <a href="{% url 'strategy:select-strategy' strategy.id %}" class="btn btn-primary btn-sm">
-                        Select Strategy
-                    </a>
+                        {% if strategy.id in active_strategy_ids %}
+                        <button class="btn btn-secondary" disabled>
+                            Strategy Already Activated
+                        </button>
+                        {% else %}
+                        <a href="{% url 'strategy:select-strategy' strategy.id %}" class="btn btn-primary btn-sm">
+                            Select Strategy
+                        </a>
+                        {% endif %}
                     {% endif %}
 
 

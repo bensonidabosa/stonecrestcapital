@@ -7,7 +7,8 @@ django-admin startapp copytrading
 django-admin startapp dividends
 django-admin startapp analytics-+
 
-
+https://azim.hostlin.com/Fxvibe/
+https://preview.themeforest.net/item/counsolve-consulting-investments-html-template/full_screen_preview/49458497
 <td>
                     {% if user.is_authenticated and portfolio != request.user.portfolio %}
                         {% if portfolio.id in followed_portfolios %}

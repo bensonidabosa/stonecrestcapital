@@ -5,42 +5,28 @@ from django.db import transaction
 from .models import PortfolioStrategy
 from trading.services import execute_buy
 from portfolios.models import Portfolio, PortfolioSnapshot
-from portfolios.services import unwind_portfolio
+from portfolios.services import unwind_portfolio, unwind_strategy_holdings
 from trading.models import Trade
 from copytrading.utils import is_copy_trading
 
-def execute_strategy(portfolio, strategy):
-    allocations = strategy.allocations.select_related('asset')
+def execute_strategy(portfolio, strategy_allocation):
+    strategy = strategy_allocation.strategy
+    total_cash = strategy_allocation.allocated_cash
 
-    # 🔒 PRICE SAFETY CHECK
-    for allocation in allocations:
-        asset = allocation.asset
-        if asset.price is None or asset.price <= 0:
-            raise ValidationError(
-                f"Asset price not available for {asset.symbol}. "
-                "Please simulate prices first."
-            )
+    for allocation in strategy.allocations.select_related('asset'):
+        if allocation.asset.price <= 0:
+            continue
 
-    total_percentage = sum(a.percentage for a in allocations)
-    if total_percentage > 100:
-        raise ValidationError("Strategy allocations exceed 100%")
+        target_cash = (allocation.percentage / 100) * total_cash
+        quantity = target_cash / allocation.asset.price
 
-    cash = portfolio.cash_balance
-
-    for allocation in allocations:
-        amount_to_invest = (
-            allocation.percentage / Decimal('100')
-        ) * cash
-
-        quantity = amount_to_invest / allocation.asset.price
-
-        if quantity > 0:
-            execute_buy(
-                portfolio=portfolio,
-                asset=allocation.asset,
-                quantity=quantity
-            )
-
+        execute_buy(
+            portfolio=portfolio,
+            asset=allocation.asset,
+            quantity=quantity,
+            strategy_allocation=strategy_allocation,
+            note=f"Strategy allocation: {strategy.name}"
+        )
 
 
 def strategy_average_return(strategy):
@@ -100,26 +86,30 @@ def switch_strategy(portfolio, new_strategy):
     return portfolio_strategy
 
 
-def liquidate_strategy(portfolio):
+def liquidate_strategy(portfolio, strategy_allocation=None):
     """
-    Exit strategy mode safely:
-    - Sell all holdings
-    - Convert to cash
-    - Remove PortfolioStrategy
-    - Record a portfolio snapshot
+    Sell all holdings for a given strategy allocation (or all active strategies),
+    record a snapshot, and remove the PortfolioStrategy record(s) after liquidation.
     """
     with transaction.atomic():
-        # 1️⃣ Sell all holdings
-        unwind_portfolio(portfolio)
+        if strategy_allocation:
+            # Sell only holdings linked to this strategy allocation
+            unwind_strategy_holdings(portfolio, strategy_allocation)
+            
+            # Delete the strategy allocation after liquidation
+            strategy_allocation.delete()
+        else:
+            # Sell all holdings for all active strategies
+            for ps in portfolio.strategy_allocations.filter(status='ACTIVE'):
+                unwind_strategy_holdings(portfolio, ps)
+                ps.delete()
 
-        # 2️⃣ Remove strategy link
-        PortfolioStrategy.objects.filter(portfolio=portfolio).delete()
-
-        # 3️⃣ Record snapshot after liquidation
+        # Record a snapshot after liquidation
         PortfolioSnapshot.objects.create(
             portfolio=portfolio,
             total_value=portfolio.total_value(),
             cash_balance=portfolio.cash_balance
         )
+
 
 

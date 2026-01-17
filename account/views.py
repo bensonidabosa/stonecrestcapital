@@ -220,12 +220,14 @@ def portfolio_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
     total_value = calculate_portfolio_value(portfolio)
 
-    active_strategy = (
-        PortfolioStrategy.objects
-        .select_related('strategy')
-        .filter(portfolio=portfolio)
-        .first()
-    )
+    # active_strategy = (
+    #     PortfolioStrategy.objects
+    #     .select_related('strategy')
+    #     .filter(portfolio=portfolio)
+    #     .first()
+    # )
+    # Get all active strategies
+    active_strategies = portfolio.strategy_allocations.filter(status='ACTIVE')
 
     active_copy = (
         CopyRelationship.objects
@@ -238,7 +240,7 @@ def portfolio_view(request):
         "current_url": request.resolver_match.url_name,
         'portfolio': portfolio,
         'total_value': total_value,
-        "active_strategy": active_strategy,
+        "active_strategies": active_strategies,
         "active_copy": active_copy,
     })
 

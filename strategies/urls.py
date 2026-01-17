@@ -8,5 +8,5 @@ urlpatterns = [
     path('', views.strategy_list_view, name='strategy-list'),
     path('select/<int:strategy_id>/', views.activate_strategy_view, name='select-strategy'),
     path('leaderboard/', views.strategy_leaderboard, name='strategy_leaderboard'),
-    path('stop-strategy/', views.stop_strategy_view, name='stop_strategy'),
+    path('stop-strategy/<strategy_allocation_id>/', views.stop_strategy_view, name='stop_strategy'),
 ]

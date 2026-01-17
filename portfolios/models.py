@@ -65,74 +65,28 @@ class Holding(models.Model):
 
     quantity = models.DecimalField(
         max_digits=15,
-        decimal_places=4
+        decimal_places=4,
+        default=Decimal('0')
     )
 
     average_price = models.DecimalField(
         max_digits=12,
-        decimal_places=2
+        decimal_places=2,
+        default=Decimal('0')
     )
-
-    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('portfolio', 'asset')
 
+    @property
+    def total_quantity(self):
+        return self.strategy_slices.aggregate(
+            total=models.Sum('quantity')
+        )['total'] or Decimal('0')
+
     def market_value(self):
-        return self.quantity * self.asset.price
+        return self.asset.price * self.total_quantity
 
-    def buy_value(self, amount):
-        """
-        Buy asset worth `amount` (value-based buy)
-        """
-        if amount <= 0 or self.asset.price is None:
-            return Decimal('0')
-
-        price = self.asset.price
-        quantity_to_buy = amount / price
-
-        if self.portfolio.cash_balance < amount:
-            amount = self.portfolio.cash_balance
-            quantity_to_buy = amount / price
-
-        self.quantity += quantity_to_buy
-        self.portfolio.cash_balance -= amount
-
-        self.save(update_fields=['quantity'])
-        self.portfolio.save(update_fields=['cash_balance'])
-
-        return quantity_to_buy  # ✅ Return quantity
-
-
-    def sell_value(self, amount):
-        """
-        Sell asset worth `amount` (value-based sell)
-        """
-        if amount <= 0 or self.asset.price is None:
-            return Decimal('0')
-
-        price = self.asset.price
-        quantity_to_sell = amount / price
-
-        if quantity_to_sell > self.quantity:
-            quantity_to_sell = self.quantity
-            amount = quantity_to_sell * price
-
-        self.quantity -= quantity_to_sell
-        self.portfolio.cash_balance += amount
-
-        if self.quantity == 0:
-            self.delete()
-        else:
-            self.save(update_fields=['quantity'])
-        
-        self.portfolio.save(update_fields=['cash_balance'])
-
-        return quantity_to_sell  # ✅ Return quantity
-
-
-    def unrealized_pnl(self):
-        return (self.asset.price - self.average_price) * self.quantity
 
 
 class RebalanceLog(models.Model):

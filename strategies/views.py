@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.exceptions import ValidationError
@@ -9,25 +10,62 @@ from .services import execute_strategy, strategy_average_return, switch_strategy
 
 @login_required
 def activate_strategy_view(request, strategy_id):
-    portfolio = Portfolio.objects.get(user=request.user)
+    portfolio = request.user.portfolio
     strategy = get_object_or_404(Strategy, id=strategy_id)
 
-    if hasattr(portfolio, 'portfoliostrategy'):
-        # User already has a strategy → SWITCH
-        try:
-            switch_strategy(portfolio, strategy)
-        except ValidationError as e:
-            messages.error(request, str(e))
-            return redirect('strategies:list')
-    else:
-        # First time → APPLY
-        PortfolioStrategy.objects.create(
-            portfolio=portfolio,
-            strategy=strategy
-        )
-        execute_strategy(portfolio, strategy)
+    # Prevent duplicate activation of same strategy
+    if PortfolioStrategy.objects.filter(
+        portfolio=portfolio,
+        strategy=strategy,
+        status='ACTIVE'
+    ).exists():
+        messages.info(request, "This strategy is already active.")
+        return redirect('account:portfolio')
 
-    return redirect('account:portfolio')
+    if request.method == "POST":
+        allocated_cash = Decimal(request.POST.get("allocated_cash", "0"))
+
+        if allocated_cash <= 0:
+            messages.error(request, "Please allocate a positive cash amount.")
+            return redirect('strategies:list')
+
+        if allocated_cash > portfolio.cash_balance:
+            messages.error(
+                request,
+                "Allocated cash exceeds your available cash balance."
+            )
+            return redirect('strategies:list')
+
+        # Create strategy allocation
+        ps = PortfolioStrategy.objects.create(
+            portfolio=portfolio,
+            strategy=strategy,
+            allocated_cash=allocated_cash,
+            status='ACTIVE'
+        )
+
+        # Execute strategy USING allocated cash only
+        execute_strategy(
+            portfolio=portfolio,
+            # strategy=strategy,
+            strategy_allocation=ps
+        )
+
+        messages.success(
+            request,
+            f"Strategy {strategy.name} activated with ${allocated_cash}."
+        )
+        return redirect('account:portfolio')
+
+    return render(
+        request,
+        "account/customer/strategies/activate_strategy.html",
+        {
+            "strategy": strategy,
+            "portfolio": portfolio
+        }
+    )
+
 
 
 @login_required
@@ -69,19 +107,32 @@ def strategy_leaderboard(request):
 
 
 @login_required
-def stop_strategy_view(request):
+def stop_strategy_view(request, strategy_allocation_id):
     portfolio = request.user.portfolio
 
-    if not PortfolioStrategy.objects.filter(portfolio=portfolio).exists():
-        messages.info(request, "No active strategy to stop.")
-        return redirect('account:strategies')
+    ps = get_object_or_404(
+        PortfolioStrategy,
+        id=strategy_allocation_id,
+        portfolio=portfolio
+    )
 
-    liquidate_strategy(portfolio)
+    if ps.status != 'ACTIVE':
+        messages.info(request, "This strategy is already stopped.")
+        return redirect('account:portfolio')
+
+    # Liquidate only this strategy
+    liquidate_strategy(
+        portfolio=portfolio,
+        strategy_allocation=ps
+    )
 
     messages.success(
         request,
-        "Strategy stopped. All assets sold, trades registered, and cash credited."
+        f"Strategy {ps.strategy.name} stopped and cash returned."
     )
+
     return redirect('account:portfolio')
+
+
 
 
