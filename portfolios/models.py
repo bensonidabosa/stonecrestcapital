@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from decimal import Decimal
+from django.db.models import Sum, F, DecimalField, ExpressionWrapper
 
 from assets.models import Asset
 
@@ -86,6 +87,18 @@ class Holding(models.Model):
 
     def market_value(self):
         return self.asset.price * self.total_quantity
+    
+    def cost_basis(self):
+        return self.average_price * self.total_quantity
+
+    def unrealized_pnl(self):
+        return self.market_value() - self.cost_basis()
+
+    def unrealized_pnl_percent(self):
+        cost = self.cost_basis()
+        if cost == 0:
+            return Decimal('0')
+        return (self.unrealized_pnl() / cost) * Decimal('100')
 
 
 

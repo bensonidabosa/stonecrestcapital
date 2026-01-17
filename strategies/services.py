@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from .models import PortfolioStrategy
+from .models import PortfolioStrategy, StrategyHolding
 from trading.services import execute_buy
 from portfolios.models import Portfolio, PortfolioSnapshot
 from portfolios.services import unwind_portfolio, unwind_strategy_holdings
@@ -112,4 +112,31 @@ def liquidate_strategy(portfolio, strategy_allocation=None):
         )
 
 
+def calculate_strategy_metrics(strategy_allocation):
+    """
+    Returns value, cost, pnl, roi for a strategy
+    """
+    holdings = StrategyHolding.objects.filter(
+        strategy_allocation=strategy_allocation
+    ).select_related("asset")
+
+    total_cost = Decimal("0")
+    current_value = Decimal("0")
+
+    for sh in holdings:
+        cost = sh.quantity * sh.average_price
+        value = sh.quantity * sh.asset.price
+
+        total_cost += cost
+        current_value += value
+
+    pnl = current_value - total_cost
+    roi = (pnl / total_cost * 100) if total_cost > 0 else Decimal("0")
+
+    return {
+        "current_value": current_value,
+        "total_cost": total_cost,
+        "pnl": pnl,
+        "roi": round(roi, 2),
+    }
 

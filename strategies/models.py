@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from decimal import Decimal
 
 from assets.models import Asset
 from portfolios.models import Portfolio, Holding
@@ -147,6 +148,12 @@ class StrategyHolding(models.Model):
     quantity = models.DecimalField(
         max_digits=15,
         decimal_places=4
+    )
+
+    average_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=4,
+        default=Decimal("0")
     )
 
     class Meta:

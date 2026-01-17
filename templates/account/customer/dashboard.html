@@ -43,7 +43,52 @@
         </div>
     </div>
 </div>
+<hr class="border-dark">
+<div class="row mt-4">
+    <div class="col-12">
+        <h6 class="fw-semibold mb-3">Active Strategies</h6>
+    </div>
+    {% if strategy_cards %}
+    <div class="row mb-4">
+        {% for s in strategy_cards %}
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">{{ s.name }}</h6>
 
+                    <span class="badge bg-secondary mb-2">
+                        {{ s.risk }}
+                    </span>
+
+                    <p class="mb-1">
+                        Allocated: <strong>${{ s.allocated_cash|intcomma }}</strong>
+                    </p>
+
+                    <p class="mb-1">
+                        Current Value: <strong>${{ s.current_value|floatformat:2|intcomma }}</strong>
+                    </p>
+
+                    <p class="mb-1 {% if s.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        P&amp;L: {{ s.pnl|floatformat:2|intcomma }}
+                    </p>
+
+                    <p class="mb-0">
+                        ROI: <strong>{{ s.roi }}%</strong>
+                    </p>
+
+                    <a href="{% url 'strategy:stop_strategy' s.id %}" class="btn btn-sm btn-outline-danger mt-2">
+                        Stop & Liquidate Strategy
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No Active Strategies</p>
+    {% endif %}
+</div>
+<hr class="border-dark">
 <div class="row mt-4">
     <div class="col-12">
         <div class="card p-4 shadow-sm">
@@ -88,7 +133,7 @@
                 {% if allocation_percentages.REIT %}
                 <li class="d-flex justify-content-between mb-2">
                     <span>
-                        <span class="legend-dot bg-success me-2"></span>
+                        <span class="legend-dot bg-warning me-2"></span>
                         REITs
                     </span>
                     <strong>{{ allocation_percentages.REIT }}%</strong>
@@ -98,7 +143,7 @@
                 {% if allocation_percentages.ETF %}
                 <li class="d-flex justify-content-between">
                     <span>
-                        <span class="legend-dot bg-warning me-2"></span>
+                        <span class="legend-dot bg-success me-2"></span>
                         ETFs
                     </span>
                     <strong>{{ allocation_percentages.ETF }}%</strong>
@@ -173,8 +218,9 @@
                             <th>Date</th>
                             <th>Type</th>
                             <th>Asset</th>
-                            <th class="text-end">Amount</th>
+                            <th >Amount</th>
                             <th>Status</th>
+                            <th>Note</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -196,7 +242,7 @@
                                 {% endif %}
                             </td>
 
-                            <td class="text-end">
+                            <td >
                                 ${{ trade.total_value|floatformat:2|intcomma }}
                             </td>
 
@@ -209,6 +255,7 @@
                                     {% endif %}
                                 </span>
                             </td>
+                            <td>{{ trade.note }}</td>
                         </tr>
                         {% empty %}
                         <tr>

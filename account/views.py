@@ -10,6 +10,8 @@ from portfolios.services import calculate_portfolio_value
 from strategies.models import PortfolioStrategy
 from copytrading.models import CopyRelationship, CopyTradePnL
 from trading.models import Trade
+from strategies.services import calculate_strategy_metrics
+
 
 def customer_dashboard_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
@@ -17,6 +19,28 @@ def customer_dashboard_view(request):
     holdings = portfolio.holdings.select_related('asset')
     snapshots = portfolio.snapshots.order_by('created_at')
     holding_count = holdings.count()
+
+    # get active strategies
+    active_strategies = (
+        PortfolioStrategy.objects
+        .filter(portfolio=portfolio, status="ACTIVE")
+        .select_related("strategy")
+    )
+
+    strategy_cards = []
+
+    for ps in active_strategies:
+        metrics = calculate_strategy_metrics(ps)
+
+        strategy_cards.append({
+            "id": ps.id,
+            "name": ps.strategy.name,
+            "risk": ps.strategy.get_risk_level_display(),
+            "allocated_cash": ps.allocated_cash,
+            "current_value": metrics["current_value"],
+            "pnl": metrics["pnl"],
+            "roi": metrics["roi"],
+        })
 
     # --------------------------------------------------
     # Asset Allocation (Market Value)
@@ -110,19 +134,27 @@ def customer_dashboard_view(request):
     # --------------------------------------------------
     # Risk Profile (from Strategy)
     # --------------------------------------------------
-    risk_profile = "—"
+    # risk_profile = "—"
 
-    try:
-        portfolio_strategy = (
-            PortfolioStrategy.objects
-            .select_related("strategy")
-            .get(portfolio=portfolio)
-        )
+    # try:
+    #     portfolio_strategy = (
+    #         PortfolioStrategy.objects
+    #         .select_related("strategy")
+    #         .get(portfolio=portfolio)
+    #     )
 
-        risk_profile = portfolio_strategy.strategy.get_risk_level_display()
+    #     risk_profile = portfolio_strategy.strategy.get_risk_level_display()
 
-    except PortfolioStrategy.DoesNotExist:
+    # except PortfolioStrategy.DoesNotExist:
+    #     risk_profile = "—"
+
+    if active_strategies.count() == 1:
+        risk_profile = active_strategies.first().strategy.get_risk_level_display()
+    elif active_strategies.exists():
+        risk_profile = "Multiple strategies"
+    else:
         risk_profile = "—"
+
 
     # --------------------------------------------------
     # Diversification Score (0–10, Herfindahl Index)
@@ -158,11 +190,12 @@ def customer_dashboard_view(request):
     # --------------------------------------------------
     # ROI
     # --------------------------------------------------
-    starting_cash = (
-        snapshots.first().cash_balance
-        if snapshots.exists()
-        else portfolio.cash_balance
-    )
+    # starting_cash = (
+    #     snapshots.first().cash_balance
+    #     if snapshots.exists()
+    #     else portfolio.cash_balance
+    # )
+    starting_cash = snapshots.first().total_value
 
     current_value = portfolio.total_value()
     roi_percent = (
@@ -210,6 +243,10 @@ def customer_dashboard_view(request):
         # "trades": trades,
         "recent_trades": recent_trades,
         "trade_badges": TRADE_BADGES,
+
+        # strategies
+        "strategy_cards": strategy_cards,
+        "has_multiple_strategies": active_strategies.count() > 1,
 
     })
 

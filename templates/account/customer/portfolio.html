@@ -51,8 +51,8 @@
             </div>
 
         </div>
-        <!-- <div class="col-md-8">
-            <div class="mt-5">
+        <div class="col-md-8">
+            <!-- <div class="mt-5">
                 <span class="text-muted ">
                     Active Strategy:
                     {% if active_strategy %}
@@ -68,7 +68,7 @@
                     <strong class="text-muted">None</strong>
                     {% endif %}
                 </span>
-            </div>
+            </div> -->
 
             <span>
                 Copy Trading:
@@ -85,7 +85,7 @@
                 <strong>None</strong>
                 {% endif %}
             </span>
-        </div> -->
+        </div>
     </div>
     {% include "../../notification/messages.html" %}
     <!-- Holdings Table -->
@@ -106,7 +106,7 @@
                         <th>Current Price</th>
                         <th>Market Value</th>
                         <th>P/L</th>
-                        <th>Action</th>
+                        <th>P/L %</th>
                     </tr>
                 </thead>
 
@@ -128,9 +128,10 @@
                             {% endwith %}
                         </td>
                         <td>
-                            <a href="" class="btn btn-sm btn-outline-primary">
-                                View
-                            </a>
+                            <span
+                                class="{% if holding.unrealized_pnl_percent >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {{ holding.unrealized_pnl_percent|floatformat:2 }}%
+                            </span>
                         </td>
                     </tr>
                     {% empty %}
@@ -141,6 +142,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
+
             </table>
         </div>
     </div>
