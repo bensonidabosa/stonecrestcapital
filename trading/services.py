@@ -5,6 +5,86 @@ from .models import Trade
 # from copytrading.services import mirror_trade
 from strategies.models import StrategyHolding
 
+# def execute_buy(
+#     portfolio,
+#     asset,
+#     quantity,
+#     strategy_allocation=None,
+#     note=""
+# ):
+#     price = asset.price
+#     if price is None or price <= 0 or quantity <= 0:
+#         return
+
+#     cost = quantity * price
+
+#     # Safety: ensure we never spend more than available cash
+#     if cost > portfolio.cash_balance:
+#         raise ValueError(
+#             f"Cannot execute trade: portfolio balance {portfolio.cash_balance} is less than cost {cost}"
+#         )
+
+#     if portfolio.cash_balance < cost:
+#         return
+
+#     if strategy_allocation:
+#         if cost > strategy_allocation.remaining_cash:
+#             return
+
+#         if cost > strategy_allocation.copy_relationship.remaining_cash:
+#             return
+
+#     with transaction.atomic():
+#         portfolio.cash_balance -= cost
+#         portfolio.save(update_fields=["cash_balance"])
+
+#         if strategy_allocation:
+#             strategy_allocation.remaining_cash -= cost
+#             strategy_allocation.save(update_fields=["remaining_cash"])
+
+#             if strategy_allocation.copy_relationship:
+#                 cr = strategy_allocation.copy_relationship
+#                 cr.remaining_cash -= cost
+#                 cr.save(update_fields=["remaining_cash"])
+
+#         holding, _ = Holding.objects.get_or_create(
+#             portfolio=portfolio,
+#             asset=asset,
+#             defaults={
+#                 "quantity": Decimal("0"),
+#                 "average_price": price,
+#             }
+#         )
+
+#         if strategy_allocation:
+#             sh, _ = StrategyHolding.objects.get_or_create(
+#                 portfolio=portfolio,
+#                 strategy_allocation=strategy_allocation,
+#                 asset=asset,
+#                 holding=holding,
+#                 defaults={
+#                     "quantity": Decimal("0"),
+#                     "average_price": price,
+#                 }
+#             )
+
+#             total_cost = (sh.quantity * sh.average_price) + cost
+#             sh.quantity += quantity
+#             sh.average_price = total_cost / sh.quantity
+#             sh.save(update_fields=["quantity", "average_price"])
+
+#         holding.quantity = holding.total_quantity
+#         holding.save(update_fields=["quantity"])
+
+#         Trade.objects.create(
+#             portfolio=portfolio,
+#             asset=asset,
+#             trade_type=Trade.BUY,
+#             quantity=quantity,
+#             price=price,
+#             note=note,
+#         )
+
 def execute_buy(
     portfolio,
     asset,
@@ -18,15 +98,42 @@ def execute_buy(
 
     cost = quantity * price
 
+    # Safety: ensure we never spend more than available cash
+    if cost > portfolio.cash_balance:
+        raise ValueError(
+            f"Cannot execute trade: portfolio balance {portfolio.cash_balance} is less than cost {cost}"
+        )
+
+    # Check against portfolio cash
     if portfolio.cash_balance < cost:
-        raise ValueError("Insufficient cash")
+        return
+
+    # Check against strategy allocation cash, if provided
+    if strategy_allocation:
+        if cost > strategy_allocation.remaining_cash:
+            return
+
+        # Only check copy_relationship if it exists
+        if getattr(strategy_allocation, "copy_relationship", None):
+            cr = strategy_allocation.copy_relationship
+            if cr and cost > cr.remaining_cash:
+                return
 
     with transaction.atomic():
-        # 1️⃣ Deduct cash ONCE
         portfolio.cash_balance -= cost
         portfolio.save(update_fields=["cash_balance"])
 
-        # 2️⃣ Get or create combined holding
+        if strategy_allocation:
+            strategy_allocation.remaining_cash -= cost
+            strategy_allocation.save(update_fields=["remaining_cash"])
+
+            # Deduct from copy_relationship if it exists
+            if getattr(strategy_allocation, "copy_relationship", None):
+                cr = strategy_allocation.copy_relationship
+                if cr:
+                    cr.remaining_cash -= cost
+                    cr.save(update_fields=["remaining_cash"])
+
         holding, _ = Holding.objects.get_or_create(
             portfolio=portfolio,
             asset=asset,
@@ -36,7 +143,6 @@ def execute_buy(
             }
         )
 
-        # 3️⃣ Strategy-level holding
         if strategy_allocation:
             sh, _ = StrategyHolding.objects.get_or_create(
                 portfolio=portfolio,
@@ -54,11 +160,9 @@ def execute_buy(
             sh.average_price = total_cost / sh.quantity
             sh.save(update_fields=["quantity", "average_price"])
 
-        # 4️⃣ Sync combined holding quantity
         holding.quantity = holding.total_quantity
         holding.save(update_fields=["quantity"])
 
-        # 5️⃣ Register trade
         Trade.objects.create(
             portfolio=portfolio,
             asset=asset,
@@ -68,75 +172,6 @@ def execute_buy(
             note=note,
         )
 
-    # mirror_trade(
-    #     leader_portfolio=portfolio,
-    #     asset=asset,
-    #     trade_type=Trade.BUY,
-    #     quantity=quantity
-    # )
-
-# def execute_buy(
-#     portfolio,
-#     asset,
-#     quantity,
-#     strategy_allocation=None,
-#     note=""
-# ):
-#     price = asset.price
-#     cost = price * quantity
-
-#     if cost <= 0:
-#         return
-
-#     if portfolio.cash_balance < cost:
-#         raise ValueError("Insufficient cash")
-
-#     with transaction.atomic():
-#         # 1️⃣ Deduct cash ONCE
-#         portfolio.cash_balance -= cost
-#         portfolio.save(update_fields=['cash_balance'])
-
-#         # 2️⃣ Update portfolio-level holding
-#         holding, _ = Holding.objects.get_or_create(
-#             portfolio=portfolio,
-#             asset=asset,
-#             defaults={
-#                 'quantity': 0,
-#                 'average_price': price
-#             }
-#         )
-
-#         holding.quantity += quantity
-#         holding.save(update_fields=['quantity'])
-
-#         # 3️⃣ Update strategy-level holding
-#         if strategy_allocation:
-#             sh, _ = StrategyHolding.objects.get_or_create(
-#                 portfolio=portfolio,
-#                 strategy_allocation=strategy_allocation,
-#                 asset=asset,
-#                 holding=holding,
-#                 defaults={'quantity': 0}
-#             )
-#             sh.quantity += quantity
-#             sh.save(update_fields=['quantity'])
-
-#         # 4️⃣ Register trade
-#         Trade.objects.create(
-#             portfolio=portfolio,
-#             asset=asset,
-#             trade_type=Trade.BUY,
-#             quantity=quantity,
-#             price=price,
-#             note=note
-#         )
-
-#     mirror_trade(
-#         leader_portfolio=portfolio,
-#         asset=asset,
-#         trade_type=Trade.BUY,
-#         quantity=quantity
-#     )
 
 
 def execute_sell(

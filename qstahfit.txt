@@ -4,3 +4,85 @@ Dividend payout	Daily webhook → /tasks/dividends/
 Strategy execution	On-demand webhook → /tasks/execute-strategy/
 Copy trading sync	Periodic webhook → /tasks/copy-sync/
 Portfolio snapshots	Periodic webhook → /tasks/snapshot/
+
+
+def execute_buy(
+    portfolio,
+    asset,
+    quantity,
+    strategy_allocation=None,
+    note=""
+):
+    price = asset.price
+    if price is None or price <= 0 or quantity <= 0:
+        return
+
+    cost = quantity * price
+
+    # 🔐 Safety checks
+    if cost > portfolio.cash_balance:
+        raise ValueError(
+            f"Cannot execute trade: portfolio balance {portfolio.cash_balance} is less than cost {cost}"
+        )
+
+    if strategy_allocation:
+        if cost > strategy_allocation.remaining_cash:
+            raise ValueError("Cannot execute trade: exceeds strategy remaining cash")
+        if cost > strategy_allocation.copy_relationship.remaining_cash:
+            raise ValueError("Cannot execute trade: exceeds copy allocation remaining cash")
+
+    # Execute atomically
+    with transaction.atomic():
+        # Deduct from wallet
+        portfolio.cash_balance -= cost
+        portfolio.save(update_fields=["cash_balance"])
+
+        if strategy_allocation:
+            strategy_allocation.remaining_cash -= cost
+            strategy_allocation.save(update_fields=["remaining_cash"])
+
+            if strategy_allocation.copy_relationship:
+                cr = strategy_allocation.copy_relationship
+                cr.remaining_cash -= cost
+                cr.save(update_fields=["remaining_cash"])
+
+        # Holdings
+        holding, _ = Holding.objects.get_or_create(
+            portfolio=portfolio,
+            asset=asset,
+            defaults={
+                "quantity": Decimal("0"),
+                "average_price": price,
+            }
+        )
+
+        if strategy_allocation:
+            sh, _ = StrategyHolding.objects.get_or_create(
+                portfolio=portfolio,
+                strategy_allocation=strategy_allocation,
+                asset=asset,
+                holding=holding,
+                defaults={
+                    "quantity": Decimal("0"),
+                    "average_price": price,
+                }
+            )
+
+            total_cost = (sh.quantity * sh.average_price) + cost
+            sh.quantity += quantity
+            sh.average_price = total_cost / sh.quantity
+            sh.save(update_fields=["quantity", "average_price"])
+
+        # Sync combined holding
+        holding.quantity = holding.total_quantity
+        holding.save(update_fields=["quantity"])
+
+        # Record trade
+        Trade.objects.create(
+            portfolio=portfolio,
+            asset=asset,
+            trade_type=Trade.BUY,
+            quantity=quantity,
+            price=price,
+            note=note,
+        )

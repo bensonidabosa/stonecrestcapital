@@ -11,7 +11,20 @@ from copytrading.utils import is_copy_trading
 
 def execute_strategy(portfolio, strategy_allocation):
     strategy = strategy_allocation.strategy
-    total_cash = strategy_allocation.allocated_cash
+    # total_cash = strategy_allocation.allocated_cash
+    # Determine total cash safely
+    if hasattr(strategy_allocation, 'copy_relationship') and strategy_allocation.copy_relationship:
+        # Copy trading: respect leader's remaining cash
+        total_cash = min(
+            strategy_allocation.remaining_cash,
+            strategy_allocation.copy_relationship.remaining_cash
+        )
+    else:
+        # Normal strategy: just use the cash the user allocated
+        total_cash = strategy_allocation.allocated_cash
+
+    if total_cash <= 0:
+        return
 
     for allocation in strategy.allocations.select_related('asset'):
         if allocation.asset.price <= 0:

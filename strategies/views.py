@@ -41,6 +41,7 @@ def activate_strategy_view(request, strategy_id):
             portfolio=portfolio,
             strategy=strategy,
             allocated_cash=allocated_cash,
+            remaining_cash=allocated_cash,
             status='ACTIVE'
         )
 

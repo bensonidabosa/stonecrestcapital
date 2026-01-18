@@ -122,6 +122,12 @@ class PortfolioStrategy(models.Model):
         decimal_places=2
     )
 
+    remaining_cash = models.DecimalField(
+        max_digits=18,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,

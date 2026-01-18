@@ -7,46 +7,6 @@ from trading.models import Trade
 from strategies.models import PortfolioStrategy
 from portfolios.services import unwind_copy_strategy_holdings
 
-
-
-# def copy_leader_strategies_to_follower(leader_portfolio, follower_portfolio, allocated_cash, relation, specific_strategy=None):
-#     """
-#     Copy all active leader strategies to the follower.
-#     Each follower strategy receives cash proportionally.
-#     """
-#     from strategies.services import execute_strategy
-
-#     active_strategies = leader_portfolio.strategy_allocations.filter(status='ACTIVE')
-#     total_leader_cash = sum(ps.allocated_cash for ps in active_strategies)
-
-#     if total_leader_cash <= 0:
-#         return  # Nothing to copy
-
-#     for leader_ps in active_strategies:
-#         # Allocate proportional follower cash
-#         follower_cash = (leader_ps.allocated_cash / total_leader_cash) * allocated_cash
-
-#         # Create follower PortfolioStrategy
-#         follower_ps, created = PortfolioStrategy.objects.get_or_create(
-#             portfolio=follower_portfolio,
-#             strategy=leader_ps.strategy,
-#             status='ACTIVE',
-#             copy_relationship=relation,
-#             defaults={'allocated_cash': follower_cash}
-#         )
-
-#         if not created:
-#             # If already exists (from previous copy), just update allocated cash
-#             follower_ps.allocated_cash = follower_cash
-#             follower_ps.status = 'ACTIVE'
-#             follower_ps.save(update_fields=['allocated_cash', 'status'])
-
-#         # Execute strategy for follower using their allocated cash
-#         execute_strategy(
-#             portfolio=follower_portfolio,
-#             strategy_allocation=follower_ps
-#         )
-
 def copy_leader_strategies_to_follower(
     leader_portfolio,
     follower_portfolio,
@@ -97,14 +57,21 @@ def copy_leader_strategies_to_follower(
             copy_relationship=relation,  # 🔐 CRITICAL
             defaults={
                 "allocated_cash": follower_cash,
+                "remaining_cash": follower_cash,
                 "status": "ACTIVE",
             },
         )
 
         if not created:
-            follower_ps.allocated_cash += follower_cash
+            follower_ps.allocated_cash = follower_cash
+            follower_ps.remaining_cash = follower_cash
             follower_ps.status = "ACTIVE"
-            follower_ps.save(update_fields=["allocated_cash", "status"])
+            follower_ps.save(update_fields=[
+                "allocated_cash",
+                "remaining_cash",
+                "status"
+            ])
+
 
         execute_strategy(
             portfolio=follower_portfolio,
