@@ -5,45 +5,112 @@ from .models import CopyRelationship
 from copytrading.models import CopyTradePnL
 from trading.models import Trade
 from strategies.models import PortfolioStrategy
+from portfolios.services import unwind_copy_strategy_holdings
 
 
 
-def copy_leader_strategies_to_follower(leader_portfolio, follower_portfolio, allocated_cash):
+# def copy_leader_strategies_to_follower(leader_portfolio, follower_portfolio, allocated_cash, relation, specific_strategy=None):
+#     """
+#     Copy all active leader strategies to the follower.
+#     Each follower strategy receives cash proportionally.
+#     """
+#     from strategies.services import execute_strategy
+
+#     active_strategies = leader_portfolio.strategy_allocations.filter(status='ACTIVE')
+#     total_leader_cash = sum(ps.allocated_cash for ps in active_strategies)
+
+#     if total_leader_cash <= 0:
+#         return  # Nothing to copy
+
+#     for leader_ps in active_strategies:
+#         # Allocate proportional follower cash
+#         follower_cash = (leader_ps.allocated_cash / total_leader_cash) * allocated_cash
+
+#         # Create follower PortfolioStrategy
+#         follower_ps, created = PortfolioStrategy.objects.get_or_create(
+#             portfolio=follower_portfolio,
+#             strategy=leader_ps.strategy,
+#             status='ACTIVE',
+#             copy_relationship=relation,
+#             defaults={'allocated_cash': follower_cash}
+#         )
+
+#         if not created:
+#             # If already exists (from previous copy), just update allocated cash
+#             follower_ps.allocated_cash = follower_cash
+#             follower_ps.status = 'ACTIVE'
+#             follower_ps.save(update_fields=['allocated_cash', 'status'])
+
+#         # Execute strategy for follower using their allocated cash
+#         execute_strategy(
+#             portfolio=follower_portfolio,
+#             strategy_allocation=follower_ps
+#         )
+
+def copy_leader_strategies_to_follower(
+    leader_portfolio,
+    follower_portfolio,
+    allocated_cash,
+    relation,
+    specific_strategy=None
+):
     """
-    Copy all active leader strategies to the follower.
-    Each follower strategy receives cash proportionally.
+    Copy leader strategies to follower.
+    - If specific_strategy is None → copy ALL active strategies
+    - If specific_strategy is provided → copy ONLY that strategy
     """
+
+    from strategies.models import PortfolioStrategy
     from strategies.services import execute_strategy
 
-    active_strategies = leader_portfolio.strategy_allocations.filter(status='ACTIVE')
-    total_leader_cash = sum(ps.allocated_cash for ps in active_strategies)
+    leader_strategies = leader_portfolio.strategy_allocations.filter(
+        status="ACTIVE"
+    )
+
+    # 🔹 THIS IS WHERE YOUR SNIPPET BELONGS
+    if specific_strategy:
+        leader_strategies = leader_strategies.filter(
+            strategy=specific_strategy
+        )
+
+    if not leader_strategies.exists():
+        return
+
+    total_leader_cash = sum(
+        ps.allocated_cash for ps in leader_strategies
+    )
 
     if total_leader_cash <= 0:
-        return  # Nothing to copy
+        return
 
-    for leader_ps in active_strategies:
-        # Allocate proportional follower cash
-        follower_cash = (leader_ps.allocated_cash / total_leader_cash) * allocated_cash
+    for leader_ps in leader_strategies:
+        # Proportional allocation
+        weight = leader_ps.allocated_cash / total_leader_cash
+        follower_cash = weight * allocated_cash
 
-        # Create follower PortfolioStrategy
+        if follower_cash <= 0:
+            continue
+
         follower_ps, created = PortfolioStrategy.objects.get_or_create(
             portfolio=follower_portfolio,
             strategy=leader_ps.strategy,
-            status='ACTIVE',
-            defaults={'allocated_cash': follower_cash}
+            copy_relationship=relation,  # 🔐 CRITICAL
+            defaults={
+                "allocated_cash": follower_cash,
+                "status": "ACTIVE",
+            },
         )
 
         if not created:
-            # If already exists (from previous copy), just update allocated cash
-            follower_ps.allocated_cash = follower_cash
-            follower_ps.status = 'ACTIVE'
-            follower_ps.save(update_fields=['allocated_cash', 'status'])
+            follower_ps.allocated_cash += follower_cash
+            follower_ps.status = "ACTIVE"
+            follower_ps.save(update_fields=["allocated_cash", "status"])
 
-        # Execute strategy for follower using their allocated cash
         execute_strategy(
             portfolio=follower_portfolio,
-            strategy_allocation=follower_ps
+            strategy_allocation=follower_ps,
         )
+
 
 def check_follower_strategy_health(follower_portfolio):
     """
@@ -60,71 +127,39 @@ def check_follower_strategy_health(follower_portfolio):
             unwind_strategy_holdings(follower_portfolio, ps)
 
 
+def stop_copying_and_unwind(follower_portfolio, leader_portfolio):
+    """
+    Stop copy trading and unwind only copied strategies.
+    """
 
-            
-# def mirror_trade(leader_portfolio, asset, trade_type, quantity):
-#     """
-#     Mirror a leader trade to all active followers
-#     """
-#     from trading.services import execute_buy, execute_sell
+    try:
+        relation = CopyRelationship.objects.get(
+            follower=follower_portfolio,
+            leader=leader_portfolio,
+            is_active=True
+        )
+    except CopyRelationship.DoesNotExist:
+        return
 
-#     # Do NOT mirror trades made by followers
-#     if CopyRelationship.objects.filter(follower=leader_portfolio, is_active=True).exists():
-#         return
+    total_returned_cash = Decimal("0")
 
-#     followers = CopyRelationship.objects.filter(
-#         leader=leader_portfolio,
-#         is_active=True
-#     ).select_related('follower')
+    copied_strategies = relation.copied_strategies.filter(
+        status="ACTIVE"
+    )
 
-#     leader_value = leader_portfolio.total_value()
+    for ps in copied_strategies:
+        # Unwind holdings
+        returned_cash = unwind_copy_strategy_holdings(ps)
+        total_returned_cash += returned_cash
 
-#     if leader_value <= 0:
-#         return
+        ps.status = "STOPPED"
+        ps.save(update_fields=["status"])
 
-#     for relation in followers:
-#         follower = relation.follower
-#         # Safety checks
-#         if follower.id == leader_portfolio.id:
-#             continue
+    # Return allocated cash back to follower
+    follower_portfolio.cash_balance += total_returned_cash
+    follower_portfolio.save(update_fields=["cash_balance"])
 
-#         follower_value = follower.total_value()
-#         if follower_value <= 0:
-#             continue
+    # Disable relationship
+    relation.is_active = False
+    relation.save(update_fields=["is_active"])
 
-#         # Scale trade proportionally
-#         ratio = follower_value / leader_value
-#         follower_quantity = quantity * ratio
-
-#         if follower_quantity <= Decimal('0.0001'):
-#             continue
-
-#         pnl_obj, _ = CopyTradePnL.objects.get_or_create(
-#             follower=follower,
-#             leader=leader_portfolio
-#         )
-
-#         try:
-#             if trade_type == Trade.BUY:
-#                 execute_buy(
-#                     portfolio=follower,
-#                     asset=asset,
-#                     quantity=follower_quantity,
-#                     note="Copy trade buy"
-#                 )
-#                 pnl_obj.total_invested += asset.price * follower_quantity
-
-#             elif trade_type == Trade.SELL:
-#                 execute_sell(
-#                     portfolio=follower,
-#                     asset=asset,
-#                     quantity=follower_quantity,
-#                     note="Copy trade sell"
-#                 )
-#                 pnl_obj.total_realized_pnl += asset.price * follower_quantity
-
-#             pnl_obj.save()
-
-#         except Exception:
-#             # Fail silently so leader trade is never blocked
-#             continue

@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from assets.models import Asset
 from portfolios.models import Portfolio, Holding
+from copytrading.models import CopyRelationship
 
 class Strategy(models.Model):
     RISK_LEVELS = (
@@ -106,6 +107,14 @@ class PortfolioStrategy(models.Model):
     strategy = models.ForeignKey(
         Strategy,
         on_delete=models.CASCADE
+    )
+
+    copy_relationship = models.ForeignKey(
+        CopyRelationship,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="copied_strategies"
     )
 
     allocated_cash = models.DecimalField(

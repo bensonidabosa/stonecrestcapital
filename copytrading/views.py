@@ -7,7 +7,7 @@ from portfolios.models import Portfolio
 from .models import CopyRelationship
 from portfolios.services import liquidate_portfolio
 from strategies.models import PortfolioStrategy
-from .services import copy_leader_strategies_to_follower
+from .services import copy_leader_strategies_to_follower, stop_copying_and_unwind
 
 @login_required
 def follow_portfolio(request, portfolio_id):
@@ -41,7 +41,7 @@ def follow_portfolio(request, portfolio_id):
         )
 
         # Copy all active leader strategies proportionally
-        copy_leader_strategies_to_follower(leader, follower, allocated_cash)
+        copy_leader_strategies_to_follower(leader, follower, allocated_cash, relation)
 
         messages.success(request, f"You are now copying {leader.user.nick_name}'s trades and strategies.")
         return redirect('account:copy_trading')
@@ -78,25 +78,43 @@ def follow_portfolio(request, portfolio_id):
 #     return redirect('account:copy_trading')
 
 
+# @login_required
+# def stop_copying_view(request, leader_id):
+#     follower = request.user.portfolio
+
+#     relation = get_object_or_404(
+#         CopyRelationship,
+#         follower=follower,
+#         leader_id=leader_id,
+#         is_active=True
+#     )
+
+#     # Disable copying
+#     relation.is_active = False
+#     relation.save(update_fields=['is_active'])
+
+#     # Liquidate follower portfolio
+#     liquidate_portfolio(follower)
+#     messages.success(request, "You stopped copy trading and liquidated successfully.")
+#     return redirect('account:portfolio')
+
+
 @login_required
 def stop_copying_view(request, leader_id):
     follower = request.user.portfolio
+    leader = get_object_or_404(Portfolio, id=leader_id)
 
-    relation = get_object_or_404(
-        CopyRelationship,
-        follower=follower,
-        leader_id=leader_id,
-        is_active=True
+    stop_copying_and_unwind(
+        follower_portfolio=follower,
+        leader_portfolio=leader
     )
 
-    # Disable copying
-    relation.is_active = False
-    relation.save(update_fields=['is_active'])
+    messages.success(
+        request,
+        "Copy trading stopped. All copied strategies have been liquidated."
+    )
+    return redirect("account:portfolio")
 
-    # Liquidate follower portfolio
-    liquidate_portfolio(follower)
-    messages.success(request, "You stopped copy trading and liquidated successfully.")
-    return redirect('account:portfolio')
 
 
 @login_required

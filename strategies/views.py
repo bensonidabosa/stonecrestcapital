@@ -6,7 +6,7 @@ from django.contrib import messages
 
 from portfolios.models import Portfolio, PortfolioSnapshot
 from .models import Strategy, PortfolioStrategy
-from .services import execute_strategy, strategy_average_return, switch_strategy, liquidate_strategy
+from .services import execute_strategy, strategy_average_return, liquidate_strategy
 
 @login_required
 def activate_strategy_view(request, strategy_id):
