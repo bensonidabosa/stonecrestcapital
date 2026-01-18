@@ -492,7 +492,7 @@ form select.form-select option:checked {
 }
 
 .logo-container {
-    max-width: 87px;
+    max-width: 115px;
     background: var(--gradient-right);
     padding: 10px;
     border-radius: 10px;
