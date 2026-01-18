@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'frontend/ajax/libs/animate.css/3.7.0/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'frontend/gh/shishirraven/animate-on-scroll%40v1.2/animation_utility.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'frontend/image/logo.png' %}">
+    <title>StoneCrest Capital {% block title %}HomePage{% endblock %}</title>
+</head>
+
+<body>
+    {% include './navbar.html' %}
+    <!-- Main -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+
+    <!-- Scripts -->
+    <script src="{% static 'frontend/js/vendor/jquery.min.js' %}"></script>
+    <script src="{% static 'frontend/js/vendor/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'frontend/js/vendor/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'frontend/js/script.js' %}"></script>
+    <script src="{% static 'frontend/js/swiper-script.js' %}"></script>
+    <script src="{% static 'frontend/js/submit-form.js' %}"></script>
+    <script src="{% static 'frontend/js/vendor/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'frontend/js/video_embedded.js' %}"></script>
+    <script src="{% static 'frontend/js/vendor/fslightbox.js' %}"></script>
+    <script src="{% static 'frontend/gh/shishirraven/animate-on-scroll%40v1.0/oyethemes_onscroll_animation.js' %}"></script>
+</body>
+
+</html>

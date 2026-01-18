@@ -13,36 +13,36 @@
             <div class="row">
                 <div class="col">
                     <!-- Positive stimulation -->
-            <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
-                {% csrf_token %}
-                <input type="hidden" name="direction" value="positive">
-                <button type="submit" class="btn btn-primary btn-sm">Positive Stimulation</button>
-            </form>
+                    <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="direction" value="positive">
+                        <button type="submit" class="btn btn-primary btn-sm">Positive Stimulation</button>
+                    </form>
                 </div>
                 <div class="col">
                     <!-- Negative stimulation -->
-            <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
-                {% csrf_token %}
-                <input type="hidden" name="direction" value="negative">
-                <button type="submit" class="btn btn-danger btn-sm">Negative Stimulation</button>
-            </form>
+                    <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="direction" value="negative">
+                        <button type="submit" class="btn btn-danger btn-sm">Negative Stimulation</button>
+                    </form>
                 </div>
                 <div class="col">
                     <!-- Both (optional) -->
-            <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
-                {% csrf_token %}
-                <input type="hidden" name="direction" value="both">
-                <button type="submit" class="btn btn-secondary btn-sm">Random Stimulation</button>
-            </form>
+                    <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="direction" value="both">
+                        <button type="submit" class="btn btn-secondary btn-sm">Random Stimulation</button>
+                    </form>
 
                 </div>
             </div>
 
-            
 
-            
 
-            
+
+
+
         </div>
     </div>
 

@@ -71,10 +71,10 @@
             </div> -->
 
             <span>
-                Copy Trading:
+                Active Copy Trading:
                 {% if active_copy %}
                 <strong class="text-success">
-                    {{ active_copy.leader.user.email }}
+                    {{ active_copy.leader.user.nick_name }}
                 </strong>
 
                 <a href="{% url 'copytrading:stop_copying' active_copy.leader.id %}"
@@ -100,11 +100,13 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
+                        <th>Type</th>
                         <th>Asset</th>
                         <th>Quantity</th>
                         <th>Avg Price</th>
                         <th>Current Price</th>
                         <th>Market Value</th>
+                        <th>Yield</th>
                         <th>P/L</th>
                         <th>P/L %</th>
                     </tr>
@@ -113,6 +115,7 @@
                 <tbody>
                     {% for holding in portfolio.holdings.all %}
                     <tr>
+                        <td><span class="badge bg-primary">{{holding.asset.asset_type}}</span></td>
                         <td><strong>{{ holding.asset.symbol }}</strong></td>
                         <td>{{ holding.quantity }}</td>
                         <td>${{ holding.average_price|intcomma }}</td>
@@ -121,9 +124,20 @@
                             ${{ holding.market_value|floatformat:2|intcomma }}
                         </td>
                         <td>
+                            {% if holding.asset.asset_type == "REIT" %}
+                                {{ holding.asset.annual_yield }}%
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
                             {% with pnl=holding.unrealized_pnl %}
                             <span class="{% if pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
-                                {{ pnl|floatformat:2|intcomma }}
+                                {% if holding.asset.asset_type == "REIT" %}
+                                    —
+                                {% else %}
+                                    {{ pnl|floatformat:2|intcomma }}
+                                {% endif %}
                             </span>
                             {% endwith %}
                         </td>

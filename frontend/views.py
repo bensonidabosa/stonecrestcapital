@@ -36,3 +36,7 @@ class EmailLoginView(LoginView):
 
 class UserLogoutView(LogoutView):
     next_page = 'frontend:login' 
+
+
+def home_view(request):
+    return render(request, 'frontend/index.html')
