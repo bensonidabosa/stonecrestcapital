@@ -1,5 +1,62 @@
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Create Account</button>
-</form>
+{% extends '../../frontend/base/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Banner -->
+<div class="section mt-5 position-relative bg-attach-fixed overflow-hidden mx-auto rounded-4"
+  style="background-image: url(/static/frontend/image/img39.png); height: 70vh; max-width: 1816px;">
+  <div class="bg-overlay"></div>
+  <div class="r-container h-100 position-relative" style="z-index: 2;">
+    <div class="d-flex flex-column w-100 h-100 justify-content-center mx-auto align-items-center text-white gap-3"
+      style="max-width: 895px;">
+      <h2 class="m-0 text-white">Register</h2>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'frontend:home' %}">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Register</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</div>
+<!-- banner end -->
+
+<div class="section">
+  <div class="container-fluid">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-md-6 mb-3">
+        <div class="card bg-gradient-footer">
+          <h4 class="text-center text-light p-3">Register</h4>
+          <hr class="border-white">
+          {% include "../../notification/messages.html" %}
+          <div class="card-body">
+            <form action="." method="post" class="contact pinner-form">
+              {% csrf_token %}
+
+              {% for field in form %}
+              <div class="mb-3">
+                <label class="text-white" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="text-danger bg-secondary mt-2">
+                  {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              {% endfor %}
+
+              <button type="submit" class="btn btn-accent w-100 btn-sm fw-bold mt-3" data-spinner-text="Creating Account..."
+                data-spinner-class="btn-secondary w-100">
+                Register
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
