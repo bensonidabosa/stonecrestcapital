@@ -24,3 +24,15 @@ https://preview.themeforest.net/item/counsolve-consulting-investments-html-templ
                         {% endif %}
                     {% endif %}
                 </td>
+
+
+
+mkdir assets/management/commands
+touch assets/management/__init__.py
+touch assets/management/commands/__init__.py
+touch assets/management/commands/seed_assets.py
+
+touch assets/management/commands/seed_strategies.py
+
+
+python manage.py seed_assets

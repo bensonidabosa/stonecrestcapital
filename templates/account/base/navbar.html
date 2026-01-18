@@ -1,4 +1,4 @@
-<nav class="navbar navbar-light bg-white shadow-sm px-3">
+<nav class="navbar shadow-sm px-3">
     <div class="d-flex align-items-center gap-3">
 
         <!-- Sidebar toggle -->
@@ -13,8 +13,8 @@
     </div>
 
     <div class="ms-auto d-flex align-items-center gap-3">
-        <span class="fw-semibold">{{ request.user.username }}</span>
-        <img src="https://ui-avatars.com/api/?name=User"
+        <span class="fw-semibold">{{ request.user.full_name }}</span>
+        <img src="https://ui-avatars.com/api/?name={{ request.full_name }}"
              class="rounded-circle"
              width="36">
     </div>

@@ -1,6 +1,8 @@
+{% load static %}
 <aside class="sidebar">
     <div class="sidebar-header">
-        <h5 class="mb-0">STONECREST CAPITAL</h5>
+        <!-- <h5 class="mb-0">STONECREST CAPITAL</h5> -->
+         <img src="{% static 'frontend/image/logo-stone.png' %}" alt="" width="180">
     </div>
 
     <ul class="nav flex-column sidebar-menu">
@@ -106,7 +108,7 @@
         </li>
         {% endif %}
         <li class="nav-item mt-3">
-            <a class="nav-link text-danger" href="{% url 'frontend:logout' %}">
+            <a class="nav-link text-white bg-danger" href="{% url 'frontend:logout' %}">
                 <i class="bi bi-box-arrow-right me-2"></i>
                 Logout
             </a>
