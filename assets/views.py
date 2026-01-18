@@ -1,12 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
-from .tasks import update_prices_task
+from .services import stimulate_prices
 
-def manual_price_stimulation(request):
-    if request.method == 'POST':
-        update_prices_task(request)
-        messages.success(request, "Asset prices are stimulated successfully.")
-        return redirect('staff:admin_dashboard')
+@require_POST
+def manual_stimulation(request):
+    # Expect a hidden field in the form: <input type="hidden" name="direction" value="positive">
+    direction = request.POST.get('direction', 'both').lower()
+    if direction not in ['positive', 'negative', 'both']:
+        direction = 'both'  # fallback just in case
 
-    return render(request, 'assets/manual_price_stimulation.html')
+    stimulate_prices(direction)
+    messages.success(request, f"Asset prices were {direction}ly stimulated successfully.")
+    return redirect('staff:admin_dashboard')
+
+

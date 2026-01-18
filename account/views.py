@@ -20,12 +20,17 @@ def customer_dashboard_view(request):
     snapshots = portfolio.snapshots.order_by('created_at')
     holding_count = holdings.count()
 
-    # get active strategies
+    # get active normal strategies
     active_strategies = (
         PortfolioStrategy.objects
-        .filter(portfolio=portfolio, status="ACTIVE")
+        .filter(
+            portfolio=portfolio,
+            status="ACTIVE",
+            copy_relationship__isnull=True  # exclude copy-trade strategies
+        )
         .select_related("strategy")
     )
+
 
     strategy_cards = []
 
@@ -40,6 +45,36 @@ def customer_dashboard_view(request):
             "current_value": metrics["current_value"],
             "pnl": metrics["pnl"],
             "roi": metrics["roi"],
+        })
+
+    #-------------------------------------------------
+    # get copied realtionhip strategies
+    #-------------------------------------------------
+    copy_strategies = (
+        PortfolioStrategy.objects
+        .filter(
+            portfolio=portfolio,
+            status="ACTIVE",
+            copy_relationship__isnull=False  # only copy-trading strategies
+        )
+        .select_related("strategy", "copy_relationship__leader")  # prefetch related objects
+    )
+
+    copy_strategy_cards = []
+
+    for ps in copy_strategies:
+        metrics = calculate_strategy_metrics(ps)  # same function as normal strategies
+
+        copy_strategy_cards.append({
+            "id": ps.id,
+            "trader_name": ps.copy_relationship.leader.user.nick_name,  # trader being copied
+            "strategy_name": ps.strategy.name,
+            "risk": ps.strategy.get_risk_level_display(),
+            "allocated_cash": ps.allocated_cash,
+            "current_value": metrics["current_value"],
+            "pnl": metrics["pnl"],
+            "roi": metrics["roi"],
+            "status": ps.status,
         })
 
     # --------------------------------------------------
@@ -134,20 +169,6 @@ def customer_dashboard_view(request):
     # --------------------------------------------------
     # Risk Profile (from Strategy)
     # --------------------------------------------------
-    # risk_profile = "—"
-
-    # try:
-    #     portfolio_strategy = (
-    #         PortfolioStrategy.objects
-    #         .select_related("strategy")
-    #         .get(portfolio=portfolio)
-    #     )
-
-    #     risk_profile = portfolio_strategy.strategy.get_risk_level_display()
-
-    # except PortfolioStrategy.DoesNotExist:
-    #     risk_profile = "—"
-
     if active_strategies.count() == 1:
         risk_profile = active_strategies.first().strategy.get_risk_level_display()
     elif active_strategies.exists():
@@ -247,6 +268,7 @@ def customer_dashboard_view(request):
         # strategies
         "strategy_cards": strategy_cards,
         "has_multiple_strategies": active_strategies.count() > 1,
+        "copy_strategy_cards": copy_strategy_cards,
 
     })
 
@@ -264,7 +286,11 @@ def portfolio_view(request):
     #     .first()
     # )
     # Get all active strategies
-    active_strategies = portfolio.strategy_allocations.filter(status='ACTIVE')
+    active_strategies = portfolio.strategy_allocations.filter(
+        status='ACTIVE',
+        copy_relationship__isnull=True  # exclude copy-trade strategies
+    )
+
 
     active_copy = (
         CopyRelationship.objects

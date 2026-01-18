@@ -6,18 +6,43 @@
 <div class="container mt-5">
     {% include "../../notification/messages.html" %}
     <div class="row">
-        <div class="col-5 col-sm-8">
+        <div class="col-3 col-sm-4">
             <h4>All Assets</h4>
         </div>
-        <div class="col-7 col-sm-4">
+        <div class="col-9 col-sm-8">
+            <div class="row">
+                <div class="col">
+                    <!-- Positive stimulation -->
             <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-primary btn-sm" data-spinner-text="Stimulating Asset prices"
-                    data-spinner-class="btn-secondary btn-sm">
-                    Manual Stimulation
-                </button>
+                <input type="hidden" name="direction" value="positive">
+                <button type="submit" class="btn btn-primary btn-sm">Positive Stimulation</button>
             </form>
-            <a href="" class="btn ntm-primary"></a>
+                </div>
+                <div class="col">
+                    <!-- Negative stimulation -->
+            <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
+                {% csrf_token %}
+                <input type="hidden" name="direction" value="negative">
+                <button type="submit" class="btn btn-danger btn-sm">Negative Stimulation</button>
+            </form>
+                </div>
+                <div class="col">
+                    <!-- Both (optional) -->
+            <form method="post" action="{% url 'assets:manual_stimulation' %}" class="pinner-form">
+                {% csrf_token %}
+                <input type="hidden" name="direction" value="both">
+                <button type="submit" class="btn btn-secondary btn-sm">Random Stimulation</button>
+            </form>
+
+                </div>
+            </div>
+
+            
+
+            
+
+            
         </div>
     </div>
 
