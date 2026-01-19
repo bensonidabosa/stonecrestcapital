@@ -41,7 +41,7 @@
 }
 
 .btn-primary {
-    background-color: var(--gradient-left);
+    background: var(--gradient-left);
     border-color: var(--color-success);
 }
 
