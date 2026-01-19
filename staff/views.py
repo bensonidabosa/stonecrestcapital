@@ -2,6 +2,7 @@ import time
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 from .decorators import admin_staff_only
 from assets.forms import AssetForm
@@ -16,13 +17,25 @@ from account.forms import AdminCustomerEditForm
 @login_required
 @admin_staff_only
 def admin_dashboard_view(request):
-    all_assets = Asset.objects.all()
+    assets_qs = Asset.objects.all().order_by('-id')
+
+    # ✅ Pagination
+    paginator = Paginator(assets_qs, 12) 
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "current_url": request.resolver_match.url_name,
-        'all_assets':all_assets
+        "all_assets": page_obj,   # paginated assets
+        "page_obj": page_obj,
+        "paginator": paginator,
     }
-    return render(request, 'account/admin/admin_dashboard.html', context )
+
+    return render(
+        request,
+        'account/admin/admin_dashboard.html',
+        context
+    )
 
 
 @login_required
@@ -131,15 +144,24 @@ def delete_asset_view(request, asset_id):
 @login_required
 @admin_staff_only
 def admin_trade_list_view(request):
-    trades = Trade.objects.select_related(
-        'portfolio',
-        'asset'
-    ).order_by('-timestamp')
+    trades_qs = (
+        Trade.objects
+        .select_related('portfolio', 'asset')
+        .order_by('-timestamp')
+    )
+
+    # ✅ Pagination
+    paginator = Paginator(trades_qs, 15)  # 20 trades per page (admin-friendly)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "current_url": request.resolver_match.url_name,
-        "trades": trades,
+        "trades": page_obj,     # paginated queryset
+        "page_obj": page_obj,
+        "paginator": paginator,
     }
+
     return render(request, 'account/admin/trade_list.html', context)
 
 

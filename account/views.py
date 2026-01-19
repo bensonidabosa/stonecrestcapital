@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from decimal import Decimal
 from django.db.models import Count
+from django.core.paginator import Paginator
 
 from assets.models import Asset 
 from portfolios.models import Portfolio
@@ -12,7 +13,7 @@ from copytrading.models import CopyRelationship, CopyTradePnL
 from trading.models import Trade
 from strategies.services import calculate_strategy_metrics
 
-
+@login_required
 def customer_dashboard_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
 
@@ -307,6 +308,7 @@ def portfolio_view(request):
         "active_copy": active_copy,
     })
 
+
 def assets_view(request):
     asset_type = request.GET.get("type")
     query = request.GET.get("q")
@@ -316,19 +318,25 @@ def assets_view(request):
     if asset_type in dict(Asset.ASSET_TYPES):
         assets = assets.filter(asset_type=asset_type)
 
-    # if query:
-    #     assets = assets.filter(
-    #         Q(name__icontains=query) |
-    #         Q(symbol__icontains=query)
-    #     )
+    if query:
+        assets = assets.filter(name__icontains=query)  # adjust field if needed
+
+    # ✅ Pagination
+    paginator = Paginator(assets, 15)  # 10 items per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     return render(request, "account/customer/assets.html", {
         "current_url": request.resolver_match.url_name,
-        'assets': assets,
+        "assets": page_obj,          # paginated result
+        "page_obj": page_obj,
+        "paginator": paginator,
         "asset_types": Asset.ASSET_TYPES,
         "selected_type": asset_type,
+        "query": query,
     })
 
+@login_required
 def asset_detail(request, symbol):
     # asset = get_object_or_404(Asset, symbol=symbol)
 
@@ -358,13 +366,13 @@ def stocks_view(request):
     }
     return render(request, "account/customer/stocks.html", context)
 
-
+@login_required
 def stock_detail_view(request):
     return render(request, "account/customer/stock_detail.html", {
         "current_url": "stocks"
     })
 
-
+@login_required
 def reits_view(request):
     # Get the user's portfolio
     portfolio = get_object_or_404(Portfolio, user=request.user)
@@ -413,11 +421,13 @@ def reits_view(request):
     return render(request, "account/customer/reits.html", context)
 
 
+@login_required
 def reit_detail_view(request):
     return render(request, "account/customer/reit_detail.html", {
         "current_url": "reits"
     })
 
+@login_required
 def copy_trading_view(request):
     user_portfolio = request.user.portfolio
 
@@ -498,6 +508,7 @@ def leader_profile_view(request, leader_id):
     return render(request, "account/customer/copy_leader_profile.html", context)
 
 
+@login_required
 def wallet_view(request):
     return render(request, "account/customer/wallet.html", {
         "current_url": "wallet"
@@ -506,9 +517,25 @@ def wallet_view(request):
 
 @login_required
 def trade_history_view(request):
-    portfolio = Portfolio.objects.get(user=request.user)
-    trades = portfolio.trades.all()
-    return render(request, 'account/customer/trade_history.html', {'trades': trades, "current_url": request.resolver_match.url_name,})
+    portfolio = get_object_or_404(Portfolio, user=request.user)
+
+    trades_qs = portfolio.trades.all().order_by('-timestamp')  # adjust field
+
+    # ✅ Pagination
+    paginator = Paginator(trades_qs, 20)  # 10 trades per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        'account/customer/trade_history.html',
+        {
+            'trades': page_obj,        # paginated trades
+            'page_obj': page_obj,
+            'paginator': paginator,
+            'current_url': request.resolver_match.url_name,
+        }
+    )
 
 
 
