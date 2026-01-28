@@ -14,5 +14,6 @@ urlpatterns = [
     path('strategy/', include('strategies.urls', namespace='strategy')),
     path('portfolio/', include('portfolios.urls', namespace='portfolio')),
     path('copytrading/', include('copytrading.urls', namespace='copytrading')),
+    path('otp/', include('otp.urls', namespace='otp')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

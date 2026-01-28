@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'copytrading.apps.CopytradingConfig',
     'transaction',
     'notification',
+    'otp',
 ]
 
 MIDDLEWARE = [
@@ -155,3 +156,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',
 }
+
+# Enable or disable OTP login globally
+LOGIN_OTP_ENABLED = True

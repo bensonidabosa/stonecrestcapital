@@ -12,10 +12,12 @@ from account.tokens import email_verification_token
 from django.conf import settings
 from datetime import timedelta
 from django.utils import timezone
+from django.core.exceptions import PermissionDenied
 
 from .forms import UserRegistrationForm, BootstrapLoginForm
 from notification.email_utils import send_html_email
 from account.models import User
+from otp.utils import create_otp
 
 def register_view(request):
     if request.method == 'POST':
@@ -42,7 +44,7 @@ def register_view(request):
                 send_html_email(
                     subject="Verify your email address",
                     to_email=[user.email],
-                    template_name="emails/verify_email.html",
+                    template_name="notifications/emails/verify_email.html",
                     context={
                         "user": user,
                         "verification_url": verification_url,
@@ -113,15 +115,42 @@ class EmailLoginView(LoginView):
 
         # Block login if email not verified
         if not user.is_email_verified:
-            # messages.warning(
-            #     self.request,
-            #     "Your email is not verified. Please check your inbox."
-            # )
-
-            # Provide a resend verification link
             self.request.session['resend_verification_user_id'] = user.id
+            messages.warning(self.request, "Your email is not verified.")
             return redirect('frontend:resend_verification')
 
+        # OTP login enabled in settings
+        if getattr(settings, 'LOGIN_OTP_ENABLED', True):
+            # Create OTP
+            try:
+                otp_obj = create_otp(user, otp_type='login')
+            except PermissionDenied:
+                messages.error(
+                    self.request,
+                    "You have requested too many OTPs. Please wait 10 minutes and try again."
+                )
+                return redirect('otp:login_verify_otp')
+
+            # Send OTP
+            try:
+                send_html_email(
+                    subject="Your Login OTP",
+                    to_email=[user.email],
+                    template_name="notifications/emails/login_otp.html",
+                    context={"user": user, "otp": otp_obj.code},
+                )
+                messages.success(self.request, "An OTP has been sent to your email.")
+            except Exception:
+                # If SMTP not configured, just print OTP
+                print("\nLOGIN OTP (dev mode):", otp_obj.code)
+                messages.info(self.request, f"OTP printed in console (dev): {otp_obj.code}")
+
+            # Store user id in session to verify OTP
+            self.request.session['otp_user_id'] = user.id
+            return redirect('otp:login_verify_otp')
+
+        # Default: normal login
+        login(self.request, user)
         return super().form_valid(form)
 
     def form_invalid(self, form):
