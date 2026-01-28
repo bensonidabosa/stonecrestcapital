@@ -10,6 +10,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=False)
 
     date_joined = models.DateTimeField(default=timezone.now)
 
