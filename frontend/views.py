@@ -10,9 +10,10 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from account.tokens import email_verification_token
 from django.conf import settings
-from datetime import timedelta
+from datetime import datetime ,timedelta
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
+import traceback
 
 from .forms import UserRegistrationForm, BootstrapLoginForm
 from notification.email_utils import send_html_email
@@ -40,10 +41,12 @@ def register_view(request):
                 send_html_email(
                     subject="Verify your email address",
                     to_email=[user.email],
-                    template_name="notifications/emails/verify_email.html",
+                    template_name="notification/emails/verify_email.html",
                     context={
-                        "user": user,
+                        "user": user, 
                         "verification_url": verification_url,
+                        "site_name": settings.SITE_NAME,
+                        "year": datetime.now().year,
                     },
                 )
             except Exception as e:
@@ -132,12 +135,19 @@ class EmailLoginView(LoginView):
                 send_html_email(
                     subject="Your Login OTP",
                     to_email=[user.email],
-                    template_name="notifications/emails/login_otp.html",
-                    context={"user": user, "otp": otp_obj.code},
+                    template_name="notification/emails/login_otp.html",
+                    context={
+                        "user": user, 
+                        "otp": otp_obj.code,
+                        "site_name": settings.SITE_NAME,
+                        "year": datetime.now().year,
+                    },
                 )
                 messages.success(self.request, "An OTP has been sent to your email.")
             except Exception:
                 # If SMTP not configured, just print OTP
+                print("\nEMAIL ERROR:")
+                traceback.print_exc()
                 print("\nLOGIN OTP (dev mode):", otp_obj.code)
                 messages.info(self.request, f"OTP printed in console (dev): {otp_obj.code}")
 
@@ -191,15 +201,25 @@ def resend_verification_view(request):
             send_html_email(
                 subject="Verify your email address",
                 to_email=[user.email],
-                template_name="emails/verify_email.html",
-                context={"user": user, "verification_url": verification_url},
+                template_name="notification/emails/verify_email.html",
+                context={
+                    "user": user, 
+                    "verification_url": verification_url,
+                    "site_name": settings.SITE_NAME,
+                    "year": datetime.now().year,
+                    },
             )
             messages.success(request, "Verification email sent. Check your inbox.")
-        except Exception:
-            # Dev mode: print link
+        except Exception as e:
+            print("\nEMAIL ERROR:")
+            traceback.print_exc()   # 🔥 full stack trace
             print("\nRESEND VERIFICATION LINK:")
             print(verification_url)
-            messages.info(request, "Email not sent (SMTP not configured). Check console for link.")
+
+            messages.info(
+                request,
+                "Email not sent (SMTP not configured). Check console for link."
+            )
 
         return redirect('frontend:login')
 

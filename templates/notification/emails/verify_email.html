@@ -1,9 +1,9 @@
-{% extends "emails/base.html" %}
+{% extends "./base.html" %}
 
 {% block title %}Verify your email address{% endblock %}
 
 {% block content %}
-  <p>Hi {{ user_name }},</p>
+  <p>Hi {{ user.nick_name }},</p>
 
   <p>
     Thanks for signing up for <strong>{{ site_name }}</strong>!
@@ -43,9 +43,9 @@
     </a>
   </p>
 
-  <p>
+  <!-- <p>
     This link will expire in {{ expiry_hours }} hours.
-  </p>
+  </p> -->
 
   <p>
     If you didn't create an account, you can safely ignore this email.

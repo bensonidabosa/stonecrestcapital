@@ -4,3 +4,4 @@ dj-database-url
 django-cockroachdb==4.2
 psycopg2-binary
 django-countries
+django-anymail

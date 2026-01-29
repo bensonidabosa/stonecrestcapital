@@ -1,8 +1,11 @@
+import traceback
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied
+from datetime import datetime
+from django.conf import settings
 
 from account.models import User
 from .utils import verify_otp, create_otp
@@ -52,11 +55,18 @@ def resend_otp_view(request):
         send_html_email(
             subject="Your Login OTP",
             to_email=[user.email],
-            template_name="emails/login_otp.html",
-            context={"user": user, "otp": otp_obj.code},
+            template_name="notification/emails/login_otp.html",
+            context={
+                    "user": user, 
+                    "otp": otp_obj.code,
+                    "site_name": settings.SITE_NAME,
+                    "year": datetime.now().year,
+                },
         )
         messages.success(request, "A new OTP has been sent to your email.")
     except Exception:
+        print("\nEMAIL ERROR:")
+        traceback.print_exc()
         print("\nLOGIN OTP (dev mode):", otp_obj.code)
         messages.info(request, f"OTP printed in console (dev): {otp_obj.code}")
 
