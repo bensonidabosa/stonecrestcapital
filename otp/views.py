@@ -25,7 +25,7 @@ def login_verify_otp_view(request):
             return redirect('account:customer_dashboard')
         messages.error(request, "Invalid or expired OTP.")
 
-    return render(request, 'otp/login_verify_otp.html', {"user": user})
+    return render(request, 'otp/new/login_verify_otp.html', {"user": user})
 
 
 def resend_otp_view(request):

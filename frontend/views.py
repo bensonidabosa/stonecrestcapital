@@ -103,7 +103,7 @@ def verify_email(request, uidb64, token):
 
 
 class EmailLoginView(LoginView):
-    template_name = 'account/authentication/login.html'
+    template_name = 'account/authentication/new/login.html'
     authentication_form = BootstrapLoginForm
 
     def form_valid(self, form):

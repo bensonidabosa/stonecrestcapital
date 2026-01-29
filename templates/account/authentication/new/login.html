@@ -56,11 +56,11 @@
     </div>
     <div class="auto-container">
         <div class="content-box">
-            <h1>Register</h1>
+            <h1>Login</h1>
             <ul class="bread-crumb clearfix">
                 <li><a href="{% url 'frontend:home' %}">Home</a></li>
-                <li>Register</li>
-                <li><span>Create Account</span></li>
+                <li>Login</li>
+                <li><span>Login Now</span></li>
             </ul>
         </div>
     </div>
@@ -74,7 +74,7 @@
             <div class="col-md-7">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="text-center py-3 text-primary">REGISTER</h3>
+                        <h3 class="text-center py-3 text-primary">LOGIN</h3>
                         <hr class="mt-0">
                         {% include "../../../notification/messages.html" %}
                         <form action="" method="post" class="pinner-form">
@@ -95,9 +95,9 @@
                             {% endfor %}
 
                             <button class="theme-btn btn-two w-100" type="submit" name="submit-form" 
-                            data-spinner-text="Creating Account..."
+                            data-spinner-text="Authenticating..."
                             data-spinner-class="btn-secondary w-100">
-                                Submit
+                                Login
                             </button>
                         </form>
 
@@ -107,5 +107,6 @@
         </div>
     </div>
 </section>
+
 
 {% endblock %}
