@@ -1,8 +1,12 @@
 from django import forms
+from django_countries.widgets import CountrySelectWidget
+from django_countries import countries
+
 from account.models import User
 from django.contrib.auth.forms import AuthenticationForm
 
 class UserRegistrationForm(forms.ModelForm):
+    
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={
@@ -18,12 +22,29 @@ class UserRegistrationForm(forms.ModelForm):
         })
     )
 
+    country = forms.ChoiceField(
+        choices=[('', 'Select country')] + list(countries),
+        widget=CountrySelectWidget(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
     class Meta:
         model = User
-        fields = ['email', 'full_name', 'nick_name']  # removed single password
+        fields = [
+            'email',
+            'full_name',
+            'nick_name',
+            'address',
+            'state',
+            'country',
+            'zipcode',
+        ]
+
         labels = {
             'nick_name': 'Username',
+            'zipcode': 'Zip / Postal Code',
         }
+
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -36,6 +57,22 @@ class UserRegistrationForm(forms.ModelForm):
             'nick_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter username'
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter address',
+                'rows': 3
+            }),
+            'state': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter state'
+            }),
+            'country': CountrySelectWidget(attrs={
+                'class': 'form-control'
+            }),
+            'zipcode': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter zip code'
             }),
         }
 

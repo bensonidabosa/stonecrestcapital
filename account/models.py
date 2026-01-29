@@ -1,12 +1,20 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django_countries.fields import CountryField
+
 from .managers import UserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255)
     nick_name = models.CharField(max_length=255, null=True, blank=True)
+
+    # Address fields
+    address = models.TextField(null=True, blank=True)
+    state = models.CharField(max_length=100, null=True, blank=True)
+    country = CountryField(blank=True, null=True)
+    zipcode = models.CharField(max_length=20, null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

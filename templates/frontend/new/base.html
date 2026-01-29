@@ -112,5 +112,16 @@
     <!-- main-js -->
     <script src="{% static 'frontend/new/assets/js/script.js' %}"></script>
 
+    <!-- Spinner j -->
+    <script src="{% static 'general/spinner.js' %}"></script>
+
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                new bootstrap.Alert(alert).close();
+            });
+        }, 8000); // 8 seconds
+    </script>
+
 </body><!-- End of .page_wrapper -->
 </html>

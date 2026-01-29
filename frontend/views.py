@@ -35,10 +35,6 @@ def register_view(request):
             token = email_verification_token.make_token(user)
             protocol = 'https' if not settings.DEBUG else 'http'
             verification_url = f"{protocol}://{current_site.domain}{reverse('frontend:verify_email', kwargs={'uidb64': uid, 'token': token})}"
-            # verification_url = (
-            #     f"http://{current_site.domain}"
-            #     f"{reverse('frontend:verify_email', kwargs={'uidb64': uid, 'token': token})}"
-            # )
 
             try:
                 send_html_email(
@@ -70,20 +66,20 @@ def register_view(request):
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'account/authentication/register.html', {'form': form})
+    return render(request, 'account/authentication/new/register.html', {'form': form})
 
 
 def account_created_view(request):
     user_data = request.session.pop('account_created_user', None)
     if not user_data:
         # fallback if session expired or page accessed directly
-        return redirect('account:login')
+        return redirect('frontend:login')
 
     context = {
         'full_name': user_data.get('full_name'),
         'email': user_data.get('email'),
     }
-    return render(request, "account/authentication/account_created.html", context)
+    return render(request, "account/authentication/new/account_created.html", context)
 
 
 def verify_email(request, uidb64, token):
@@ -215,7 +211,7 @@ def resend_verification_view(request):
         "user": user,
         "token_expired": token_expired,
     }
-    return render(request, "account/authentication/resend_verification.html", context)
+    return render(request, "account/authentication/new/resend_verification.html", context)
 
 
 class UserLogoutView(LogoutView):
