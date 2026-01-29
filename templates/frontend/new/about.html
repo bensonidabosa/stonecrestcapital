@@ -1,0 +1,611 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- page-title -->
+<section class="page-title">
+    <div class="bg-layer" style="background-image: url(/static/frontend/new/assets/images/background/page-title.jpg);">
+    </div>
+    <div class="auto-container">
+        <div class="content-box">
+            <h1>About Us</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="{% url 'frontend:home' %}">Home</a></li>
+                <li>About</li>
+                <li><span>StoneCrest Capital</span></li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- page-title end -->
+
+
+<!-- about-style-four -->
+<section class="about-style-four about-page sec-pad centred">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h6>About Stonecrest Capital</h6>
+            <h2>Pioneers in <br>crypto & REIT strategy investing</h2>
+        </div>
+
+        <div class="inner-box">
+            <div class="award-box">
+                <figure class="badge">
+                    <img src="{% static 'frontend/new/assets/images/icons/badge-1.png' %}" alt="">
+                </figure>
+                <span>Digital Asset Excellence <br>Mar, 2024</span>
+            </div>
+
+            <div class="text-box">
+                <p>
+                    Stonecrest Capital delivers intelligent investment solutions through curated crypto strategies
+                    and REIT backed portfolios. Our platform empowers investors to copy proven traders, automate
+                    execution, and grow capital with confidence across evolving markets.
+                </p>
+                <figure class="signature">
+                    <img src="{% static 'frontend/new/assets/images/icons/signature-1.png' %}" alt="">
+                </figure>
+                <h5>Alex Morgan, <span>Founder & Managing Director</span></h5>
+            </div>
+
+            <div class="award-box">
+                <figure class="badge">
+                    <img src="{% static 'frontend/new/assets/images/icons/badge-2.png' %}" alt="">
+                </figure>
+                <span>Investor Trust Award <br>Jun, 2023</span>
+            </div>
+        </div>
+
+        <div class="links-box">
+            <ul class="links-list">
+                <li><a href="#"><span>+</span>Our Story</a></li>
+                <li><a href="#"><span>+</span>Investment Philosophy</a></li>
+                <li><a href="#"><span>+</span>Core Principles</a></li>
+            </ul>
+        </div>
+
+        <figure class="image-box">
+            <img src="{% static 'frontend/new/assets/images/resource/about-3.jpg' %}" alt="">
+        </figure>
+    </div>
+</section>
+<!-- about-style-four end -->
+
+<!-- about-style-two -->
+<section class="about-style-two">
+    <div class="auto-container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 col-md-12 col-sm-12 image-column">
+                <div class="image-box">
+                    <figure class="image">
+                        <img src="{% static 'frontend/new/assets/images/resource/about-2.jpg' %}" alt="">
+                    </figure>
+
+                    <div class="experience-box">
+                        <div class="shape"
+                            style="background-image: url(/static/frontend/new/assets/images/shape/shape-35.png);"></div>
+                        <div class="icon-box">
+                            <img src="{% static 'frontend/new/assets/images/icons/icon-37.png' %}" alt="">
+                        </div>
+                        <h2>10+ <span>Years</span></h2>
+                        <h5>Market Experience</h5>
+                    </div>
+
+                    <div class="image-content">
+                        <h6>Last Year Strategy Success Rate</h6>
+                        <h3>84.65%</h3>
+                        <p><i class="flaticon-right-up"></i>+6.39%</p>
+                        <div class="bar">
+                            <img src="{% static 'frontend/new/assets/images/icons/bar-4.png' %}" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-md-12 col-sm-12 content-column">
+                <div class="content-box">
+                    <div class="sec-title">
+                        <h6>Our Journey</h6>
+                        <h2>Leading crypto & REIT strategies</h2>
+                    </div>
+
+                    <div class="text-box">
+                        <p>
+                            Stonecrest Capital was built to simplify investing through expert led crypto strategies
+                            and income focused REIT portfolios. Our platform bridges experience and automation,
+                            helping investors access disciplined market exposure with ease.
+                        </p>
+
+                        <div class="single-item">
+                            <div class="icon-box">
+                                <img src="{% static 'frontend/new/assets/images/icons/icon-67.png' %}" alt="">
+                            </div>
+                            <h3>Evolution</h3>
+                            <p>
+                                We evolved from traditional trading methods into a technology-driven platform
+                                centered on transparency, automation, and scalable investment strategies.
+                            </p>
+                        </div>
+                        <!-- <a href="" class="theme-btn btn-two"><span>Explore History</span></a> -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- about-style-two end -->
+
+<!-- funfact-style-three -->
+<section class="funfact-style-three bg-color-2 centred">
+    <div class="pattern-layer" style="background-image: url(/static/frontend/new/assets/images/shape/shape-36.png);">
+    </div>
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="col-lg-3 col-md-6 col-sm-12 single-column">
+                <div class="funfact-block-one">
+                    <div class="inner-box">
+                        <div class="icon-box"><img src="{% static 'frontend/new/assets/images/icons/icon-68.png' %}"
+                                alt=""></div>
+                        <h2>4 <span>minutes</span></h2>
+                        <p>Avg Payout <br>Processing Time</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 single-column">
+                <div class="funfact-block-one">
+                    <div class="inner-box">
+                        <div class="icon-box"><img src="{% static 'frontend/new/assets/images/icons/icon-69.png' %}"
+                                alt=""></div>
+                        <h2>2 <span>minutes</span></h2>
+                        <p>To Earn a <br>Trading Account</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 single-column">
+                <div class="funfact-block-one">
+                    <div class="inner-box">
+                        <div class="icon-box"><img src="{% static 'frontend/new/assets/images/icons/icon-70.png' %}"
+                                alt=""></div>
+                        <h2>10 <span>Million</span></h2>
+                        <p>No. of Trades Opened <br>Last Month</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 single-column">
+                <div class="funfact-block-one">
+                    <div class="inner-box">
+                        <div class="icon-box"><img src="{% static 'frontend/new/assets/images/icons/icon-71.png' %}"
+                                alt=""></div>
+                        <h2>18+ <span>Years</span></h2>
+                        <p>Provide Funds to Futures <br>Traders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- funfact-style-three end -->
+
+<!-- statements-section -->
+<section class="statements-section bg-color-1 centred">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h6>Statements</h6>
+            <h2>Guiding principles of our <br>investment platform</h2>
+        </div>
+        <div class="row clearfix">
+            <div class="col-lg-8 col-md-12 col-sm-12 left-column">
+                <div class="left-content">
+                    <div class="row clearfix">
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 statements-block">
+                            <div class="statements-block-one">
+                                <div class="inner-box"
+                                    style="background-image: url(/static/frontend/new/assets/images/resource/statement-1.jpg);">
+                                    <div class="shape"
+                                        style="background-image: url(/static/frontend/new/assets/images/shape/shape-37.png);">
+                                    </div>
+                                    <h3>Our Mission</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 statements-block">
+                            <div class="statements-block-two">
+                                <div class="inner-box">
+                                    <div class="icon-box">
+                                        <img src="{% static 'frontend/new/assets/images/icons/icon-72.png' %}" alt="">
+                                    </div>
+                                    <p>
+                                        To empower investors with seamless access to proven crypto and REIT strategies
+                                        through automation, transparency, and disciplined capital allocation.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 statements-block">
+                            <div class="statements-block-two">
+                                <div class="inner-box">
+                                    <div class="icon-box">
+                                        <img src="{% static 'frontend/new/assets/images/icons/icon-73.png' %}" alt="">
+                                    </div>
+                                    <p>
+                                        We focus on consistency, risk awareness, and long term growth by combining
+                                        experienced traders with technology driven execution.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 statements-block">
+                            <div class="statements-block-one">
+                                <div class="inner-box"
+                                    style="background-image: url(/static/frontend/new/assets/images/resource/statement-2.jpg);">
+                                    <div class="shape"
+                                        style="background-image: url(/static/frontend/new/assets/images/shape/shape-37.png);">
+                                    </div>
+                                    <h3>Our Vision</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 col-sm-12 right-column">
+                <div class="right-content">
+                    <div class="statements-block-three">
+                        <div class="inner-box">
+                            <div class="icon-box">
+                                <img src="{% static 'frontend/new/assets/images/icons/icon-74.png' %}" alt="">
+                            </div>
+                            <h3>Our Core Values</h3>
+                            <p>
+                                Our values define how we build trust, manage risk, and deliver sustainable investment
+                                experiences across digital assets and real estate markets.
+                            </p>
+                            <ul class="list-item">
+                                <li>Transparency</li>
+                                <li>Investor First</li>
+                                <li>Innovation</li>
+                                <li>Risk Discipline</li>
+                                <li>Accountability</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- statements-section end -->
+
+<!-- team-section -->
+<section class="team-section">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h6>Team Members</h6>
+            <h2>Experts driving our investment strategies</h2>
+            <!-- <a href="team.html" class="theme-btn btn-two"><span>See All Members</span></a> -->
+        </div>
+
+        <div class="row clearfix">
+
+            <div class="col-lg-3 col-md-6 col-sm-12 team-block">
+                <div class="team-block-one wow fadeInUp animated" data-wow-delay="00ms" data-wow-duration="1500ms">
+                    <div class="inner-box">
+                        <figure class="image-box">
+                            <a href="#"><img src="{% static 'frontend/new/assets/images/team/team-1.jpg' %}" alt=""></a>
+                        </figure>
+                        <div class="lower-content">
+                            <h3><a href="#">Michael Kyle</a></h3>
+                            <p>
+                                Oversees strategic direction and long-term growth across crypto and REIT portfolios.
+                            </p>
+                            <!-- <div class="lower-box">
+                                <span class="designation">Founder & CEO</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-12 team-block">
+                <div class="team-block-one wow fadeInUp animated" data-wow-delay="200ms" data-wow-duration="1500ms">
+                    <div class="inner-box">
+                        <figure class="image-box">
+                            <a href="#"><img src="{% static 'frontend/new/assets/images/team/team-2.jpg' %}" alt=""></a>
+                        </figure>
+                        <div class="lower-content">
+                            <h3><a href="#">Gerald Ivor</a></h3>
+                            <p>
+                                Leads financial planning, capital allocation, and risk oversight across strategies.
+                            </p>
+                            <!-- <div class="lower-box">
+                                <span class="designation">Chief Financial Officer</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-12 team-block">
+                <div class="team-block-one wow fadeInUp animated" data-wow-delay="400ms" data-wow-duration="1500ms">
+                    <div class="inner-box">
+                        <figure class="image-box">
+                            <a href="#"><img src="{% static 'frontend/new/assets/images/team/team-3.jpg' %}" alt=""></a>
+                        </figure>
+                        <div class="lower-content">
+                            <h3><a href="#">Nora Lillian</a></h3>
+                            <p>
+                                Designs and manages automated trading strategies and copy-trading performance.
+                            </p>
+                            <!-- <div class="lower-box">
+                                <span class="designation">Head of Strategy</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-12 team-block">
+                <div class="team-block-one wow fadeInUp animated" data-wow-delay="600ms" data-wow-duration="1500ms">
+                    <div class="inner-box">
+                        <figure class="image-box">
+                            <a href="#"><img src="{% static 'frontend/new/assets/images/team/team-4.jpg' %}" alt=""></a>
+                        </figure>
+                        <div class="lower-content">
+                            <h3><a href="#">Michal Starck</a></h3>
+                            <p>
+                                Analyzes market trends across digital assets and real estate investment vehicles.
+                            </p>
+                            <!-- <div class="lower-box">
+                                <span class="designation">Senior Market Analyst</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- team-section end -->
+
+<!-- chooseus-style-two -->
+<section class="chooseus-style-two bg-color-2">
+    <div class="pattern-layer" style="background-image: url(/static/frontend/new/assets/images/shape/shape-12.png);">
+    </div>
+    <div class="auto-container">
+        <div class="sec-title centred light">
+            <h6>Key Highlights</h6>
+            <h2>Reasons for choosing us</h2>
+        </div>
+        <div class="row clearfix">
+
+            <div class="col-lg-4 col-md-12 col-sm-12 left-column">
+                <div class="left-content">
+
+                    <div class="chooseus-block-two">
+                        <div class="inner-box">
+                            <div class="icon-box">
+                                <div class="icon-bg"
+                                    style="background-image: url(/static/frontend/new/assets/images/shape/shape-39.png);">
+                                </div>
+                                <div class="icon">
+                                    <img src="{% static 'frontend/new/assets/images/icons/icon-75.png' %}" alt="">
+                                </div>
+                            </div>
+                            <h3>Expert-Led Strategies</h3>
+                            <p>Professionally designed strategies focused on consistency, discipline, and risk control.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="chooseus-block-two">
+                        <div class="inner-box">
+                            <div class="icon-box">
+                                <div class="icon-bg"
+                                    style="background-image: url(/static/frontend/new/assets/images/shape/shape-39.png);">
+                                </div>
+                                <div class="icon">
+                                    <img src="{% static 'frontend/new/assets/images/icons/icon-76.png' %}" alt="">
+                                </div>
+                            </div>
+                            <h3>Strategy Simulation</h3>
+                            <p>Test selected strategies using historical data before committing real capital.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 col-sm-12 left-column">
+                <div class="logo-box">
+                    <figure class="logo">
+                        <img src="{% static 'frontend/new/assets/images/icons/logo-2.png' %}" alt="">
+                    </figure>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 col-sm-12 right-column">
+                <div class="right-content">
+
+                    <div class="chooseus-block-two">
+                        <div class="inner-box">
+                            <div class="icon-box">
+                                <div class="icon-bg"
+                                    style="background-image: url(/static/frontend/new/assets/images/shape/shape-39.png);">
+                                </div>
+                                <div class="icon">
+                                    <img src="{% static 'frontend/new/assets/images/icons/icon-77.png' %}" alt="">
+                                </div>
+                            </div>
+                            <h3>Continuous Access</h3>
+                            <p>Monitor performance, positions, and activity anytime through your dashboard.</p>
+                        </div>
+                    </div>
+
+                    <div class="chooseus-block-two">
+                        <div class="inner-box">
+                            <div class="icon-box">
+                                <div class="icon-bg"
+                                    style="background-image: url(/static/frontend/new/assets/images/shape/shape-39.png);">
+                                </div>
+                                <div class="icon">
+                                    <img src="{% static 'frontend/new/assets/images/icons/icon-78.png' %}" alt="">
+                                </div>
+                            </div>
+                            <h3>Proven Framework</h3>
+                            <p>Built on disciplined execution, transparency, and long-term portfolio thinking.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- chooseus-style-two end -->
+
+<!-- awards-section -->
+<section class="awards-section sec-pad bg-color-1">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h6>Achievements</h6>
+            <h2>We're proud of our milestones</h2>
+        </div>
+        <div class="three-item-carousel owl-carousel owl-theme dots-style-one nav-style-one">
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Global Capital <br>Management Award</h3>
+                    <p>International Finance Review <br>Mar, 2016</p>
+                </div>
+            </div>
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Most Transparent <br>Investment Firm</h3>
+                    <p>Global Asset Summit <br>Dec, 2022</p>
+                </div>
+            </div>
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Best Portfolio <br>Performance Model</h3>
+                    <p>Capital Markets Forum <br>July, 2018</p>
+                </div>
+            </div>
+
+            <!-- repeated items for carousel -->
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Global Capital <br>Management Award</h3>
+                    <p>International Finance Review <br>Mar, 2019</p>
+                </div>
+            </div>
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Most Transparent <br>Investment Firm</h3>
+                    <p>Global Asset Summit <br>Dec, 2024</p>
+                </div>
+            </div>
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Best Portfolio <br>Performance Model</h3>
+                    <p>Capital Markets Forum <br>Jun, 2023</p>
+                </div>
+            </div>
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Global Capital <br>Management Award</h3>
+                    <p>International Finance Review <br>Mar, 2023</p>
+                </div>
+            </div>
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Most Transparent <br>Investment Firm</h3>
+                    <p>Global Asset Summit <br>Dec, 2021</p>
+                </div>
+            </div>
+
+            <div class="awards-block-one">
+                <div class="inner-box">
+                    <div class="light-icon">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-80.png' %}" alt="">
+                    </div>
+                    <div class="icon-box">
+                        <img src="{% static 'frontend/new/assets/images/icons/icon-79.png' %}" alt="">
+                    </div>
+                    <h3>Best Portfolio <br>Performance Model</h3>
+                    <p>Capital Markets Forum <br>Jun, 2025</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- awards-section end -->
+
+
+
+{% endblock %}

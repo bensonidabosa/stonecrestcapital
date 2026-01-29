@@ -225,5 +225,8 @@ class UserLogoutView(LogoutView):
 def home_view(request):
     return render(request, 'frontend/new/index.html')
 
+def about_view(request):
+    return render(request, 'frontend/new/about.html')
+
 def contact_view(request):
     return render(request, 'frontend/new/contact.html')
