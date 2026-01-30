@@ -33,16 +33,22 @@
                     <td>{{ customer.nick_name|default:"-" }}</td>
                     <td>{{ customer.date_joined|date:"Y-m-d" }}</td>
                     {% if customer.is_active%}
-                        <td>Active</td>
+                    <td>Active</td>
                     {% else %}
-                        <td>Inactive</td>
+                    <td>Inactive</td>
                     {% endif %}
                     <td>
-                        <a href="{% url 'staff:admin_customer_detail' customer.id %}" class="me-3 btn btn-primary btn-sm">
+                        <a href="{% url 'staff:admin_customer_detail' customer.id %}"
+                            class="me-3 btn btn-primary btn-sm">
                             View Details
                         </a>
-                        <a href="{% url 'staff:admin_edit_customer' customer.id %}" class="btn btn-info text-white btn-sm">
+                        <a href="{% url 'staff:admin_edit_customer' customer.id %}"
+                            class="btn btn-info text-white btn-sm">
                             Edit
+                        </a>
+                        <a href="{% url 'staff:admin_delete_customer' customer.id %}"
+                            class="btn btn-danger btn-sm ms-2">
+                            Delete
                         </a>
                     </td>
                 </tr>

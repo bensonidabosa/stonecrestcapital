@@ -41,7 +41,7 @@ def admin_dashboard_view(request):
 @login_required
 @admin_staff_only
 def admin_customer_list_view(request):
-    customers = User.objects.filter(is_staff=False)
+    customers = User.objects.filter(is_staff=False).order_by('-date_joined')
 
     context = {
         "current_url": request.resolver_match.url_name,
@@ -86,6 +86,29 @@ def admin_edit_customer_view(request, user_id):
     }
 
     return render(request, "account/admin/edit_customer.html", context)
+
+
+@login_required
+@admin_staff_only
+def admin_delete_customer_view(request, user_id):
+    customer = get_object_or_404(User, id=user_id, is_staff=False)
+
+    if request.method == "POST":
+        full_name = customer.full_name
+        customer.delete()
+        messages.success(
+            request,
+            f"{full_name} has been deleted successfully."
+        )
+        return redirect("staff:admin_customer_list")
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "customer": customer,
+    }
+
+    return render(request, "account/admin/delete_customer.html", context)
+
 
 
 @login_required

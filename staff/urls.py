@@ -12,6 +12,9 @@ urlpatterns = [
     name='admin_customer_detail'),
     path("customers/<int:user_id>/edit/", views.admin_edit_customer_view,
     name="admin_edit_customer"),
+    path("customers/<int:user_id>/delete/", views.admin_delete_customer_view,
+    name="admin_delete_customer"),
+    
     path("add/", views.add_asset_view, name="add_asset"),
     path('<int:asset_id>/edit/', views.edit_asset_view, name='edit_asset'),
     path('delete/<int:asset_id>/', views.delete_asset_view, name='delete_asset'),
