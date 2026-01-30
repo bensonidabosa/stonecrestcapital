@@ -142,70 +142,14 @@ def take_daily_snapshots():
         )
 
 
-# def unwind_portfolio(portfolio):
-#     for holding in portfolio.holdings.select_related('asset'):
-#         price = holding.asset.price
-
-#         if price is None or price <= 0:
-#             continue  # Skip selling invalid-priced assets
-
-#         if holding.quantity > 0:
-#             holding.sell_value(holding.market_value())
-    
-#     portfolio.holdings.filter(quantity=0).delete()
-
-# def unwind_portfolio(portfolio):
-#     """
-#     Sell all holdings in the portfolio and register trades.
-#     Used when stopping a strategy.
-#     """
-#     for holding in portfolio.holdings.select_related('asset'):
-#         price = holding.asset.price
-
-#         if price is None or price <= 0:
-#             continue  # Skip invalid-priced assets
-
-#         if holding.quantity > 0:
-#             # Sell the full market value using execute_sell so a Trade is created
-#             execute_sell(
-#                 portfolio=portfolio,
-#                 asset=holding.asset,
-#                 quantity=holding.quantity,
-#                 note="Strategy liquidation"
-#             )
-
-#     # Clean up holdings with zero quantity (though execute_sell deletes automatically)
-#     portfolio.holdings.filter(quantity=0).delete()
-
-
-# def unwind_strategy_holdings(portfolio, strategy_allocation):
-#     """
-#     Sell all holdings linked to a specific strategy allocation and register trades.
-#     """
-#     # Assuming we have a way to track which holdings came from which strategy allocation.
-#     # For now, let's assume all holdings belong to this strategy allocation.
-#     for holding in portfolio.holdings.select_related('asset'):
-#         price = holding.asset.price
-#         if price is None or price <= 0:
-#             continue
-
-#         if holding.quantity > 0:
-#             execute_sell(
-#                 portfolio=portfolio,
-#                 asset=holding.asset,
-#                 quantity=holding.quantity,
-#                 note=f"Strategy ({strategy_allocation.strategy.name}) liquidation"
-#             )
-
-#     portfolio.holdings.filter(quantity=0).delete()
-
 def unwind_strategy_holdings(portfolio, strategy_allocation):
     """
-    Sell all holdings associated with a specific strategy allocation
+    Sell all holdings associated with a specific strategy allocation,
+    safely handling crypto decimals and min trade quantities.
     """
     holdings = StrategyHolding.objects.filter(
         strategy_allocation=strategy_allocation
-    ).select_related('holding', 'asset')  # correct select_related
+    ).select_related('holding', 'asset')
 
     for sh in holdings:
         holding = sh.holding
@@ -215,17 +159,22 @@ def unwind_strategy_holdings(portfolio, strategy_allocation):
         if price is None or sh.quantity <= 0:
             continue
 
+        # Skip if crypto quantity is below minimum trade quantity
+        if asset.asset_type == "CRYPTO" and sh.quantity < asset.min_trade_quantity:
+            continue
+
+        # Execute sell (should handle all asset types)
         execute_sell(
             portfolio=portfolio,
             asset=asset,
-            quantity=sh.quantity,
+            quantity=sh.quantity,  # preserve full precision
             strategy_allocation=strategy_allocation,
             note=f"Liquidating strategy: {strategy_allocation.strategy.name}"
         )
 
-
-    # Remove empty strategy holdings
+    # Delete holdings that are fully liquidated
     holdings.filter(quantity__lte=0).delete()
+
 
 
 def unwind_copy_strategy_holdings(strategy_allocation):
