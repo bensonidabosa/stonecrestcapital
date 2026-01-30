@@ -290,6 +290,8 @@ def portfolio_view(request):
     asset_alloc_map = {}
     active_strategies = portfolio.strategy_allocations.filter(
         status='ACTIVE',
+    )
+    customer_active_strategies = active_strategies.filter(
         copy_relationship__isnull=True
     )
     for sa in active_strategies:
@@ -309,6 +311,7 @@ def portfolio_view(request):
     return render(request, "account/customer/portfolio_main.html", {
         'portfolio': portfolio,
         'active_strategies': active_strategies,
+        'customer_active_strategies':customer_active_strategies,
         'active_copy': active_copy,
         'stock_holdings': stock_holdings,
         'reit_holdings': reit_holdings,

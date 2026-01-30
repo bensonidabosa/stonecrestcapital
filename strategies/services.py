@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
@@ -9,19 +9,51 @@ from portfolios.services import unwind_portfolio, unwind_strategy_holdings
 from trading.models import Trade
 from copytrading.utils import is_copy_trading
 
-def execute_strategy(portfolio, strategy_allocation):
+# def execute_strategy(portfolio, strategy_allocation):
+#     strategy = strategy_allocation.strategy
+#     # total_cash = strategy_allocation.allocated_cash
+#     # Determine total cash safely
+#     if hasattr(strategy_allocation, 'copy_relationship') and strategy_allocation.copy_relationship:
+#         # Copy trading: respect leader's remaining cash
+#         total_cash = min(
+#             strategy_allocation.remaining_cash,
+#             strategy_allocation.copy_relationship.remaining_cash
+#         )
+#     else:
+#         # Normal strategy: just use the cash the user allocated
+#         total_cash = strategy_allocation.allocated_cash
+
+#     if total_cash <= 0:
+#         return
+
+#     for allocation in strategy.allocations.select_related('asset'):
+#         if allocation.asset.price <= 0:
+#             continue
+
+#         target_cash = (allocation.percentage / 100) * total_cash
+#         quantity = target_cash / allocation.asset.price
+
+#         execute_buy(
+#             portfolio=portfolio,
+#             asset=allocation.asset,
+#             quantity=quantity,
+#             strategy_allocation=strategy_allocation,
+#             note=f"Strategy allocation: {strategy.name}"
+#         )
+
+def execute_strategy(portfolio, strategy_allocation, max_cash=None):
     strategy = strategy_allocation.strategy
-    # total_cash = strategy_allocation.allocated_cash
-    # Determine total cash safely
+
+    # Determine cash to use
     if hasattr(strategy_allocation, 'copy_relationship') and strategy_allocation.copy_relationship:
-        # Copy trading: respect leader's remaining cash
-        total_cash = min(
-            strategy_allocation.remaining_cash,
-            strategy_allocation.copy_relationship.remaining_cash
-        )
+        total_cash = min(strategy_allocation.remaining_cash,
+                         strategy_allocation.copy_relationship.remaining_cash)
     else:
-        # Normal strategy: just use the cash the user allocated
         total_cash = strategy_allocation.allocated_cash
+
+    # If a max_cash is passed (e.g., from copy_leader_strategies_to_follower), respect it
+    if max_cash is not None:
+        total_cash = min(total_cash, max_cash)
 
     if total_cash <= 0:
         return
@@ -40,6 +72,7 @@ def execute_strategy(portfolio, strategy_allocation):
             strategy_allocation=strategy_allocation,
             note=f"Strategy allocation: {strategy.name}"
         )
+
 
 
 def strategy_average_return(strategy):
@@ -152,4 +185,44 @@ def calculate_strategy_metrics(strategy_allocation):
         "pnl": pnl,
         "roi": round(roi, 2),
     }
+
+
+def execute_copy_strategy(portfolio, strategy_allocation):
+    """
+    Buy holdings for copy trading without affecting normal strategies.
+    Uses remaining cash of follower strategy only.
+    """
+    strategy = strategy_allocation.strategy
+    total_cash = Decimal(strategy_allocation.remaining_cash)
+
+    if total_cash <= 0:
+        return
+
+    for allocation in strategy.allocations.select_related('asset'):
+        asset_price = Decimal(allocation.asset.price)
+        if asset_price <= 0:
+            continue
+
+        # Cash to allocate for this asset
+        target_cash = (total_cash * Decimal(allocation.percentage) / Decimal("100")).quantize(
+            Decimal("0.01"), rounding=ROUND_DOWN
+        )
+        if target_cash <= 0:
+            continue
+
+        # Determine quantity to buy
+        quantity = (target_cash / asset_price).quantize(Decimal("0.0001"), rounding=ROUND_DOWN)
+        if quantity <= 0:
+            continue
+
+        # Execute actual buy
+        execute_buy(
+            portfolio=portfolio,
+            asset=allocation.asset,
+            quantity=quantity,
+            strategy_allocation=strategy_allocation,
+            note=f"Copy strategy allocation: {strategy.name}"
+        )
+
+
 

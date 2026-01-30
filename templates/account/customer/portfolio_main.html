@@ -26,9 +26,9 @@
             <!-- Active Strategies -->
             <div class="mb-4">
                 <h5>Active Strategies</h5>
-                {% if active_strategies %}
+                {% if customer_active_strategies %}
                     <ul class="list-group">
-                        {% for ps in active_strategies %}
+                        {% for ps in customer_active_strategies %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>
                                     <strong>{{ ps.strategy.name }}</strong> — Allocated: ${{ ps.allocated_cash|intcomma }}
