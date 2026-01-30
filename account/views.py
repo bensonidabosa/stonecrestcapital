@@ -276,37 +276,45 @@ def customer_dashboard_view(request):
 
 
 @login_required
+@login_required
 def portfolio_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
-    total_value = calculate_portfolio_value(portfolio)
 
+    # Split holdings by asset type
+    holdings = portfolio.holdings.select_related('asset')
+    stock_holdings = [h for h in holdings if h.asset.asset_type == "STOCK"]
+    reit_holdings = [h for h in holdings if h.asset.asset_type == "REIT"]
+    crypto_holdings = [h for h in holdings if h.asset.asset_type == "CRYPTO"]
+
+    # Calculate allocated cash for holdings based on active strategies
+    asset_alloc_map = {}
     active_strategies = portfolio.strategy_allocations.filter(
         status='ACTIVE',
         copy_relationship__isnull=True
     )
+    for sa in active_strategies:
+        for alloc in sa.strategy.allocations.select_related('asset'):
+            allocated_cash = (alloc.percentage / 100) * sa.allocated_cash
+            asset_alloc_map[alloc.asset.id] = allocated_cash
 
-    active_copy = (
-        CopyRelationship.objects
-        .select_related('leader__user')
-        .filter(follower=portfolio, is_active=True)
-        .first()
-    )
+    for holding in holdings:
+        holding.allocated_cash = asset_alloc_map.get(holding.asset.id, 0)
+        holding.difference = holding.market_value() - holding.allocated_cash
 
-    # Filter holdings by asset type
-    stock_holdings = portfolio.holdings.filter(asset__asset_type='STOCK')
-    reit_holdings = portfolio.holdings.filter(asset__asset_type='REIT')
-    crypto_holdings = portfolio.holdings.filter(asset__asset_type='CRYPTO')
+    # Active copy
+    active_copy = CopyRelationship.objects.select_related('leader__user').filter(
+        follower=portfolio, is_active=True
+    ).first()
 
     return render(request, "account/customer/portfolio_main.html", {
-        "current_url": request.resolver_match.url_name,
         'portfolio': portfolio,
-        'total_value': total_value,
-        "active_strategies": active_strategies,
-        "active_copy": active_copy,
-        "stock_holdings": stock_holdings,
-        "reit_holdings": reit_holdings,
-        "crypto_holdings": crypto_holdings,
+        'active_strategies': active_strategies,
+        'active_copy': active_copy,
+        'stock_holdings': stock_holdings,
+        'reit_holdings': reit_holdings,
+        'crypto_holdings': crypto_holdings,
     })
+
 
 
 def assets_view(request):
