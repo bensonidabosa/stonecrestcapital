@@ -5,6 +5,7 @@ from django.db.models import Sum, F, DecimalField, ExpressionWrapper
 
 from assets.models import Asset
 
+
 User = settings.AUTH_USER_MODEL
 
 class Portfolio(models.Model):
@@ -48,6 +49,39 @@ class Portfolio(models.Model):
             return 0
 
         return ((self.current_value() - initial) / initial) * 100
+    
+    # ---- Add this method ----
+    def total_investment_value(self):
+        # Sum all holdings (current market value)
+        holdings_value = Holding.objects.filter(portfolio=self).annotate(
+            value=F('quantity') * F('asset__price')
+        ).aggregate(total=Sum('value', output_field=DecimalField()))['total'] or Decimal('0.00')
+        
+        return holdings_value
+
+    def total_allocated_cash(self):
+        # Sum all strategy allocations (normal + copy)
+        from strategies.models import PortfolioStrategy
+        allocated = PortfolioStrategy.objects.filter(
+            portfolio=self,
+            status='ACTIVE'
+        ).aggregate(total=Sum('allocated_cash'))['total'] or Decimal('0.00')
+        return allocated
+    
+    def remaining_cash_total(self):
+        """
+        Sum all remaining_cash of active strategies (normal + copy).
+        """
+        from strategies.models import PortfolioStrategy
+        remaining = PortfolioStrategy.objects.filter(
+            portfolio=self,
+            status='ACTIVE'
+        ).aggregate(total=Sum('remaining_cash'))['total'] or Decimal('0.00')
+        return remaining
+
+
+    def profit_loss(self):
+        return self.total_investment_value() - self.total_allocated_cash()
 
     # def return_percentage(self):
     #     initial = self.initial_value()

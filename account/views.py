@@ -276,7 +276,6 @@ def customer_dashboard_view(request):
 
 
 @login_required
-@login_required
 def portfolio_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
 
@@ -547,7 +546,5 @@ def trade_history_view(request):
             'current_url': request.resolver_match.url_name,
         }
     )
-
-
 
 

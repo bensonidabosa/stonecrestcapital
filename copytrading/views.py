@@ -98,7 +98,7 @@ def follow_portfolio(request, portfolio_id):
             allocated_cash=allocated_cash,
             relation=relation,
             buy_percent=Decimal("0.2"),  # 20% of remaining cash per leader strategy
-            min_cash=Decimal("1000")     # minimum cash threshold
+            min_cash=Decimal("100")     # minimum cash threshold
         )
 
         messages.success(request, f"You are now copying {leader.user.nick_name}'s strategies.")

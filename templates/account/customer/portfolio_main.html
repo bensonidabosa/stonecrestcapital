@@ -18,7 +18,10 @@
         <div class="col-md-3">
             <div class="card p-3 shadow-sm">
                 <small class="text-muted">Total Investment Value:</small>
-                <h4 class="fw-bold">${{ portfolio.total_holding_value|floatformat:2|intcomma }}</h4>
+                <h4 class="fw-bold">${{ portfolio.total_investment_value|floatformat:2|intcomma }}</h4>
+                <!-- <h4 class="fw-bold">${{ portfolio.total_allocated_cash|floatformat:2|intcomma }}</h4>
+                <h4 class="fw-bold">${{ portfolio.profit_loss|floatformat:2|intcomma }}</h4>
+                <h4 class="fw-bold">${{ portfolio.remaining_cash_total|floatformat:2|intcomma }}</h4> -->
             </div>
         </div>
 

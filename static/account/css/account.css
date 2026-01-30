@@ -27,9 +27,12 @@
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
 
-    --gradient-left: linear-gradient(262.01deg, #105742 -12.43%, #076653 45.32%, #E3EF26 125.28%);
+    --gradient-left: -webkit-linear-gradient(-45deg, #132720 50%, #187c59 100%);
 
-    --gradient-footer: linear-gradient(180deg, #0C342C 46.04%, #076653 84.68%, #E3EF26 130.31%);
+    --gradient-footer: -webkit-linear-gradient(-45deg, #132720 50%, #187c59 100%);
+    /* --gradient-left: linear-gradient(262.01deg, #105742 -12.43%, #076653 45.32%, #E3EF26 125.28%);
+
+    --gradient-footer: linear-gradient(180deg, #0C342C 46.04%, #076653 84.68%, #E3EF26 130.31%); */
 }
 
 .text-success {

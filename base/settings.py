@@ -98,7 +98,7 @@ DATABASES = {
     }
 }
 
-# DATABASES = {'default': dj_database_url.config(default=os.environ['DATABASE_URL'], engine='django_cockroachdb')}
+DATABASES = {'default': dj_database_url.config(default=os.environ['DATABASE_URL'], engine='django_cockroachdb')}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -172,3 +172,33 @@ ANYMAIL = {
 
 DEFAULT_FROM_EMAIL = "StoneCrest Capital <noreply@mail.gigifreight.org>"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+
+# ----------------------------
+# SIMPLE LOGGING CONFIGURATION
+# ----------------------------
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '[{levelname}] {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # or INFO in production
+    },
+}
+
+# ----------------------------
+# YOUR OTHER SETTINGS BELOW
+# ----------------------------

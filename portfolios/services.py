@@ -177,13 +177,52 @@ def unwind_strategy_holdings(portfolio, strategy_allocation):
 
 
 
+# def unwind_copy_strategy_holdings(strategy_allocation):
+#     """
+#     Sell all holdings associated with a specific strategy allocation
+#     and return total cash realized.
+#     """
+#     portfolio = strategy_allocation.portfolio
+#     total_returned_cash = Decimal("0")
+
+#     holdings = StrategyHolding.objects.filter(
+#         strategy_allocation=strategy_allocation
+#     ).select_related("holding", "asset")
+
+#     for sh in holdings:
+#         asset = sh.asset
+#         quantity = sh.quantity
+#         price = asset.price
+
+#         if quantity <= 0 or price is None:
+#             continue
+
+#         proceeds = quantity * price
+
+#         execute_sell(
+#             portfolio=portfolio,
+#             asset=asset,
+#             quantity=quantity,
+#             strategy_allocation=strategy_allocation,
+#             note=f"Liquidating strategy: {strategy_allocation.strategy.name}"
+#         )
+
+#         total_returned_cash += proceeds
+
+#     # Cleanup empty strategy holdings
+#     StrategyHolding.objects.filter(
+#         strategy_allocation=strategy_allocation,
+#         quantity__lte=0
+#     ).delete()
+
+#     return total_returned_cash
+
 def unwind_copy_strategy_holdings(strategy_allocation):
     """
-    Sell all holdings associated with a specific strategy allocation
-    and return total cash realized.
+    Sell all holdings associated with a copy strategy allocation.
+    Cash is returned via execute_sell.
     """
     portfolio = strategy_allocation.portfolio
-    total_returned_cash = Decimal("0")
 
     holdings = StrategyHolding.objects.filter(
         strategy_allocation=strategy_allocation
@@ -197,8 +236,6 @@ def unwind_copy_strategy_holdings(strategy_allocation):
         if quantity <= 0 or price is None:
             continue
 
-        proceeds = quantity * price
-
         execute_sell(
             portfolio=portfolio,
             asset=asset,
@@ -207,15 +244,6 @@ def unwind_copy_strategy_holdings(strategy_allocation):
             note=f"Liquidating strategy: {strategy_allocation.strategy.name}"
         )
 
-        total_returned_cash += proceeds
-
-    # Cleanup empty strategy holdings
-    StrategyHolding.objects.filter(
-        strategy_allocation=strategy_allocation,
-        quantity__lte=0
-    ).delete()
-
-    return total_returned_cash
 
 
 
