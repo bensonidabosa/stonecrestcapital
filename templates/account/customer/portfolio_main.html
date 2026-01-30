@@ -1,0 +1,108 @@
+{% extends "../base/base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Portfolio</h4>
+        <span class="text-muted">
+            Cash Balance:
+            <strong>${{ portfolio.cash_balance|floatformat:2|intcomma }}</strong>
+        </span>
+    </div>
+
+    <!-- Portfolio Summary -->
+    <div class="row g-5 mb-4">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <small class="text-muted">Total Investment Value:</small>
+                <h4 class="fw-bold">${{ portfolio.total_holding_value|floatformat:2|intcomma }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <!-- Active Strategies -->
+            <div class="mb-4">
+                <h5>Active Strategies</h5>
+                {% if active_strategies %}
+                    <ul class="list-group">
+                        {% for ps in active_strategies %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <strong>{{ ps.strategy.name }}</strong> — Allocated: ${{ ps.allocated_cash|intcomma }}
+                                </span>
+                                <form method="post" action="{% url 'strategy:stop_strategy' ps.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Stop & Liquidate</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No active strategies</p>
+                {% endif %}
+            </div>
+
+            <!-- Active Copy Trading -->
+            <div>
+                Active Copy Trading:
+                {% if active_copy %}
+                    <strong class="text-success">{{ active_copy.leader.user.nick_name }}</strong>
+                    <a href="{% url 'copytrading:stop_copying' active_copy.leader.id %}"
+                       class="btn btn-sm btn-outline-warning ms-2 text-dark"
+                       onclick="return confirm('Stop copying this trader?');">
+                        Stop Copying
+                    </a>
+                {% else %}
+                    <strong>None</strong>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% include "../../notification/messages.html" %}
+
+    <!-- Holdings Card -->
+    <div class="card">
+        <div class="card-header">
+            Holdings
+        </div>
+
+        <!-- Tabs Nav -->
+        <ul class="nav nav-tabs" id="portfolioTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="stocks-tab" data-bs-toggle="tab" data-bs-target="#stocks"
+                        type="button" role="tab">Stocks</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reit-tab" data-bs-toggle="tab" data-bs-target="#reit"
+                        type="button" role="tab">REITs</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="crypto-tab" data-bs-toggle="tab" data-bs-target="#crypto"
+                        type="button" role="tab">Crypto</button>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content mt-3">
+            <!-- Stocks Tab -->
+            <div class="tab-pane fade show active" id="stocks" role="tabpanel">
+                {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=stock_holdings asset_type="STOCK" %}
+            </div>
+
+            <!-- REITs Tab -->
+            <div class="tab-pane fade" id="reit" role="tabpanel">
+                {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=reit_holdings asset_type="REIT" %}
+            </div>
+
+            <!-- Crypto Tab -->
+            <div class="tab-pane fade" id="crypto" role="tabpanel">
+                {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=crypto_holdings asset_type="CRYPTO" %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

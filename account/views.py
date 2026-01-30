@@ -280,18 +280,10 @@ def portfolio_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
     total_value = calculate_portfolio_value(portfolio)
 
-    # active_strategy = (
-    #     PortfolioStrategy.objects
-    #     .select_related('strategy')
-    #     .filter(portfolio=portfolio)
-    #     .first()
-    # )
-    # Get all active strategies
     active_strategies = portfolio.strategy_allocations.filter(
         status='ACTIVE',
-        copy_relationship__isnull=True  # exclude copy-trade strategies
+        copy_relationship__isnull=True
     )
-
 
     active_copy = (
         CopyRelationship.objects
@@ -299,13 +291,21 @@ def portfolio_view(request):
         .filter(follower=portfolio, is_active=True)
         .first()
     )
-    
-    return render(request, "account/customer/portfolio.html", {
+
+    # Filter holdings by asset type
+    stock_holdings = portfolio.holdings.filter(asset__asset_type='STOCK')
+    reit_holdings = portfolio.holdings.filter(asset__asset_type='REIT')
+    crypto_holdings = portfolio.holdings.filter(asset__asset_type='CRYPTO')
+
+    return render(request, "account/customer/portfolio_main.html", {
         "current_url": request.resolver_match.url_name,
         'portfolio': portfolio,
         'total_value': total_value,
         "active_strategies": active_strategies,
         "active_copy": active_copy,
+        "stock_holdings": stock_holdings,
+        "reit_holdings": reit_holdings,
+        "crypto_holdings": crypto_holdings,
     })
 
 

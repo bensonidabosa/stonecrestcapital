@@ -7,6 +7,7 @@ class Asset(models.Model):
         ('STOCK', 'Stock'),
         ('ETF', 'ETF'),
         ('REIT', 'REIT'),
+        ("CRYPTO", "Crypto"),
     )
 
     name = models.CharField(max_length=255)
@@ -14,8 +15,8 @@ class Asset(models.Model):
     asset_type = models.CharField(max_length=10, choices=ASSET_TYPES)
 
     price = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
+        max_digits=20,
+        decimal_places=8,
         default=Decimal('100.00')
     )
 
@@ -45,6 +46,14 @@ class Asset(models.Model):
         null=True,
         blank=True
     )
+
+    # for crypto
+    # Optional but very useful
+    min_trade_quantity = models.DecimalField(
+        max_digits=20, decimal_places=8, default=Decimal("0.00000001")
+    )
+
+    is_tradeable = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['symbol']
