@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
 import logging
 
 from strategies.models import PortfolioStrategy
@@ -9,44 +9,111 @@ from .services import copy_leader_strategies_to_follower
 
 
 logger = logging.getLogger("copytrading.signal")
-MIN_CASH_THRESHOLD = Decimal("1000") 
+# MIN_CASH_THRESHOLD = Decimal("1000") 
+
+# @receiver(post_save, sender=PortfolioStrategy)
+# def auto_copy_new_strategy(sender, instance, created, **kwargs):
+#     """
+#     When a leader creates a new strategy allocation, copy it to all active followers.
+#     Only allocate if the follower has enough remaining cash.
+#     """
+#     if not created or instance.copy_relationship_id is not None:
+#         return  # Only trigger for true new leader strategies
+
+#     leader_portfolio = instance.portfolio
+
+#     # Get all active followers
+#     active_followers = CopyRelationship.objects.filter(
+#         leader=leader_portfolio,
+#         is_active=True
+#     ).select_related("follower")
+
+#     for relation in active_followers:
+#         follower = relation.follower
+
+#         # Skip follower if remaining cash is below threshold
+#         if relation.remaining_cash < MIN_CASH_THRESHOLD:
+#             logger.info(
+#                 f"Follower {follower.id} remaining_cash={relation.remaining_cash} below threshold, skipping new strategy {instance.strategy.name}"
+#             )
+#             continue
+
+#         # Copy the new strategy to follower
+#         copy_leader_strategies_to_follower(
+#             leader_portfolio=leader_portfolio,
+#             follower_portfolio=follower,
+#             allocated_cash=relation.remaining_cash,
+#             relation=relation,
+#             buy_percent=Decimal("0.2"),
+#             specific_strategy=instance.strategy
+#         )
+
+MIN_CASH_THRESHOLD = Decimal("200")
 
 @receiver(post_save, sender=PortfolioStrategy)
 def auto_copy_new_strategy(sender, instance, created, **kwargs):
     """
-    When a leader creates a new strategy allocation, copy it to all active followers.
-    Only allocate if the follower has enough remaining cash.
+    When a leader creates a new strategy allocation,
+    allocate to followers using their remaining copy cash.
     """
+    # Only trigger for true leader strategies
     if not created or instance.copy_relationship_id is not None:
-        return  # Only trigger for true new leader strategies
+        return
 
     leader_portfolio = instance.portfolio
 
-    # Get all active followers
-    active_followers = CopyRelationship.objects.filter(
+    logger.info(
+        "[SIGNAL] New leader strategy created | leader=%s strategy=%s",
+        leader_portfolio.id,
+        instance.strategy.name
+    )
+
+    active_relations = CopyRelationship.objects.filter(
         leader=leader_portfolio,
         is_active=True
     ).select_related("follower")
 
-    for relation in active_followers:
+    for relation in active_relations:
         follower = relation.follower
+        remaining_cash = relation.remaining_cash
 
-        # Skip follower if remaining cash is below threshold
-        if relation.remaining_cash < MIN_CASH_THRESHOLD:
+        logger.info(
+            "[CHECK] follower=%s remaining_cash=%s",
+            follower.id,
+            remaining_cash
+        )
+
+        # Check allocation feasibility (20% rule)
+        allocatable_cash = (remaining_cash * Decimal("0.2")).quantize(
+            Decimal("0.01"), rounding=ROUND_DOWN
+        )
+
+        if allocatable_cash < MIN_CASH_THRESHOLD:
             logger.info(
-                f"Follower {follower.id} remaining_cash={relation.remaining_cash} below threshold, skipping new strategy {instance.strategy.name}"
+                "[SKIP] follower=%s allocatable_cash=%s below threshold=%s",
+                follower.id,
+                allocatable_cash,
+                MIN_CASH_THRESHOLD
             )
+            # Skip this follower only
             continue
 
-        # Copy the new strategy to follower
+        logger.info(
+            "[ALLOCATE] follower=%s strategy=%s allocatable_cash=%s",
+            follower.id,
+            instance.strategy.name,
+            allocatable_cash
+        )
+
         copy_leader_strategies_to_follower(
             leader_portfolio=leader_portfolio,
             follower_portfolio=follower,
-            allocated_cash=relation.remaining_cash,
             relation=relation,
             buy_percent=Decimal("0.2"),
-            specific_strategy=instance.strategy
+            specific_strategy=instance.strategy,
+            min_cash=MIN_CASH_THRESHOLD
         )
+
 
 
 

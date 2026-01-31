@@ -1,10 +1,14 @@
 from decimal import Decimal
 from django.db import transaction
+import logging
+
 from portfolios.models import Portfolio, PortfolioSnapshot, Holding, RebalanceLog, DividendLog
 from strategies.models import PortfolioStrategy, StrategyHolding
 from trading.models import Trade
 from trading.services import execute_sell
 from copytrading.utils import is_copy_trading
+
+logger = logging.getLogger(__name__)
 
 def calculate_portfolio_value(portfolio):
     holdings_value = sum(
@@ -176,32 +180,47 @@ def unwind_strategy_holdings(portfolio, strategy_allocation):
     holdings.filter(quantity__lte=0).delete()
 
 
+
 def unwind_copy_strategy_holdings(strategy_allocation):
     """
     Sell all holdings associated with a copy strategy allocation.
     Cash is returned via execute_sell.
     """
     portfolio = strategy_allocation.portfolio
-
     holdings = StrategyHolding.objects.filter(
         strategy_allocation=strategy_allocation
     ).select_related("holding", "asset")
 
-    for sh in holdings:
-        asset = sh.asset
-        quantity = sh.quantity
-        price = asset.price
+    logger.info(
+        f"Starting unwind for strategy={strategy_allocation.strategy.name} "
+        f"portfolio={portfolio.id} holdings={holdings.count()}"
+    )
 
-        if quantity <= 0 or price is None:
-            continue
+    with transaction.atomic():
+        for sh in holdings:
+            asset = sh.asset
+            quantity = sh.quantity
+            price = asset.price
 
-        execute_sell(
-            portfolio=portfolio,
-            asset=asset,
-            quantity=quantity,
-            strategy_allocation=strategy_allocation,
-            note=f"Liquidating strategy: {strategy_allocation.strategy.name}"
-        )
+            if quantity <= 0:
+                logger.debug(f"Skipping sell: zero quantity for {asset}")
+                continue
+
+            if price is None or price <= 0:
+                logger.warning(f"Skipping sell: invalid price ({price}) for {asset}")
+                continue
+
+            logger.info(f"Selling {quantity} of {asset} at {price} for strategy={strategy_allocation.strategy.name}")
+            execute_sell(
+                portfolio=portfolio,
+                asset=asset,
+                quantity=quantity,
+                strategy_allocation=strategy_allocation,
+                note=f"Liquidating strategy: {strategy_allocation.strategy.name}"
+            )
+
+    logger.info(f"Completed unwind for strategy={strategy_allocation.strategy.name} portfolio={portfolio.id}")
+
         
     # Delete holdings that are fully liquidated
     holdings.filter(quantity__lte=0).delete()

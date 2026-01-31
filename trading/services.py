@@ -9,6 +9,85 @@ from strategies.models import StrategyHolding
 
 logger = logging.getLogger(__name__)
 
+# def execute_buy(
+#     portfolio,
+#     asset,
+#     quantity,
+#     strategy_allocation=None,
+#     note=""
+# ):
+#     price = asset.price
+#     if price is None or price <= 0 or quantity <= 0:
+#         logger.debug(f"Skipping buy: invalid price ({price}) or quantity ({quantity}) for {asset}")
+#         return
+
+#     cost = quantity * price
+
+#     # Safety: ensure we never spend more than available cash
+#     if cost > portfolio.cash_balance:
+#         logger.warning(
+#             f"Cannot execute trade: portfolio balance {portfolio.cash_balance} is less than cost {cost} for {asset}"
+#         )
+#         return
+
+#     # Check against strategy allocation cash, if provided
+#     if strategy_allocation:
+#         if getattr(strategy_allocation, "copy_relationship", None):
+#             cr = strategy_allocation.copy_relationship
+#             if cr and cost > cr.remaining_cash:
+#                 logger.debug(
+#                     f"Skipping buy: copy_relationship remaining_cash {cr.remaining_cash} < cost {cost} for {asset}"
+#                 )
+#                 return
+#         else:
+#             if cost > strategy_allocation.remaining_cash:
+#                 logger.debug(
+#                     f"Skipping buy: strategy_allocation remaining_cash {strategy_allocation.remaining_cash} < cost {cost} for {asset}"
+#                 )
+#                 return
+
+#     with transaction.atomic():
+#         # Deduct from strategy allocation only, not portfolio cash (already deducted on allocation)
+#         if strategy_allocation:
+#             strategy_allocation.remaining_cash -= cost
+#             strategy_allocation.save(update_fields=["remaining_cash"])
+
+#         holding, _ = Holding.objects.get_or_create(
+#             portfolio=portfolio,
+#             asset=asset,
+#             defaults={"quantity": Decimal("0"), "average_price": price},
+#         )
+
+#         if strategy_allocation:
+#             sh, _ = StrategyHolding.objects.get_or_create(
+#                 portfolio=portfolio,
+#                 strategy_allocation=strategy_allocation,
+#                 asset=asset,
+#                 holding=holding,
+#                 defaults={"quantity": Decimal("0"), "average_price": price},
+#             )
+
+#             total_cost = (sh.quantity * sh.average_price) + cost
+#             sh.quantity += quantity
+#             sh.average_price = total_cost / sh.quantity
+#             sh.save(update_fields=["quantity", "average_price"])
+
+#         holding.quantity = holding.total_quantity
+#         holding.save(update_fields=["quantity"])
+
+#         Trade.objects.create(
+#             portfolio=portfolio,
+#             asset=asset,
+#             trade_type=Trade.BUY,
+#             quantity=quantity,
+#             price=price,
+#             note=note,
+#         )
+
+#         logger.info(f"Executed BUY: {quantity} of {asset} at {price} under {strategy_allocation}")
+#     logger.info(f"the final remaining cash is {strategy_allocation.remaining_cash}")
+MIN_CASH_THRESHOLD = Decimal('400')
+
 def execute_buy(
     portfolio,
     asset,
@@ -45,6 +124,13 @@ def execute_buy(
                     f"Skipping buy: strategy_allocation remaining_cash {strategy_allocation.remaining_cash} < cost {cost} for {asset}"
                 )
                 return
+
+        # ✅ NEW: enforce MIN_CASH_THRESHOLD
+        if strategy_allocation.remaining_cash < MIN_CASH_THRESHOLD:
+            logger.info(
+                f"Remaining cash {strategy_allocation.remaining_cash} below MIN_CASH_THRESHOLD {MIN_CASH_THRESHOLD}, skipping buy"
+            )
+            return
 
     with transaction.atomic():
         # Deduct from strategy allocation only, not portfolio cash (already deducted on allocation)
@@ -85,7 +171,7 @@ def execute_buy(
         )
 
         logger.info(f"Executed BUY: {quantity} of {asset} at {price} under {strategy_allocation}")
-    logger.info(f"the final remaining cash is {strategy_allocation.remaining_cash}")
+    logger.info(f"The final remaining cash is {strategy_allocation.remaining_cash if strategy_allocation else 'N/A'}")
 
 
 

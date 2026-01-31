@@ -5,56 +5,7 @@ from decimal import Decimal
 
 from portfolios.models import Portfolio
 from .models import CopyRelationship
-from portfolios.services import liquidate_portfolio
-from strategies.models import PortfolioStrategy
 from .services import copy_leader_strategies_to_follower, stop_copying_and_unwind
-
-# @login_required
-# def follow_portfolio(request, portfolio_id):
-#     follower = request.user.portfolio
-#     leader = get_object_or_404(Portfolio, id=portfolio_id)
-
-#     if follower == leader:
-#         messages.warning(request, "You cannot copy your own portfolio.")
-#         return redirect('leaderboard')
-
-#     if request.method == "POST":
-#         allocated_cash = Decimal(request.POST.get("allocated_cash", "0"))
-
-#         if allocated_cash <= 0:
-#             messages.error(request, "Please allocate a positive cash amount.")
-#             return redirect('account:copy_trading')
-
-#         if allocated_cash > follower.cash_balance:
-#             messages.error(request, "Allocated cash exceeds your available cash balance.")
-#             return redirect('account:copy_trading')
-
-#         # Deduct allocated cash from follower
-#         # follower.cash_balance -= allocated_cash
-#         # follower.save(update_fields=['cash_balance'])
-
-#         # Create or update copy relationship
-#         relation, created = CopyRelationship.objects.update_or_create(
-#             follower=follower,
-#             leader=leader,
-#             defaults={
-#                 'allocated_cash': allocated_cash,
-#                 'remaining_cash': allocated_cash, 
-#                 'is_active': True
-#                 }
-#         )
-
-#         # Copy all active leader strategies proportionally
-#         copy_leader_strategies_to_follower(leader, follower, allocated_cash, relation)
-
-#         messages.success(request, f"You are now copying {leader.user.nick_name}'s trades and strategies.")
-#         return redirect('account:copy_trading')
-
-#     # GET → show form to enter allocated cash
-#     return render(request, "account/customer/copy_trading/follow_form.html", {
-#         "leader": leader,
-#         "follower": follower
-#     })
 
 @login_required
 def follow_portfolio(request, portfolio_id):
@@ -86,19 +37,23 @@ def follow_portfolio(request, portfolio_id):
             leader=leader,
             defaults={
                 'allocated_cash': allocated_cash,
-                'remaining_cash': allocated_cash,
                 'is_active': True
             }
         )
+
+        if created:
+            relation.remaining_cash = allocated_cash
+            relation.save(update_fields=['remaining_cash'])
+
 
         # 3️⃣ Copy leader strategies to follower
         copy_leader_strategies_to_follower(
             leader_portfolio=leader,
             follower_portfolio=follower,
-            allocated_cash=allocated_cash,
+            # allocated_cash=allocated_cash,
             relation=relation,
-            buy_percent=Decimal("0.2"),  # 20% of remaining cash per leader strategy
-            min_cash=Decimal("100")     # minimum cash threshold
+            buy_percent=Decimal("0.2"), # 20% of remaining cash per leader strategy
+            min_cash=Decimal("200")
         )
 
         messages.success(request, f"You are now copying {leader.user.nick_name}'s strategies.")
