@@ -9,38 +9,6 @@ from portfolios.services import unwind_portfolio, unwind_strategy_holdings
 from trading.models import Trade
 from copytrading.utils import is_copy_trading
 
-# def execute_strategy(portfolio, strategy_allocation):
-#     strategy = strategy_allocation.strategy
-#     # total_cash = strategy_allocation.allocated_cash
-#     # Determine total cash safely
-#     if hasattr(strategy_allocation, 'copy_relationship') and strategy_allocation.copy_relationship:
-#         # Copy trading: respect leader's remaining cash
-#         total_cash = min(
-#             strategy_allocation.remaining_cash,
-#             strategy_allocation.copy_relationship.remaining_cash
-#         )
-#     else:
-#         # Normal strategy: just use the cash the user allocated
-#         total_cash = strategy_allocation.allocated_cash
-
-#     if total_cash <= 0:
-#         return
-
-#     for allocation in strategy.allocations.select_related('asset'):
-#         if allocation.asset.price <= 0:
-#             continue
-
-#         target_cash = (allocation.percentage / 100) * total_cash
-#         quantity = target_cash / allocation.asset.price
-
-#         execute_buy(
-#             portfolio=portfolio,
-#             asset=allocation.asset,
-#             quantity=quantity,
-#             strategy_allocation=strategy_allocation,
-#             note=f"Strategy allocation: {strategy.name}"
-#         )
-
 def execute_strategy(portfolio, strategy_allocation, max_cash=None):
     strategy = strategy_allocation.strategy
 
