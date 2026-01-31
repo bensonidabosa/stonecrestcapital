@@ -49,7 +49,9 @@ def execute_strategy(portfolio, strategy_allocation, max_cash=None):
         total_cash = min(strategy_allocation.remaining_cash,
                          strategy_allocation.copy_relationship.remaining_cash)
     else:
-        total_cash = strategy_allocation.allocated_cash
+        total_cash = strategy_allocation.remaining_cash
+        print(total_cash)
+        print(strategy_allocation.allocated_cash)
 
     # If a max_cash is passed (e.g., from copy_leader_strategies_to_follower), respect it
     if max_cash is not None:
@@ -72,7 +74,6 @@ def execute_strategy(portfolio, strategy_allocation, max_cash=None):
             strategy_allocation=strategy_allocation,
             note=f"Strategy allocation: {strategy.name}"
         )
-
 
 
 def strategy_average_return(strategy):

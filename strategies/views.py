@@ -35,6 +35,10 @@ def activate_strategy_view(request, strategy_id):
                 "Allocated cash exceeds your available cash balance."
             )
             return redirect('strategies:list')
+        
+        # 1️⃣ Deduct allocated cash from follower only once
+        portfolio.cash_balance -= allocated_cash
+        portfolio.save(update_fields=['cash_balance'])
 
         # Create strategy allocation
         ps = PortfolioStrategy.objects.create(
