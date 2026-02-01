@@ -5,7 +5,7 @@ import logging
 from portfolios.models import Portfolio, PortfolioSnapshot, Holding, RebalanceLog, DividendLog
 from strategies.models import PortfolioStrategy, StrategyHolding
 from trading.models import Trade
-from trading.services import execute_sell
+from trading.services import execute_sell, execute_copy_sell
 from copytrading.utils import is_copy_trading
 
 logger = logging.getLogger(__name__)
@@ -261,17 +261,13 @@ def liquidate_portfolio(portfolio):
 
 def unwind_copy_strategy_holdings_for_copy(strategy_allocation):
     """
-    Liquidate a copied strategy:
-    - Sell all holdings
-    - Credit proceeds to strategy remaining_cash
-    - Delete StrategyHoldings
-    - Delete PortfolioStrategy
+    Liquidate a copied strategy by selling all holdings via execute_copy_sell,
+    then delete the StrategyAllocation.
     """
-
     total_returned_cash = Decimal("0")
     portfolio = strategy_allocation.portfolio
 
-    # ✅ CAPTURE METADATA BEFORE DELETE
+    # Capture metadata before delete
     strategy_id = strategy_allocation.id
     strategy_name = strategy_allocation.strategy.name
     portfolio_id = portfolio.id
@@ -281,46 +277,25 @@ def unwind_copy_strategy_holdings_for_copy(strategy_allocation):
     ).select_related("asset")
 
     for sh in holdings:
-        asset = sh.asset
-        quantity = sh.quantity
-        price = asset.price
-
-        if quantity <= 0 or not price:
+        if sh.quantity <= 0:
             continue
 
-        proceeds = (quantity * price).quantize(Decimal("0.01"))
+        proceeds = execute_copy_sell(
+            strategy_allocation=strategy_allocation,
+            asset=sh.asset,
+            quantity=sh.quantity,
+            note=f"Unwinding strategy: {strategy_name}",
+        )
+
         total_returned_cash += proceeds
 
-        # Delete holding
-        sh.delete()
-        logger.info(
-            "[HOLDING DELETE] StrategyHolding deleted: portfolio=%s, asset=%s",
-            portfolio_id,
-            asset
-        )
-
-        # Trade record
-        Trade.objects.create(
-            portfolio=portfolio,
-            asset=asset,
-            trade_type=Trade.SELL,
-            quantity=quantity,
-            price=price,
-            note=f"Liquidating strategy: {strategy_name}",
-        )
-
-    # Credit strategy remaining cash
-    strategy_allocation.remaining_cash += total_returned_cash
-    strategy_allocation.save(update_fields=["remaining_cash"])
-
     logger.info(
-        "[STRATEGY CASH CREDIT] StrategyAllocation %s credited %s remaining_cash=%s",
+        "[STRATEGY UNWIND] StrategyAllocation %s total returned cash=%s",
         strategy_id,
-        total_returned_cash,
-        strategy_allocation.remaining_cash
+        total_returned_cash
     )
 
-    # ✅ DELETE STRATEGY LAST
+    # Delete strategy allocation LAST
     strategy_allocation.delete()
     logger.info(
         "[STRATEGY DELETE] PortfolioStrategy deleted: id=%s, strategy=%s, portfolio=%s",
@@ -330,6 +305,79 @@ def unwind_copy_strategy_holdings_for_copy(strategy_allocation):
     )
 
     return total_returned_cash
+
+
+# def unwind_copy_strategy_holdings_for_copy(strategy_allocation):
+#     """
+#     Liquidate a copied strategy:
+#     - Sell all holdings
+#     - Credit proceeds to strategy remaining_cash
+#     - Delete StrategyHoldings
+#     - Delete PortfolioStrategy
+#     """
+
+#     total_returned_cash = Decimal("0")
+#     portfolio = strategy_allocation.portfolio
+
+#     # ✅ CAPTURE METADATA BEFORE DELETE
+#     strategy_id = strategy_allocation.id
+#     strategy_name = strategy_allocation.strategy.name
+#     portfolio_id = portfolio.id
+
+#     holdings = StrategyHolding.objects.filter(
+#         strategy_allocation=strategy_allocation
+#     ).select_related("asset")
+
+#     for sh in holdings:
+#         asset = sh.asset
+#         quantity = sh.quantity
+#         price = asset.price
+
+#         if quantity <= 0 or not price:
+#             continue
+
+#         proceeds = (quantity * price).quantize(Decimal("0.01"))
+#         total_returned_cash += proceeds
+
+#         # Delete holding
+#         sh.delete()
+#         logger.info(
+#             "[HOLDING DELETE] StrategyHolding deleted: portfolio=%s, asset=%s",
+#             portfolio_id,
+#             asset
+#         )
+
+#         # Trade record
+#         Trade.objects.create(
+#             portfolio=portfolio,
+#             asset=asset,
+#             trade_type=Trade.SELL,
+#             quantity=quantity,
+#             price=price,
+#             note=f"Liquidating strategy: {strategy_name}",
+#         )
+
+#     # Credit strategy remaining cash
+#     strategy_allocation.remaining_cash += total_returned_cash
+#     strategy_allocation.save(update_fields=["remaining_cash"])
+
+#     logger.info(
+#         "[STRATEGY CASH CREDIT] StrategyAllocation %s credited %s remaining_cash=%s",
+#         strategy_id,
+#         total_returned_cash,
+#         strategy_allocation.remaining_cash
+#     )
+
+#     # ✅ DELETE STRATEGY LAST
+#     strategy_allocation.delete()
+#     logger.info(
+#         "[STRATEGY DELETE] PortfolioStrategy deleted: id=%s, strategy=%s, portfolio=%s",
+#         strategy_id,
+#         strategy_name,
+#         portfolio_id
+#     )
+
+#     return total_returned_cash
 
 
 
