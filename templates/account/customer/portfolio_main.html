@@ -19,9 +19,6 @@
             <div class="card p-3 shadow-sm">
                 <small class="text-muted">Total Investment Value:</small>
                 <h4 class="fw-bold">${{ portfolio.total_investment_value|floatformat:2|intcomma }}</h4>
-                <!-- <h4 class="fw-bold">${{ portfolio.total_allocated_cash|floatformat:2|intcomma }}</h4>
-                <h4 class="fw-bold">${{ portfolio.profit_loss|floatformat:2|intcomma }}</h4>
-                <h4 class="fw-bold">${{ portfolio.remaining_cash_total|floatformat:2|intcomma }}</h4> -->
             </div>
         </div>
 
@@ -50,16 +47,28 @@
 
             <!-- Active Copy Trading -->
             <div>
-                Active Copy Trading:
-                {% if active_copy %}
-                    <strong class="text-success">{{ active_copy.leader.user.nick_name }}</strong>
-                    <a href="{% url 'copytrading:stop_copying' active_copy.leader.id %}"
-                       class="btn btn-sm btn-outline-warning ms-2 text-dark"
-                       onclick="return confirm('Stop copying this trader?');">
-                        Stop Copying
-                    </a>
+                <h5>Active Copy Trading:</h5>
+                {% if active_copies %}
+                <ul class="list-group">
+                    {% for copy in active_copies %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            <strong>Leader: {{copy.leader.user.nick_name }}</strong> — Allocated: ${{ copy.allocated_cash|intcomma }}
+                        </span>
+                        <!-- <a href="{% url 'copytrading:stop_copying' copy.leader.id %}"
+                        class="btn btn-sm btn-outline-warning ms-2 text-dark"
+                        onclick="return confirm('Stop copying this trader?');">
+                            Stop Copying
+                        </a> -->
+                        <a href="{% url 'copytrading:user_copy_trade_detail' copy.id %}"
+                        class="btn btn-sm btn-outline-info ms-2 text-dark">
+                            More Details
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
                 {% else %}
-                    <strong>None</strong>
+                    <p class="text-muted">No active strategies</p>
                 {% endif %}
             </div>
         </div>

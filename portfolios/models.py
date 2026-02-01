@@ -197,26 +197,4 @@ class PortfolioSnapshot(models.Model):
         return f"{self.portfolio.id} @ {self.created_at}"
     
 
-class Transaction(models.Model):
-    TRANSACTION_TYPES = [
-        ('BUY', 'Buy'),
-        ('SELL', 'Sell'),
-        ('DIVIDEND', 'Dividend'),
-        ('REBALANCE', 'Rebalance'),
-        ('SWITCH', 'Strategy Switch'),
-    ]
 
-    portfolio = models.ForeignKey('Portfolio', on_delete=models.CASCADE, related_name='transactions')
-    asset = models.ForeignKey('assets.Asset', on_delete=models.SET_NULL, null=True, blank=True)
-    transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
-    quantity = models.DecimalField(max_digits=20, decimal_places=6, default=Decimal('0'))
-    price = models.DecimalField(max_digits=20, decimal_places=2, default=Decimal('0'))
-    total_value = models.DecimalField(max_digits=20, decimal_places=2, default=Decimal('0'))
-    timestamp = models.DateTimeField(auto_now_add=True)
-    note = models.TextField(blank=True)
-
-    class Meta:
-        ordering = ['-timestamp']
-
-    def __str__(self):
-        return f"{self.transaction_type} {self.asset} {self.total_value}"

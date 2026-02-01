@@ -13,6 +13,14 @@ class Strategy(models.Model):
         ('HIGH', 'High'),
     )
 
+    # New type choices
+    TYPE_CHOICES = (
+        ('CRYPTO', 'Trade Crypto'),
+        ('STOCK', 'Trade Stock'),
+        ('REIT', 'Invest in REIT'),
+    )
+
+
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
@@ -20,7 +28,12 @@ class Strategy(models.Model):
         max_length=20,
         choices=RISK_LEVELS
     )
-
+    strategy_type = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        default='STOCK',
+        help_text="Type of strategy"
+    )
     target_return_min = models.DecimalField(
         max_digits=5,
         decimal_places=2,

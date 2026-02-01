@@ -23,6 +23,10 @@ class CopyRelationship(models.Model):
     class Meta:
         unique_together = ('follower', 'leader')
 
+    @property
+    def invested(self):
+        return self.allocated_cash - self.remaining_cash
+
     def __str__(self):
         return f"{self.follower} copies {self.leader}"
 

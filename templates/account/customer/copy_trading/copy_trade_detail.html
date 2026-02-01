@@ -1,0 +1,193 @@
+{% extends "../../base/base.html" %}
+{% load humanize %}
+
+{% block title %}Copy Trade Detail{% endblock %}
+
+{% block content %}
+<style>
+    .strategy-mini {
+        border-radius: 12px;
+        background-color: #f9fafb;
+    }
+</style>
+<!-- page header -->
+<div class="container-fluid mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1">Copied Leader: {{ copy.leader.user.nick_name }}</h4>
+            <p class="text-muted mb-0">
+                Automated trading based on leader's trades
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <!-- <span class="badge bg-primary-subtle text-primary">
+                Active
+            </span> -->
+
+            <a href="{% url 'copytrading:stop_copying' copy.leader.id %}"
+            class="btn btn-sm btn-outline-danger"
+            onclick="return confirm('Stop copying this trader?');">
+                Stop Copying
+            </a>
+
+            <!-- <button
+                class="btn btn-sm btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#stopCopyModal">
+                Stop Copying
+            </button> -->
+        </div>
+    </div>
+</div>
+
+<!-- allocation summary -->
+<div class="row g-4 mb-4">
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <small class="text-muted">Allocated Cash</small>
+                <h5 class="mb-0">${{copy.allocated_cash|floatformat:2|intcomma}}</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <small class="text-muted">Invested</small>
+                <h5 class="mb-0">${{invested|floatformat:2|intcomma}}</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <small class="text-muted">Available Cash</small>
+                <h5 class="mb-0">${{copy.remaining_cash|floatformat:2|intcomma}}</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 {% if current_value >= invested %}border-success{% else %}border-danger{% endif %}">
+            <div class="card-body">
+                <small class="text-muted">Current Value</small>
+                <h5 class="mb-0 {% if current_value >= invested %}text-success{% else %}text-danger{% endif %}">
+                    ${{ current_value|floatformat:2|intcomma }}
+                </h5>
+                <small class="{% if current_value >= invested %}text-success{% else %}text-danger{% endif %}">
+                    {% if current_value >= invested %}+{% endif %}{{ percent_change|floatformat:2 }}%
+                </small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Attached Strategies Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        Attached Strategies
+    </div>
+
+    <div class="card-body">
+        <div class="row g-3">
+
+            {% for sa in copy_strategy_allocs %}
+            <div class="col-lg-4 mb-3">
+                <div class="card strategy-mini h-100">
+                    <div class="card-body">
+
+                        <h6 class="mb-1">
+                            {{ sa.strategy.name }}
+                        </h6>
+
+                        <small class="text-muted">
+                            {{ sa.strategy.get_risk_level_display }} Risk
+                        </small>
+
+                        <ul class="list-unstyled small mt-3 mb-0">
+                            <li>
+                                • Allocation:
+                                ${{ sa.allocated_cash|floatformat:2|intcomma }}
+                            </li>
+
+                            <li>
+                                • Assets:
+                                {{ sa.strategy.asset_types|join:", " }}
+                            </li>
+
+                            <li>
+                                • Target Return:
+                                {{ sa.strategy.target_return_min }}%
+                                -
+                                {{ sa.strategy.target_return_max }}%
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted">
+                No strategies attached to this copy.
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- Holdings Table (Aggregated from Strategies) -->
+<!-- Holdings Card -->
+    <div class="card">
+        <div class="card-header">
+            Holdings
+        </div>
+
+        <!-- Tabs Nav -->
+        <!-- Tabs Nav -->
+<ul class="nav nav-tabs" id="portfolioTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="stocks-tab" data-bs-toggle="tab" data-bs-target="#stocks" type="button" role="tab">
+            Stocks
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="reit-tab" data-bs-toggle="tab" data-bs-target="#reit" type="button" role="tab">
+            REITs
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="crypto-tab" data-bs-toggle="tab" data-bs-target="#crypto" type="button" role="tab">
+            Crypto
+        </button>
+    </li>
+</ul>
+
+<!-- Tabs Content -->
+<div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="stocks" role="tabpanel">
+        {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=stock_holdings asset_type="STOCK" %}
+    </div>
+    <div class="tab-pane fade" id="reit" role="tabpanel">
+        {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=reit_holdings asset_type="REIT" %}
+    </div>
+    <div class="tab-pane fade" id="crypto" role="tabpanel">
+        {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=crypto_holdings asset_type="CRYPTO" %}
+    </div>
+</div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

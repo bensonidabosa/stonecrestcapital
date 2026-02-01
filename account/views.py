@@ -303,15 +303,15 @@ def portfolio_view(request):
         holding.difference = holding.market_value() - holding.allocated_cash
 
     # Active copy
-    active_copy = CopyRelationship.objects.select_related('leader__user').filter(
+    active_copies = CopyRelationship.objects.select_related('leader__user').filter(
         follower=portfolio, is_active=True
-    ).first()
+    )
 
     return render(request, "account/customer/portfolio_main.html", {
         'portfolio': portfolio,
         'active_strategies': active_strategies,
         'customer_active_strategies':customer_active_strategies,
-        'active_copy': active_copy,
+        'active_copies': active_copies,
         'stock_holdings': stock_holdings,
         'reit_holdings': reit_holdings,
         'crypto_holdings': crypto_holdings,
