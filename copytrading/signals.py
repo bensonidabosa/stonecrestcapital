@@ -1,53 +1,14 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from decimal import Decimal, ROUND_DOWN
+from django.db import transaction
 import logging
 
 from strategies.models import PortfolioStrategy
 from .models import CopyRelationship
 from .services import copy_leader_strategies_to_follower
 
-
 logger = logging.getLogger("copytrading.signal")
-# MIN_CASH_THRESHOLD = Decimal("1000") 
-
-# @receiver(post_save, sender=PortfolioStrategy)
-# def auto_copy_new_strategy(sender, instance, created, **kwargs):
-#     """
-#     When a leader creates a new strategy allocation, copy it to all active followers.
-#     Only allocate if the follower has enough remaining cash.
-#     """
-#     if not created or instance.copy_relationship_id is not None:
-#         return  # Only trigger for true new leader strategies
-
-#     leader_portfolio = instance.portfolio
-
-#     # Get all active followers
-#     active_followers = CopyRelationship.objects.filter(
-#         leader=leader_portfolio,
-#         is_active=True
-#     ).select_related("follower")
-
-#     for relation in active_followers:
-#         follower = relation.follower
-
-#         # Skip follower if remaining cash is below threshold
-#         if relation.remaining_cash < MIN_CASH_THRESHOLD:
-#             logger.info(
-#                 f"Follower {follower.id} remaining_cash={relation.remaining_cash} below threshold, skipping new strategy {instance.strategy.name}"
-#             )
-#             continue
-
-#         # Copy the new strategy to follower
-#         copy_leader_strategies_to_follower(
-#             leader_portfolio=leader_portfolio,
-#             follower_portfolio=follower,
-#             allocated_cash=relation.remaining_cash,
-#             relation=relation,
-#             buy_percent=Decimal("0.2"),
-#             specific_strategy=instance.strategy
-#         )
-
 MIN_CASH_THRESHOLD = Decimal("200")
 
 @receiver(post_save, sender=PortfolioStrategy)
@@ -115,130 +76,96 @@ def auto_copy_new_strategy(sender, instance, created, **kwargs):
         )
 
 
-
-
-@receiver(post_save, sender=PortfolioStrategy)
-def propagate_strategy_stop_to_followers(sender, instance, **kwargs):
+@receiver(post_delete, sender=PortfolioStrategy)
+def propagate_strategy_delete_to_followers(sender, instance, **kwargs):
     """
-    When a leader stops a strategy, stop only copied versions for followers.
+    When a leader liquidates (deletes) a strategy,
+    fully unwind and delete follower copies.
     """
-    if instance.status != "STOPPED":
-        return
+    from portfolios.services import unwind_copy_strategy_holdings_for_copy
+    import logging
 
+    logger = logging.getLogger("trading.services")
+
+    # Ignore deletes of copied strategies
     if instance.copy_relationship_id:
         return
 
     leader_portfolio = instance.portfolio
-    followers = CopyRelationship.objects.filter(leader=leader_portfolio, is_active=True)
+    strategy = instance.strategy
 
-    for relation in followers:
-        copied_ps_list = PortfolioStrategy.objects.filter(
+    relations = CopyRelationship.objects.filter(
+        leader=leader_portfolio,
+        is_active=True
+    )
+
+    for relation in relations:
+        copied_strategies = PortfolioStrategy.objects.filter(
             copy_relationship=relation,
-            strategy=instance.strategy,
-            status="ACTIVE"
+            strategy=strategy
         )
-        for ps in copied_ps_list:
-            from portfolios.services import unwind_copy_strategy_holdings
-            returned_cash = unwind_copy_strategy_holdings(ps)
-            ps.portfolio.cash_balance += returned_cash
-            ps.portfolio.save(update_fields=["cash_balance"])
-            ps.status = "STOPPED"
-            ps.save(update_fields=["status"])
 
+        for ps in copied_strategies:
+            returned_cash = unwind_copy_strategy_holdings_for_copy(ps)
 
+            relation.remaining_cash += returned_cash
+            relation.save(update_fields=["remaining_cash"])
 
-# from django.db.models.signals import post_save
-# from django.dispatch import receiver
-# from strategies.models import PortfolioStrategy
-# from .models import CopyRelationship
-# from .services import copy_leader_strategies_to_follower, check_follower_strategy_health
-# from portfolios.services import unwind_copy_strategy_holdings
-
-
-# @receiver(post_save, sender=PortfolioStrategy)
-# def auto_copy_new_strategy(sender, instance, created, **kwargs):
-#     """
-#     When a leader creates a new strategy allocation,
-#     copy it to all active followers proportionally.
-#     """
-
-#     if not created:
-#         return
-
-#     # 🚫 Skip copied strategies
-#     if instance.copy_relationship_id is not None:
-#         return
-
-#     leader_portfolio = instance.portfolio
-
-#     active_followers = CopyRelationship.objects.filter(
-#         leader=leader_portfolio,
-#         is_active=True
-#     ).select_related("follower")
-
-#     leader_strategies = leader_portfolio.strategy_allocations.filter(status="ACTIVE")
-
-#     leader_total_cash = sum(
-#         ps.allocated_cash for ps in leader_strategies
-#     )
-
-#     if leader_total_cash <= 0:
-#         return
-
-#     for relation in active_followers:
-#         follower = relation.follower
-#         check_follower_strategy_health(follower)
-
-#         # Strategy weight
-#         weight = instance.allocated_cash / leader_total_cash
-#         follower_cash = weight * relation.allocated_cash
-
-#         if follower_cash <= 0:
-#             continue
-
-#         copy_leader_strategies_to_follower(
-#             leader_portfolio=leader_portfolio,
-#             follower_portfolio=follower,
-#             allocated_cash=follower_cash,
-#             relation=relation,
-#             specific_strategy=instance.strategy
-#         )
-
+            logger.info(
+                "[COPY LIQUIDATION] follower=%s strategy=%s returned=%s remaining_cash=%s",
+                relation.follower_id,
+                strategy.name,
+                returned_cash,
+                relation.remaining_cash
+            )
 
 # @receiver(post_save, sender=PortfolioStrategy)
 # def propagate_strategy_stop_to_followers(sender, instance, **kwargs):
 #     """
 #     When a leader stops a strategy, stop only copied versions for followers.
+#     Liquidate holdings, credit proceeds to remaining_cash, and delete the PortfolioStrategy.
 #     """
+#     from portfolios.services import unwind_copy_strategy_holdings_for_copy
 
+#     # Only trigger if the leader stops a strategy
 #     if instance.status != "STOPPED":
+#         return
+
+#     # Skip if this is a copy itself
+#     if instance.copy_relationship_id:
 #         return
 
 #     leader_portfolio = instance.portfolio
 
-#     # Ignore follower-owned strategies
-#     if instance.copy_relationship_id:
-#         return
-
-#     followers = CopyRelationship.objects.filter(
+#     # Get all active followers
+#     active_followers = CopyRelationship.objects.filter(
 #         leader=leader_portfolio,
 #         is_active=True
-#     )
+#     ).select_related("follower")
 
-#     for relation in followers:
-#         copied_ps = PortfolioStrategy.objects.filter(
+#     for relation in active_followers:
+#         follower = relation.follower
+
+#         # Find the copied strategy for this follower
+#         copied_strategies = PortfolioStrategy.objects.filter(
 #             copy_relationship=relation,
 #             strategy=instance.strategy,
 #             status="ACTIVE"
 #         )
 
-#         for ps in copied_ps:
-#             returned_cash = unwind_copy_strategy_holdings(ps)
+#         for ps in copied_strategies:
+#             # Liquidate follower strategy and credit remaining_cash
+#             total_returned = unwind_copy_strategy_holdings_for_copy(ps)
 
-#             ps.portfolio.cash_balance += returned_cash
-#             ps.portfolio.save(update_fields=["cash_balance"])
+#             # Add to copy relationship remaining_cash
+#             relation.remaining_cash += total_returned
+#             relation.save(update_fields=["remaining_cash"])
 
-#             ps.status = "STOPPED"
-#             ps.save(update_fields=["status"])
-
+#             logger.info(
+#                 "[COPY STRATEGY STOP] Follower %s strategy %s liquidated, credited %s to remaining_cash=%s",
+#                 follower.id,
+#                 ps.strategy.name,
+#                 total_returned,
+#                 relation.remaining_cash
+#             )
 
