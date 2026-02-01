@@ -1,0 +1,110 @@
+{% extends "../../base/base.html" %}
+{% load humanize %}
+{% load copytrading_tags %}
+
+{% block title %}Strategy List{% endblock %}
+
+{% block content %}
+<style>
+    .strategy-card {
+        border-radius: 14px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .strategy-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    }
+</style>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+        <div class="col col-md-8">
+            <h4 class="mb-1">
+                {% if strategy_type == "STOCK" %}Stock Strategies{% endif %}
+                {% if strategy_type == "CRYPTO" %}Crypto Strategies{% endif %}
+                {% if strategy_type == "REIT" %}REIT Strategies{% endif %}
+            </h4>
+            <p class="text-muted mb-0">
+                Choose a fully managed strategy. Our system trades automatically on your behalf.
+            </p>
+        </div>
+        <div class="col col-md-4">
+            <a href="{% url 'strategy:strategy_leaderboard' %}" class="btn btn-primary btn-sm fw-bold mt-md-5">
+                Strategy Performance Ranking
+            </a>
+
+        </div>
+    </div>
+</div>
+<hr class="mt-2 pt-2">
+{% include "../../../notification/messages.html" %}
+<div class="row g-4">
+
+    <!-- Conservative Strategy -->
+    {% for strategy in strategies %}
+    <div class="col-xl-4 col-lg-6">
+        <div class="card strategy-card h-100">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-0">{{ strategy.name }}</h5>
+                        <!-- <small class="text-muted">{{ strategy.risk_level }} Risk</small> -->
+                    </div>
+                    {% if strategy.risk_level == 'LOW' %}
+                    <span class="badge bg-success-subtle text-success">
+                        {{ strategy.get_risk_level_display }} Risk
+                    </span>
+
+                    {% elif strategy.risk_level == 'MEDIUM' %}
+                    <span class="badge bg-primary">
+                        {{ strategy.get_risk_level_display }} Risk
+                    </span>
+
+                    {% elif strategy.risk_level == 'HIGH' %}
+                    <span class="badge bg-danger-subtle text-danger">
+                        {{ strategy.get_risk_level_display }} Risk
+                    </span>
+                    {% endif %}
+
+                </div>
+
+                <p class="text-muted">
+                    {{ strategy.description }}
+                </p>
+
+                <ul class="list-unstyled small mb-4">
+                    <li>• Target return: {{strategy.target_return_min}}-{{strategy.target_return_max}}%</li>
+                    <li>• Assets: {{ strategy.asset_types|join:", " }}</li>
+                    <li>• Drawdown tolerance: {{ strategy.risk_level }}</li>
+                </ul>
+
+                <div class="d-grid">
+                    {% if portfolio|portfolio_is_copy_trading %}
+                    <button class="btn btn-secondary w-100" disabled>
+                        Stop copy trading to select strategy
+                    </button>
+                    {% else %}
+                        {% if strategy.id in active_strategy_ids %}
+                        <button class="btn btn-secondary" disabled>
+                            Strategy Already Activated
+                        </button>
+                        {% else %}
+                        <a href="{% url 'strategy:select-strategy' strategy.id %}" class="btn btn-primary btn-sm">
+                            Select Strategy
+                        </a>
+                        {% endif %}
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

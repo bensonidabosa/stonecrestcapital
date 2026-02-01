@@ -1,0 +1,117 @@
+{% extends "../base/base.html" %}
+{% load humanize %}
+
+{% block title %}Crypto{% endblock %}
+
+{% block content %}
+<style>
+ .card {
+    border-left: 4px solid #f7931a; /* Bitcoin orange hint */
+}
+
+</style>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-semibold mb-0">Crypto Assets</h5>
+        <small class="text-muted">Digital assets traded 24/7 with higher volatility.</small>
+    </div>
+
+    <a href="{% url 'strategy:list_by_type' 'CRYPTO' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-building me-1"></i>
+        Trade Crypto
+    </a>
+</div>
+
+<!-- Income Summary -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Total Crypto Value</small>
+            <h5 class="fw-bold">${{ total_value|floatformat:2|intcomma }}</h5>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Annual Yield</small>
+            <h5 class="fw-bold text-success">{{ avg_annual_yield|floatformat:1 }}%</h5>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Dividend Income (Monthly)</small>
+            <h5 class="fw-bold">${{ monthly_income|floatformat:2|intcomma }}</h5>
+        </div>
+    </div>
+</div>
+
+
+<!-- crypto holding  -->
+ <div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+                <tr>
+                    <th>Asset</th>
+                    <th class="text-end">Quantity</th>
+                    <th class="text-end">Avg Price</th>
+                    <th class="text-end">Current Price</th>
+                    <th class="text-end">Market Value</th>
+                    <th class="text-end">Allocated</th>
+                    <th class="text-end">Difference</th>
+                    <th class="text-end">MTQ</th>
+                    <!-- <th class="text-end">Min Trade Qty</th> -->
+                    <th class="text-end">P/L</th>
+                    <th class="text-end">P/L %</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for holding in crypto_holdings %}
+                <tr>
+                    <td>
+                        <strong>{{ holding.asset.symbol }}</strong>
+                        <div class="text-muted small">{{ holding.asset.name }}</div>
+                    </td>
+
+                    <td class="text-end">{{ holding.quantity }}</td>
+                    <td class="text-end">${{ holding.average_price|floatformat:2|intcomma }}</td>
+                    <td class="text-end">${{ holding.asset.price|floatformat:2|intcomma }}</td>
+                    <td class="text-end">${{ holding.market_value|floatformat:2|intcomma }}</td>
+
+                    <td class="text-end">${{ holding.allocated_cash|floatformat:2|intcomma }}</td>
+                    <td class="text-end text-success">
+                        <span class="{% if holding.difference >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ${{ holding.difference|floatformat:2|intcomma }}
+                        </span>
+                    </td>
+
+                    <td class="text-end">{{ holding.asset.min_trade_quantity|floatformat:2 }}</td>
+
+                    <td class="text-end text-success">
+                        {% with pnl=holding.unrealized_pnl %}
+                        <span class="{% if pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ pnl|floatformat:2|intcomma }}
+                        </span>
+                        {% endwith %}
+                    </td>
+                    <td class="text-end text-success">
+                        <span class="{% if holding.unrealized_pnl_percent >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ holding.unrealized_pnl_percent|floatformat:2 }}%
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No REIT holdings found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -4,6 +4,12 @@
 {% block title %}Stocks{% endblock %}
 
 {% block content %}
+<style>
+ .card {
+    border-left: 4px solid #f7931a; /* Bitcoin orange hint */
+}
+
+</style>
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -11,9 +17,9 @@
         <!-- <small class="text-muted">Your equity investments</small> -->
     </div>
 
-    <a href="{% url 'strategy:strategy-list' %}" class="btn btn-primary btn-sm">
+    <a href="{% url 'strategy:list_by_type' 'STOCK' %}" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-circle me-1"></i>
-        Start Trading
+        Trade Stock
     </a>
 </div>
 

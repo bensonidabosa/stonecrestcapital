@@ -139,5 +139,15 @@ def stop_strategy_view(request, strategy_allocation_id):
     return redirect('account:portfolio')
 
 
+def strategy_list_by_type(request, strategy_type):
+    strategies = Strategy.objects.filter(strategy_type=strategy_type, is_active=True)
+    return render(
+        request,
+        'account/customer/strategies/strategy_list.html',
+        {
+            'strategies': strategies,
+            'strategy_type': strategy_type
+        }
+    )
 
 

@@ -432,6 +432,55 @@ def reits_view(request):
 
 
 @login_required
+def crypto_view(request):
+    # Get the user's portfolio
+    portfolio = get_object_or_404(Portfolio, user=request.user)
+
+    # Filter REIT holdings
+    crypto_holdings = portfolio.holdings.filter(asset__asset_type='CRYPTO').select_related('asset')
+
+    total_value = Decimal('0')
+    total_yield_weighted = Decimal('0')
+    holdings_data = []
+
+    for holding in crypto_holdings:
+        asset = holding.asset
+        value = holding.market_value()
+        total_value += value
+
+        annual_yield = asset.annual_yield or Decimal('0')
+        total_yield_weighted += value * annual_yield
+
+        # Prepare table data
+        income = value * annual_yield / 100
+        holdings_data.append({
+            'symbol': asset.symbol,
+            'name': asset.name,
+            'units': holding.quantity,
+            'price': asset.price,
+            'value': value,
+            'yield': annual_yield,
+            'income': income,
+        })
+
+    # Weighted average annual yield
+    avg_annual_yield = (total_yield_weighted / total_value) if total_value else Decimal('0')
+
+    # Monthly dividend income
+    monthly_income = total_value * avg_annual_yield / 100 / 12
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "crypto_holdings": crypto_holdings,
+        "total_value": total_value,
+        "avg_annual_yield": avg_annual_yield,
+        "monthly_income": monthly_income,
+    }
+
+    return render(request, "account/customer/crypto.html", context)
+
+
+@login_required
 def reit_detail_view(request):
     return render(request, "account/customer/reit_detail.html", {
         "current_url": "reits"
