@@ -112,11 +112,12 @@ class EmailLoginView(LoginView):
     def form_valid(self, form):
         user = form.get_user()
 
-        # Block login if email not verified
-        if not user.is_email_verified:
+        # Block login if email not verified (except staff)
+        if not user.is_email_verified and not user.is_staff:
             self.request.session['resend_verification_user_id'] = user.id
             messages.warning(self.request, "Your email is not verified.")
             return redirect('frontend:resend_verification')
+
 
         # OTP login enabled in settings
         if getattr(settings, 'LOGIN_OTP_ENABLED', True):

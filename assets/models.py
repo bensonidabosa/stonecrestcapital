@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 class Asset(models.Model):
     ASSET_TYPES = (
         ('STOCK', 'Stock'),
-        ('ETF', 'ETF'),
+        # ('ETF', 'ETF'),
         ('REIT', 'REIT'),
         ("CRYPTO", "Crypto"),
     )
