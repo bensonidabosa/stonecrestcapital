@@ -9,6 +9,9 @@
         border-radius: 12px;
         background-color: #f9fafb;
     }
+    .card {
+        border-left: 4px solid #041757; /* Bitcoin orange hint */
+    }
 </style>
 <!-- page header -->
 <div class="container-fluid mb-4">
@@ -175,13 +178,13 @@
 <!-- Tabs Content -->
 <div class="tab-content mt-3">
     <div class="tab-pane fade show active" id="stocks" role="tabpanel">
-        {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=stock_holdings asset_type="STOCK" %}
+        {% include "account/customer/partials/holding_table_for_copy.html" with holdings=stock_holdings asset_type="STOCK" %}
     </div>
     <div class="tab-pane fade" id="reit" role="tabpanel">
-        {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=reit_holdings asset_type="REIT" %}
+        {% include "account/customer/partials/holding_table_for_copy.html" with holdings=reit_holdings asset_type="REIT" %}
     </div>
     <div class="tab-pane fade" id="crypto" role="tabpanel">
-        {% include "account/customer/partials/portfolio_holdings_table.html" with holdings=crypto_holdings asset_type="CRYPTO" %}
+        {% include "account/customer/partials/holding_table_for_copy.html" with holdings=crypto_holdings asset_type="CRYPTO" %}
     </div>
 </div>
     </div>

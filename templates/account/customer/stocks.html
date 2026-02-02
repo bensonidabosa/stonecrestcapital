@@ -6,9 +6,8 @@
 {% block content %}
 <style>
  .card {
-    border-left: 4px solid #f7931a; /* Bitcoin orange hint */
+    border-left: 4px solid #041757; /* Bitcoin orange hint */
 }
-
 </style>
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -25,22 +24,47 @@
 
 <!-- Summary Cards -->
 <div class="row g-4 mb-4">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card p-3">
-            <small class="text-muted">Total Stock Value</small>
-            <h5 class="fw-bold">${{ total_stock_value|floatformat:2|intcomma }}</h5>
+            <small class="text-muted">Allocated Cash</small>
+            <h5 class="fw-bold">
+                ${{ total_allocated_value|floatformat:2|intcomma }}
+            </h5>
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card p-3">
-            <small class="text-muted">Unrealized P&L</small>
-            <h5 class="fw-bold {% if total_unrealized_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
-                {% if total_unrealized_pnl >= 0 %}+{% endif %}${{ total_unrealized_pnl|floatformat:2|intcomma }}
+            <small class="text-muted">Current Value</small>
+            <h5 class="fw-bold
+                {% if total_current_value < total_allocated_value %}
+                    text-danger
+                {% else %}
+                    text-success
+                {% endif %}
+            ">
+                ${{ total_current_value|floatformat:2|intcomma }}
+            </h5>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <small class="text-muted">Difference</small>
+            <h5 class="fw-bold
+                {% if total_difference < 0 %}
+                    text-danger
+                {% else %}
+                    text-success
+                {% endif %}
+            ">
+                {% if total_difference > 0 %}+{% endif %}
+                ${{ total_difference|floatformat:2|intcomma }}
             </h5>
         </div>
     </div>
 </div>
+
 
 
 <!-- Stocks Table -->
@@ -49,24 +73,37 @@
         <table class="table align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Symbol</th>
-                    <th>Stock Name</th>
+                    <th>Asset</th>
                     <th class="text-end">Units</th>
                     <th class="text-end">AVG Price</th>
                     <th class="text-end">Current Price</th>
                     <th class="text-end">Market Value</th>
+                    <th class="text-end">Allocated</th>
+                    <th class="text-end">Difference</th>
                     <th class="text-end">P/L</th>
+                    <th class="text-end">P/L%</th>
                 </tr>
             </thead>
             <tbody>
                 {% for holding in stock_holdings %}
                 <tr>
-                    <td><strong>{{ holding.asset.symbol }}</strong></td>
-                    <td>{{ holding.asset.name }}</td>
+                    <td>
+                        <strong>{{ holding.asset.symbol }}</strong>
+                        <div class="text-muted small">{{ holding.asset.name }}</div>
+                    </td>
                     <td class="text-end">{{ holding.quantity }}</td>
                     <td class="text-end">${{ holding.average_price|intcomma }}</td>
                     <td class="text-end">${{ holding.asset.price|floatformat:2 }}</td>
                     <td class="text-end">${{ holding.market_value|floatformat:2 }}</td>
+                    <td class="text-end">${{ holding.allocated_cash|floatformat:2 }}</td>
+                    <td class="text-end">${{ holding.difference|floatformat:2 }}</td>
+                    <td class="text-end">
+                        {% with pnl=holding.unrealized_pnl %}
+                        <span class="{% if pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ pnl|floatformat:2|intcomma }}
+                        </span>
+                        {% endwith %}
+                    </td>
                     <td class="text-end">
                         {% with pnl=holding.unrealized_pnl %}
                         <span class="{% if pnl >= 0 %}text-success{% else %}text-danger{% endif %}">

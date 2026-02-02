@@ -4,6 +4,7 @@ from django.contrib import messages
 from decimal import Decimal
 
 from portfolios.models import Portfolio
+from strategies.models import StrategyHolding
 from .models import CopyRelationship
 from .services import copy_leader_strategies_to_follower, stop_copying_and_unwind
 
@@ -106,9 +107,9 @@ def user_copy_trade_detail(request, copy_id):
     asset_alloc_map = {}
     for sa in copy_strategy_allocs:
         for alloc in sa.strategy.allocations.select_related('asset'):
-            allocated_cash = (alloc.percentage / 100) * sa.allocated_cash
+            allocated_cash = (alloc.percentage / Decimal('100.0')) * sa.allocated_cash
             asset_alloc_map[alloc.asset.id] = (
-                asset_alloc_map.get(alloc.asset.id, Decimal("0.00")) + allocated_cash
+                asset_alloc_map.get(alloc.asset.id, Decimal('0.00')) + allocated_cash
             )
 
     # Filter holdings for this copy's assets and calculate differences
@@ -117,6 +118,18 @@ def user_copy_trade_detail(request, copy_id):
         if holding.asset.id in asset_alloc_map:
             holding.allocated_cash = asset_alloc_map[holding.asset.id]
             holding.difference = holding.market_value() - holding.allocated_cash
+
+            # Compute decimals for display
+            if holding.asset.asset_type == "CRYPTO":
+                holding.decimals = 8
+            else:
+                holding.decimals = 2
+
+            # Compute P/L and % for display
+            holding.market_value_calc = holding.market_value()
+            holding.unrealized_pnl_calc = holding.unrealized_pnl()
+            holding.unrealized_pnl_percent_calc = holding.unrealized_pnl_percent()
+
             holdings.append(holding)
 
     # Split holdings by asset type
@@ -124,26 +137,87 @@ def user_copy_trade_detail(request, copy_id):
     reit_holdings = [h for h in holdings if h.asset.asset_type == "REIT"]
     crypto_holdings = [h for h in holdings if h.asset.asset_type == "CRYPTO"]
 
-    # --- New: calculate copy summary ---
+    # --- Copy summary ---
     invested = copy.invested  # allocated - remaining
-    current_value = sum(h.market_value() for h in holdings)  # total market value
+    current_value = sum(h.market_value() for h in holdings)
     percent_change = ((current_value - invested) / invested * 100) if invested else 0
 
-    return render(
-        request,
-        'account/customer/copy_trading/copy_trade_detail.html',
-        {
-            'copy': copy,
-            'copy_strategy_allocs': copy_strategy_allocs,
-            'stock_holdings': stock_holdings,
-            'reit_holdings': reit_holdings,
-            'crypto_holdings': crypto_holdings,
-            # --- summary context ---
-            'invested': invested,
-            'current_value': current_value,
-            'percent_change': percent_change,
-        }
-    )
+    context = {
+        'copy': copy,
+        'copy_strategy_allocs': copy_strategy_allocs,
+        'stock_holdings': stock_holdings,
+        'reit_holdings': reit_holdings,
+        'crypto_holdings': crypto_holdings,
+        'invested': invested,
+        'current_value': current_value,
+        'percent_change': percent_change,
+    }
+
+    return render(request, 'account/customer/copy_trading/copy_trade_detail.html', context)
+
+
+
+
+# @login_required
+# def user_copy_trade_detail(request, copy_id):
+#     portfolio = request.user.portfolio
+
+#     # Get the active copy
+#     copy = get_object_or_404(
+#         CopyRelationship.objects.select_related('leader__user'),
+#         id=copy_id,
+#         follower=portfolio,
+#         is_active=True
+#     )
+
+#     # Get strategies attached to this copy
+#     copy_strategy_allocs = portfolio.strategy_allocations.filter(
+#         copy_relationship=copy,
+#         status='ACTIVE'
+#     ).select_related('strategy')
+
+#     # Build allocation map: asset_id -> allocated_cash
+#     asset_alloc_map = {}
+#     for sa in copy_strategy_allocs:
+#         for alloc in sa.strategy.allocations.select_related('asset'):
+#             allocated_cash = (alloc.percentage / 100) * sa.allocated_cash
+#             asset_alloc_map[alloc.asset.id] = (
+#                 asset_alloc_map.get(alloc.asset.id, Decimal("0.00")) + allocated_cash
+#             )
+
+#     # Filter holdings for this copy's assets and calculate differences
+#     holdings = []
+#     for holding in portfolio.holdings.select_related('asset'):
+#         if holding.asset.id in asset_alloc_map:
+#             holding.allocated_cash = asset_alloc_map[holding.asset.id]
+#             holding.difference = holding.market_value() - holding.allocated_cash
+#             holdings.append(holding)
+
+#     # Split holdings by asset type
+#     stock_holdings = [h for h in holdings if h.asset.asset_type == "STOCK"]
+#     reit_holdings = [h for h in holdings if h.asset.asset_type == "REIT"]
+#     crypto_holdings = [h for h in holdings if h.asset.asset_type == "CRYPTO"]
+
+#     # --- New: calculate copy summary ---
+#     invested = copy.invested  # allocated - remaining
+#     current_value = sum(h.market_value() for h in holdings)  # total market value
+#     percent_change = ((current_value - invested) / invested * 100) if invested else 0
+
+#     return render(
+#         request,
+#         'account/customer/copy_trading/copy_trade_detail.html',
+#         {
+#             'copy': copy,
+#             'copy_strategy_allocs': copy_strategy_allocs,
+#             'stock_holdings': stock_holdings,
+#             'reit_holdings': reit_holdings,
+#             'crypto_holdings': crypto_holdings,
+#             # --- summary context ---
+#             'invested': invested,
+#             'current_value': current_value,
+#             'percent_change': percent_change,
+#         }
+#     )
 
 
 

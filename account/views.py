@@ -359,21 +359,53 @@ def asset_detail(request, symbol):
 def stocks_view(request):
     portfolio = request.user.portfolio
 
-    # Get all stock holdings for this portfolio
-    stock_holdings = portfolio.holdings.filter(asset__asset_type='STOCK').select_related('asset')
+    # Stock holdings only
+    stock_holdings = (
+        portfolio.holdings
+        .filter(asset__asset_type='STOCK')
+        .select_related('asset')
+    )
 
-    # Calculate total stock value
-    total_stock_value = sum([h.market_value() for h in stock_holdings])
+    # Build allocation map for STOCK assets only
+    asset_alloc_map = {}
 
-    # Calculate total unrealized P&L
-    total_unrealized_pnl = sum([h.unrealized_pnl() for h in stock_holdings])
+    active_strategies = portfolio.strategy_allocations.filter(
+        status='ACTIVE',
+        copy_relationship__isnull=True
+    )
+
+    for sa in active_strategies:
+        for alloc in sa.strategy.allocations.select_related('asset'):
+            if alloc.asset.asset_type != 'STOCK':
+                continue
+
+            allocated_cash = (alloc.percentage / 100) * sa.allocated_cash
+            asset_alloc_map[alloc.asset_id] = (
+                asset_alloc_map.get(alloc.asset_id, 0) + allocated_cash
+            )
+
+    total_allocated_value = 0
+    total_current_value = 0
+
+    # Attach allocated cash & difference per stock
+    for holding in stock_holdings:
+        holding.allocated_cash = asset_alloc_map.get(holding.asset_id, 0)
+        holding.current_value = holding.market_value()
+        holding.difference = holding.current_value - holding.allocated_cash
+
+        total_allocated_value += holding.allocated_cash
+        total_current_value += holding.current_value
 
     context = {
         "current_url": request.resolver_match.url_name,
         "stock_holdings": stock_holdings,
-        "total_stock_value": total_stock_value,
-        "total_unrealized_pnl": total_unrealized_pnl,
+
+        # Totals
+        "total_allocated_value": total_allocated_value,
+        "total_current_value": total_current_value,
+        "total_difference": total_current_value - total_allocated_value,
     }
+
     return render(request, "account/customer/stocks.html", context)
 
 @login_required
@@ -571,9 +603,34 @@ def leader_profile_view(request, leader_id):
 
 @login_required
 def wallet_view(request):
+    from django.db import models
+    portfolio = request.user.portfolio
+
+    # Customer-owned active capital
+    active_invested_capital = (
+        portfolio.strategy_allocations
+        .filter(status='ACTIVE', copy_relationship__isnull=True)
+        .aggregate(total=models.Sum('allocated_cash'))['total'] or 0
+    )
+
+    # Copied active capital
+    copied_invested_capital = (
+        portfolio.strategy_allocations
+        .filter(status='ACTIVE', copy_relationship__isnull=False)
+        .aggregate(total=models.Sum('allocated_cash'))['total'] or 0
+    )
+
+    # Total active capital (optional but useful)
+    total_active_capital = active_invested_capital + copied_invested_capital
+
     return render(request, "account/customer/wallet.html", {
-        "current_url": "wallet"
+        "current_url": "wallet",
+        "portfolio": portfolio,
+        "active_invested_capital": active_invested_capital,
+        "copied_invested_capital": copied_invested_capital,
+        "total_active_capital": total_active_capital,
     })
+
 
 
 @login_required

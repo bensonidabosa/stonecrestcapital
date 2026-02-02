@@ -5,6 +5,11 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
+<style>
+ .card {
+    border-left: 4px solid #041757; /* Bitcoin orange hint */
+}
+</style>
 {{ allocation_labels|json_script:"allocation-labels" }}
 {{ allocation_values|json_script:"allocation-values" }}
 {{ snapshot_labels|json_script:"snapshot-labels" }}

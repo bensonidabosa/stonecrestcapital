@@ -4,6 +4,12 @@
 
 {% block content %}
 
+<style>
+ .card {
+    border-left: 4px solid #041757; /* Bitcoin orange hint */
+}
+</style>
+
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -50,7 +56,7 @@
                     <th>Name</th>
                     <th>Type</th>
                     <th>Price</th>
-                    <th>Volatility</th>
+                    <!-- <th>Volatility</th> -->
                     <th>Yield</th>
                 </tr>
             </thead>
@@ -61,14 +67,14 @@
                     <td>{{asset.name}}.</td>
                     <td><span class="badge bg-primary">{{asset.asset_type}}</span></td>
                     <td>${{asset.price}}</td>
-                    <td>
+                    <!-- <td>
                         {% if asset.asset_type == "REIT" %}
                         —
                         {% else %}
                         {{asset.volatility}}
                         {% endif %}
 
-                    </td>
+                    </td> -->
                     <td>
                         {% if asset.asset_type == "REIT" %}
                         {{ asset.annual_yield }}%

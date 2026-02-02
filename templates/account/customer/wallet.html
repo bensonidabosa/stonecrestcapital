@@ -1,13 +1,19 @@
 {% extends "../base/base.html" %}
+{% load humanize %}
 
 {% block title %}Wallet{% endblock %}
 
 {% block content %}
+<style>
+ .card {
+    border-left: 4px solid #041757; /* Bitcoin orange hint */
+}
+</style>
 
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h5 class="fw-semibold mb-0">Wallet</h5>
+        <h5 class="fw-semibold mb-0 d-none">Wallet</h5>
         <small class="text-muted">Manage your cash and transactions</small>
     </div>
 
@@ -27,22 +33,22 @@
 <div class="row g-4 mb-4">
     <div class="col-md-4">
         <div class="card p-3">
-            <small class="text-muted">Total Balance</small>
-            <h5 class="fw-bold">$18,320.00</h5>
+            <small class="text-muted">Cash Balance</small>
+            <h5 class="fw-bold">${{ portfolio.cash_balance|floatformat:2|intcomma }}</h5>
         </div>
     </div>
 
     <div class="col-md-4">
         <div class="card p-3">
-            <small class="text-muted">Available Cash</small>
-            <h5 class="fw-bold">$6,120.00</h5>
+            <small class="text-muted">Strategies Invested Capital</small>
+            <h5 class="fw-bold">${{ active_invested_capital|floatformat:2|intcomma }}</h5>
         </div>
     </div>
 
     <div class="col-md-4">
         <div class="card p-3">
-            <small class="text-muted">Invested Capital</small>
-            <h5 class="fw-bold">$12,200.00</h5>
+            <small class="text-muted">Copy Invested Capital</small>
+            <h5 class="fw-bold">${{ copied_invested_capital|floatformat:2|intcomma }}</h5>
         </div>
     </div>
 </div>
@@ -51,7 +57,7 @@
 <div class="card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h6 class="fw-semibold mb-0">Recent Wallet Transactions</h6>
-        <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+        <!-- <a href="#" class="btn btn-sm btn-outline-primary">View All</a> -->
     </div>
 
     <div class="table-responsive">
