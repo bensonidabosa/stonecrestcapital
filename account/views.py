@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+# from django.db.models import Q
+from django.db import models
 from decimal import Decimal
 from django.db.models import Count
 from django.core.paginator import Paginator
@@ -527,7 +528,7 @@ def copy_trading_view(request):
     portfolios = (
         Portfolio.objects
         .annotate(followers_count=Count('followers'))
-        .filter(can_be_copied=True)
+        .filter(user__can_be_copied=True)
         .exclude(user=request.user)
         .exclude(user__is_staff=True)
     )
@@ -601,10 +602,6 @@ def leader_profile_view(request, leader_id):
 
     return render(request, "account/customer/copy_leader_profile.html", context)
 
-
-from django.db import models
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 
 @login_required
 def wallet_view(request):
