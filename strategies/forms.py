@@ -60,7 +60,7 @@ StrategyAllocationCreateFormSet = inlineformset_factory(
     Strategy,
     StrategyAllocation,
     form=StrategyAllocationForm,
-    extra=3,          # 3 empty rows for new allocations
+    extra=8,          # 3 empty rows for new allocations
     can_delete=False  # nothing to delete yet
 )
 

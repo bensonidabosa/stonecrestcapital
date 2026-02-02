@@ -13,7 +13,7 @@ class Portfolio(models.Model):
     cash_balance = models.DecimalField(
         max_digits=15,
         decimal_places=2,
-        default=Decimal('1000000.00')  # virtual money
+        default=Decimal('0.00')  # virtual money
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
