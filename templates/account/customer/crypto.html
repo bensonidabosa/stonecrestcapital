@@ -27,24 +27,43 @@
     <div class="col-md-4">
         <div class="card p-3">
             <small class="text-muted">Total Crypto Value</small>
-            <h5 class="fw-bold">${{ total_value|floatformat:2|intcomma }}</h5>
+            <h5 class="fw-bold">
+                ${{ total_allocated_value|floatformat:2|intcomma }}
+            </h5>
         </div>
     </div>
 
     <div class="col-md-4">
         <div class="card p-3">
-            <small class="text-muted">Annual Yield</small>
-            <h5 class="fw-bold text-success">{{ avg_annual_yield|floatformat:1 }}%</h5>
+            <small class="text-muted">Current Value</small>
+            <h5 class="fw-bold
+                {% if total_current_value < total_allocated_value %}
+                    text-danger
+                {% else %}
+                    text-success
+                {% endif %}
+            ">
+                ${{ total_current_value|floatformat:2|intcomma }}
+            </h5>
         </div>
     </div>
 
     <div class="col-md-4">
         <div class="card p-3">
-            <small class="text-muted">Dividend Income (Monthly)</small>
-            <h5 class="fw-bold">${{ monthly_income|floatformat:2|intcomma }}</h5>
+            <small class="text-muted">Difference</small>
+            <h5 class="fw-bold
+                {% if total_difference < 0 %}
+                    text-danger
+                {% else %}
+                    text-success
+                {% endif %}
+            ">
+                ${{ total_difference|floatformat:2|intcomma }}
+            </h5>
         </div>
     </div>
 </div>
+
 
 
 <!-- crypto holding  -->

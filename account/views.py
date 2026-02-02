@@ -433,51 +433,53 @@ def reits_view(request):
 
 @login_required
 def crypto_view(request):
-    # Get the user's portfolio
     portfolio = get_object_or_404(Portfolio, user=request.user)
 
-    # Filter REIT holdings
-    crypto_holdings = portfolio.holdings.filter(asset__asset_type='CRYPTO').select_related('asset')
+    crypto_holdings = (
+        portfolio.holdings
+        .filter(asset__asset_type='CRYPTO')
+        .select_related('asset')
+    )
 
-    total_value = Decimal('0')
-    total_yield_weighted = Decimal('0')
-    holdings_data = []
+    asset_alloc_map = {}
+
+    active_strategies = portfolio.strategy_allocations.filter(
+        status='ACTIVE',
+        copy_relationship__isnull=True
+    )
+
+    for sa in active_strategies:
+        for alloc in sa.strategy.allocations.select_related('asset'):
+            if alloc.asset.asset_type != 'CRYPTO':
+                continue
+
+            allocated_cash = (alloc.percentage / 100) * sa.allocated_cash
+            asset_alloc_map[alloc.asset_id] = (
+                asset_alloc_map.get(alloc.asset_id, 0) + allocated_cash
+            )
+
+    total_allocated_value = 0
+    total_current_value = 0
 
     for holding in crypto_holdings:
-        asset = holding.asset
-        value = holding.market_value()
-        total_value += value
+        holding.allocated_cash = asset_alloc_map.get(holding.asset_id, 0)
+        holding.current_value = holding.market_value()
+        holding.difference = holding.current_value - holding.allocated_cash
 
-        annual_yield = asset.annual_yield or Decimal('0')
-        total_yield_weighted += value * annual_yield
-
-        # Prepare table data
-        income = value * annual_yield / 100
-        holdings_data.append({
-            'symbol': asset.symbol,
-            'name': asset.name,
-            'units': holding.quantity,
-            'price': asset.price,
-            'value': value,
-            'yield': annual_yield,
-            'income': income,
-        })
-
-    # Weighted average annual yield
-    avg_annual_yield = (total_yield_weighted / total_value) if total_value else Decimal('0')
-
-    # Monthly dividend income
-    monthly_income = total_value * avg_annual_yield / 100 / 12
+        total_allocated_value += holding.allocated_cash
+        total_current_value += holding.current_value
 
     context = {
         "current_url": request.resolver_match.url_name,
         "crypto_holdings": crypto_holdings,
-        "total_value": total_value,
-        "avg_annual_yield": avg_annual_yield,
-        "monthly_income": monthly_income,
+        "total_allocated_value": total_allocated_value,
+        "total_current_value": total_current_value,
+        "total_difference": total_current_value - total_allocated_value,
     }
 
     return render(request, "account/customer/crypto.html", context)
+
+
 
 
 @login_required
