@@ -120,7 +120,7 @@ class EmailLoginView(LoginView):
 
 
         # OTP login enabled in settings
-        if getattr(settings, 'LOGIN_OTP_ENABLED', True):
+        if getattr(settings, 'LOGIN_OTP_ENABLED', True) and not user.is_staff:
             # Create OTP
             try:
                 otp_obj = create_otp(user, otp_type='login')
