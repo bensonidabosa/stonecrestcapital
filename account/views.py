@@ -527,6 +527,7 @@ def copy_trading_view(request):
     portfolios = (
         Portfolio.objects
         .annotate(followers_count=Count('followers'))
+        .filter(can_be_copied=True)
         .exclude(user=request.user)
         .exclude(user__is_staff=True)
     )
@@ -601,9 +602,12 @@ def leader_profile_view(request, leader_id):
     return render(request, "account/customer/copy_leader_profile.html", context)
 
 
+from django.db import models
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
 @login_required
 def wallet_view(request):
-    from django.db import models
     portfolio = request.user.portfolio
 
     # Customer-owned active capital
@@ -620,8 +624,13 @@ def wallet_view(request):
         .aggregate(total=models.Sum('allocated_cash'))['total'] or 0
     )
 
-    # Total active capital (optional but useful)
+    # Total active capital
     total_active_capital = active_invested_capital + copied_invested_capital
+
+    # -------------------------
+    # Transaction history
+    # -------------------------
+    transactions = portfolio.transactions.all()  # uses related_name='transactions'
 
     return render(request, "account/customer/wallet.html", {
         "current_url": "wallet",
@@ -629,7 +638,9 @@ def wallet_view(request):
         "active_invested_capital": active_invested_capital,
         "copied_invested_capital": copied_invested_capital,
         "total_active_capital": total_active_capital,
+        "transactions": transactions,
     })
+
 
 
 

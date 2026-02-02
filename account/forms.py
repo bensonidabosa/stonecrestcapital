@@ -23,6 +23,7 @@ class AdminCustomerEditForm(forms.ModelForm):
             "country",
             "zipcode",
             "is_active",
+            "can_be_copied",
         ]
 
         labels = {
@@ -60,6 +61,9 @@ class AdminCustomerEditForm(forms.ModelForm):
                 "placeholder": "Enter zip code"
             }),
             "is_active": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+            "can_be_copied": forms.CheckboxInput(attrs={
                 "class": "form-check-input"
             }),
         }

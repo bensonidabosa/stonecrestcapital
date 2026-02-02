@@ -112,6 +112,18 @@
                 Strategies
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_url == 'deposit' %}active{% endif %}" href="{% url 'transaction:deposit' %}">
+                <i class="bi bi-cash-stack me-2"></i>
+                Deposit
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_url == 'withdraw' %}active{% endif %}" href="{% url 'transaction:withdraw' %}">
+                <i class="bi bi-arrow-down-circle me-2"></i>
+                Withdraw
+            </a>
+        </li>
         {% endif %}
         <li class="nav-item mt-3">
             <a class="nav-link text-white bg-danger" href="{% url 'frontend:logout' %}">

@@ -13,8 +13,8 @@
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h5 class="fw-semibold mb-0 d-none">Wallet</h5>
-        <small class="text-muted">Manage your cash and transactions</small>
+        <h5 class="fw-semibold mb-0 d-none d-md-block">Wallet</h5>
+        <small class="text-muted d-none d-md-block">Manage your cash and transactions</small>
     </div>
 
     <div>
@@ -56,8 +56,7 @@
 <!-- Transactions Table -->
 <div class="card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6 class="fw-semibold mb-0">Recent Wallet Transactions</h6>
-        <!-- <a href="#" class="btn btn-sm btn-outline-primary">View All</a> -->
+        <h6 class="fw-semibold mb-0">Wallet Transactions</h6>
     </div>
 
     <div class="table-responsive">
@@ -72,32 +71,40 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>2026-01-06</td>
-                    <td><span class="badge bg-success">Deposit</span></td>
-                    <td class="text-end">$2,000.00</td>
-                    <td class="text-end">$18,320.00</td>
-                    <td><span class="badge bg-success">Completed</span></td>
-                </tr>
 
+                {% for t in transactions %}
                 <tr>
-                    <td>2026-01-04</td>
-                    <td><span class="badge bg-danger">Withdrawal</span></td>
-                    <td class="text-end">$500.00</td>
-                    <td class="text-end">$16,320.00</td>
-                    <td><span class="badge bg-success">Completed</span></td>
-                </tr>
+                    <td>{{ t.timestamp|date:"Y-m-d" }}</td>
 
-                <tr>
-                    <td>2026-01-02</td>
-                    <td><span class="badge bg-primary">Investment</span></td>
-                    <td class="text-end">$1,200.00</td>
-                    <td class="text-end">$16,820.00</td>
+                    <td>
+                        {% if t.transaction_type == "Deposit" %}
+                            <span class="badge bg-success">Deposit</span>
+                        {% elif t.transaction_type == "Withdraw" %}
+                            <span class="badge bg-danger">Withdrawal</span>
+                        {% else %}
+                            <span class="badge bg-primary">{{ t.transaction_type }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="text-end">${{ t.amount|floatformat:2|intcomma }}</td>
+
+                    <!-- Balance: if you don't store it, show placeholder -->
+                    <td class="text-end">
+                        ${{ t.balance|floatformat:2|intcomma }}
+                    </td>
+
                     <td><span class="badge bg-success">Completed</span></td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No transactions yet.</td>
+                </tr>
+                {% endfor %}
+
             </tbody>
         </table>
     </div>
 </div>
+
 
 {% endblock %}
