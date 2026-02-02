@@ -46,7 +46,7 @@ def execute_strategy(portfolio, strategy_allocation, max_cash=None):
 
 def strategy_average_return(strategy):
     portfolios = Portfolio.objects.filter(
-        portfoliostrategy__strategy=strategy
+        strategy_allocations__strategy=strategy
     )
 
     returns = [

@@ -27,14 +27,14 @@ def activate_strategy_view(request, strategy_id):
 
         if allocated_cash <= 0:
             messages.error(request, "Please allocate a positive cash amount.")
-            return redirect('strategy:list')
+            return redirect('strategy:strategy-list')
 
         if allocated_cash > portfolio.cash_balance:
             messages.error(
                 request,
                 "Allocated cash exceeds your available cash balance."
             )
-            return redirect('strategy:list')
+            return redirect('strategy:strategy-list')
         
         # 1️⃣ Deduct allocated cash from follower only once
         portfolio.cash_balance -= allocated_cash
