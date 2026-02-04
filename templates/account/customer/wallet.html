@@ -18,11 +18,11 @@
     </div>
 
     <div>
-        <a href="#" class="btn btn-success btn-sm me-2">
+        <a href="{% url 'transaction:customer_deposit' %}" class="btn btn-success btn-sm me-2">
             <i class="bi bi-plus-circle me-1"></i>
             Deposit
         </a>
-        <a href="#" class="btn btn-danger btn-sm">
+        <a href="{% url 'transaction:customer_withdraw' %}" class="btn btn-danger btn-sm">
             <i class="bi bi-dash-circle me-1"></i>
             Withdraw
         </a>
@@ -65,8 +65,8 @@
                 <tr>
                     <th>Date</th>
                     <th>Type</th>
-                    <th class="text-end">Amount</th>
-                    <th class="text-end">Balance</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -86,14 +86,28 @@
                         {% endif %}
                     </td>
 
-                    <td class="text-end">${{ t.amount|floatformat:2|intcomma }}</td>
+                    <td>${{ t.amount|floatformat:2|intcomma }}</td>
 
                     <!-- Balance: if you don't store it, show placeholder -->
-                    <td class="text-end">
+                    <td>
                         ${{ t.balance|floatformat:2|intcomma }}
                     </td>
 
-                    <td><span class="badge bg-success">Completed</span></td>
+                    <td>
+                        {% if t.status == "PENDING" %}
+                        <span class="badge bg-warning-subtle text-warning">
+                            Pending
+                        </span>
+                        {% elif t.status == "SUCCESSFUL" %}
+                        <span class="badge bg-success-subtle text-success">
+                            Successful
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger-subtle text-danger">
+                            Failed
+                        </span>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
