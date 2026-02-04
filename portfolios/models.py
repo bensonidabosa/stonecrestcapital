@@ -83,11 +83,9 @@ class Portfolio(models.Model):
     def profit_loss(self):
         return self.total_investment_value() - self.total_allocated_cash()
 
-    # def return_percentage(self):
-    #     initial = self.initial_value()
-    #     if initial == 0:
-    #         return 0
-    #     return (self.total_return() / initial) * 100
+    @property
+    def is_kyc_verified(self):
+        return hasattr(self, "kyc") and self.kyc.status == "VERIFIED"
     
 
 class Holding(models.Model):
@@ -133,8 +131,7 @@ class Holding(models.Model):
         if cost == 0:
             return Decimal('0')
         return (self.unrealized_pnl() / cost) * Decimal('100')
-
-
+    
 
 class RebalanceLog(models.Model):
     portfolio = models.ForeignKey(

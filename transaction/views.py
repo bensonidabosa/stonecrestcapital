@@ -138,6 +138,13 @@ def customer_withdraw_view(request):
                     "You don't have enough cash balance to complete this withdrawal."
                 )
             else:
+
+                if not portfolio.is_kyc_verified:
+                    messages.error(
+                        request,
+                        "You must complete identity verification (KYC) before making a withdrawal."
+                    )
+                    return redirect('portfolio:verify_kyc')
                 # Deduct from balance and save
                 portfolio.cash_balance -= trans.amount
                 portfolio.save()
