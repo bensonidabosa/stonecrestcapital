@@ -198,12 +198,14 @@
                 <tr>
                     <td>{{ t.timestamp|date:"Y-m-d" }}</td>
                     <td>
-                        {% if t.transaction_type == "Deposit" %}
+                        {% if t.transaction_type == "DEPOSIT" %}
                         <span class="badge bg-success">Deposit</span>
-                        {% elif t.transaction_type == "Withdraw" %}
+                        {% elif t.transaction_type == "WITHDRAW" %}
                         <span class="badge bg-danger">Withdrawal</span>
                         {% else %}
-                        <span class="badge bg-warning">{{ t.transaction_type }}</span>
+                        <span class="badge bg-warning">
+                            {{ t.get_transaction_type_display }}
+                        </span>
                         {% endif %}
                     </td>
                     <td>{{ t.payment_method }}</td>

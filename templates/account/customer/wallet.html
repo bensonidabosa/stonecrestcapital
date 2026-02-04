@@ -5,9 +5,10 @@
 
 {% block content %}
 <style>
- .card {
-    border-left: 4px solid #041757; /* Bitcoin orange hint */
-}
+    .card {
+        border-left: 4px solid #041757;
+        /* Bitcoin orange hint */
+    }
 </style>
 
 <!-- Page Header -->
@@ -77,12 +78,14 @@
                     <td>{{ t.timestamp|date:"Y-m-d" }}</td>
 
                     <td>
-                        {% if t.transaction_type == "Deposit" %}
-                            <span class="badge bg-success">Deposit</span>
-                        {% elif t.transaction_type == "Withdraw" %}
-                            <span class="badge bg-danger">Withdrawal</span>
+                        {% if t.transaction_type == "DEPOSIT" %}
+                        <span class="badge bg-success">Deposit</span>
+                        {% elif t.transaction_type == "WITHDRAW" %}
+                        <span class="badge bg-danger">Withdrawal</span>
                         {% else %}
-                            <span class="badge bg-primary">{{ t.transaction_type }}</span>
+                        <span class="badge bg-warning">
+                            {{ t.get_transaction_type_display }}
+                        </span>
                         {% endif %}
                     </td>
 

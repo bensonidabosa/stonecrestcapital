@@ -93,6 +93,9 @@ class CustomerTransactionForm(forms.ModelForm):
     def __init__(self, *args, transaction_type=None, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # 👇 STORE CONTEXT
+        self.transaction_type = transaction_type
+
         self.fields['currency'].required = False
         self.fields['currency'].initial = 'USD'
 
@@ -105,6 +108,10 @@ class CustomerTransactionForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         payment_method = cleaned_data.get("payment_method")
+
+        # 🚫 Do NOT enforce withdraw rules on deposits
+        if self.transaction_type != "WITHDRAW":
+            return cleaned_data
 
         if payment_method == "WIRE":
             if not cleaned_data.get("destination_bank"):

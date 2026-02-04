@@ -15,7 +15,7 @@ def deposit_view(request):
         form = TransactionForm(request.POST)
         if form.is_valid():
             trans = form.save(commit=False)
-            trans.transaction_type = 'Deposit'
+            trans.transaction_type = 'DEPOSIT'
             trans.save()
 
             # Update the selected portfolio cash_balance
@@ -43,7 +43,7 @@ def withdraw_view(request):
         form = TransactionForm(request.POST)
         if form.is_valid():
             trans = form.save(commit=False)
-            trans.transaction_type = 'Withdraw'
+            trans.transaction_type = 'WITHDRAW'
 
             portfolio = trans.portfolio
 
@@ -76,12 +76,14 @@ def customer_deposit_view(request):
     )
 
     if request.method == "POST":
-        form = CustomerTransactionForm(request.POST)
+        form = CustomerTransactionForm(request.POST, transaction_type="DEPOSIT")
 
         if form.is_valid():
             trans = form.save(commit=False)
-            trans.transaction_type = 'Deposit'
+            trans.transaction_type = 'DEPOSIT'
             trans.portfolio = portfolio
+
+            trans.balance = portfolio.cash_balance
             trans.save()
 
             messages.success(request, "Your deposit request has been received and is currently being processed.")
@@ -122,7 +124,7 @@ def customer_withdraw_view(request):
     )['total'] or 0
 
     if request.method == "POST":
-        form = CustomerTransactionForm(request.POST)
+        form = CustomerTransactionForm(request.POST, transaction_type="WITHDRAW")
 
         if form.is_valid():
             trans = form.save(commit=False)
