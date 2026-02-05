@@ -113,17 +113,29 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {% if current_url == 'admin_deposit_requests' %}active{% endif %}" href="{% url 'transaction:admin_deposit_requests' %}">
+                <i class="bi bi-cash-stack me-2"></i>
+                Deposit Requests
+            </a>
+        </li>
+        <!-- <li class="nav-item">
             <a class="nav-link {% if current_url == 'deposit' %}active{% endif %}" href="{% url 'transaction:deposit' %}">
                 <i class="bi bi-cash-stack me-2"></i>
                 Deposit
             </a>
-        </li>
+        </li> -->
         <li class="nav-item">
+            <a class="nav-link {% if current_url == 'admin_withdraw_requests' %}active{% endif %}" href="{% url 'transaction:admin_withdraw_requests' %}">
+                <i class="bi bi-arrow-down-circle me-2"></i>
+                Withdrawal Requests
+            </a>
+        </li>
+        <!-- <li class="nav-item">
             <a class="nav-link {% if current_url == 'withdraw' %}active{% endif %}" href="{% url 'transaction:withdraw' %}">
                 <i class="bi bi-arrow-down-circle me-2"></i>
                 Withdraw
             </a>
-        </li>
+        </li> -->
         <li class="nav-item">
             <a class="nav-link {% if current_url == 'admin_kyc_list' %}active{% endif %}" href="{% url 'staff:admin_kyc_list' %}">
                 <i class="bi bi-arrow-down-circle me-2"></i>

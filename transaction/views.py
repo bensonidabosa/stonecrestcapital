@@ -4,6 +4,7 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 
+from.models import Transaction
 from .forms import TransactionForm, CustomerTransactionForm
 from staff.decorators import admin_staff_only
 
@@ -67,6 +68,125 @@ def withdraw_view(request):
     return render(request, "transactions/withdraw.html", {"form": form})
 
 
+@login_required
+@admin_staff_only
+@transaction.atomic
+def admin_deposit_requests_view(request):
+    deposits = (
+        Transaction.objects
+        .select_related('portfolio', 'portfolio__user')
+        .filter(transaction_type='DEPOSIT', status='PENDING')
+        .order_by('-timestamp')
+    )
+
+    if request.method == "POST":
+        transaction_id = request.POST.get("transaction_id")
+        action = request.POST.get("action")
+
+        deposit = get_object_or_404(
+            Transaction,
+            id=transaction_id,
+            transaction_type='DEPOSIT',
+            status='PENDING'
+        )
+
+        portfolio = deposit.portfolio
+
+        if action == "approve":
+            portfolio.cash_balance += deposit.amount
+            portfolio.save(update_fields=['cash_balance'])
+
+            deposit.status = 'SUCCESSFUL'
+            deposit.balance = portfolio.cash_balance
+            deposit.save(update_fields=['status', 'balance'])
+
+            messages.success(
+                request,
+                f"Deposit of {deposit.amount} approved successfully."
+            )
+
+        elif action == "decline":
+            deposit.status = 'FAILED'
+            deposit.save(update_fields=['status'])
+
+            messages.error(
+                request,
+                f"Deposit of {deposit.amount} was declined."
+            )
+
+        return redirect('transaction:admin_deposit_requests')
+
+    return render(
+        request,
+        "transactions/admin/deposit_requests.html",
+        {
+            "deposits": deposits,
+            "current_url": request.resolver_match.url_name,
+        }
+    )
+
+
+@login_required
+@admin_staff_only
+@transaction.atomic
+def admin_withdraw_requests_view(request):
+    withdrawals = (
+        Transaction.objects
+        .select_related('portfolio', 'portfolio__user')
+        .filter(transaction_type='WITHDRAW', status='PENDING')
+        .order_by('-timestamp')
+    )
+
+    if request.method == "POST":
+        transaction_id = request.POST.get("transaction_id")
+        action = request.POST.get("action")
+
+        withdraw = get_object_or_404(
+            Transaction,
+            id=transaction_id,
+            transaction_type='WITHDRAW',
+            status='PENDING'
+        )
+
+        portfolio = withdraw.portfolio
+
+        if action == "approve":
+            # Funds already deducted at request time
+            withdraw.status = 'SUCCESSFUL'
+            withdraw.save(update_fields=['status'])
+
+            messages.success(
+                request,
+                f"Withdrawal of {withdraw.amount} approved successfully."
+            )
+
+        elif action == "decline":
+            # Refund the reserved funds
+            portfolio.cash_balance += withdraw.amount
+            portfolio.save(update_fields=['cash_balance'])
+
+            withdraw.status = 'FAILED'
+            withdraw.balance = portfolio.cash_balance
+            withdraw.save(update_fields=['status', 'balance'])
+
+            messages.warning(
+                request,
+                f"Withdrawal of {withdraw.amount} was successfully declined and funds were returned to owner's poprtfolio balance."
+            )
+
+        return redirect('transaction:admin_withdraw_requests')
+
+    return render(
+        request,
+        "transactions/admin/withdraw_requests.html",
+        {
+            "withdrawals": withdrawals,
+            "current_url": request.resolver_match.url_name,
+        }
+    )
+
+
+# customer start
 @login_required
 @transaction.atomic
 def customer_deposit_view(request):
