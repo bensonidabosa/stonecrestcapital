@@ -1,0 +1,78 @@
+<h5 class="mb-3">KYC Review</h5>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p><strong>Name:</strong> {{ kyc.first_name }} {{ kyc.last_name }}</p>
+        <p><strong>Email:</strong> {{ kyc.portfolio.user.email }}</p>
+        <p><strong>Status:</strong> {{ kyc.get_status_display }}</p>
+        <p><strong>Submitted:</strong> {{ kyc.submitted_at|date:"Y-m-d H:i" }}</p>
+    </div>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">Personal Information</div>
+    <div class="card-body">
+        <p><strong>Date of Birth:</strong> {{ kyc.date_of_birth }}</p>
+        <p><strong>Nationality:</strong> {{ kyc.nationality }}</p>
+    </div>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">Identity Document</div>
+    <div class="card-body">
+        <p><strong>Document Type:</strong> {{ kyc.get_document_type_display }}</p>
+        <p><strong>Document Number:</strong> {{ kyc.document_number }}</p>
+
+        {% if kyc.document_image %}
+            <a href="{{ kyc.document_image.url }}" target="_blank">
+                View Document
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">Proof of Address</div>
+    <div class="card-body">
+        <p><strong>Address:</strong> {{ kyc.address }}</p>
+        <p><strong>City:</strong> {{ kyc.city }}</p>
+        <p><strong>Country:</strong> {{ kyc.country }}</p>
+
+        {% if kyc.address_proof %}
+            <a href="{{ kyc.address_proof.url }}" target="_blank">
+                View Proof of Address
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label class="form-label">Rejection Reason (required if rejecting)</label>
+        <textarea name="rejection_reason"
+                  class="form-control"
+                  rows="3"></textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit"
+                name="action"
+                value="approve"
+                class="btn btn-success">
+            Approve
+        </button>
+
+        <button type="submit"
+                name="action"
+                value="reject"
+                class="btn btn-danger">
+            Reject
+        </button>
+    </div>
+</form>

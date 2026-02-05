@@ -124,6 +124,12 @@
                 Withdraw
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_url == 'admin_kyc_list' %}active{% endif %}" href="{% url 'staff:admin_kyc_list' %}">
+                <i class="bi bi-arrow-down-circle me-2"></i>
+                KYC Submissions
+            </a>
+        </li>
         {% endif %}
         <li class="nav-item mt-3">
             <a class="nav-link text-white bg-danger" href="{% url 'frontend:logout' %}">

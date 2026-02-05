@@ -28,4 +28,9 @@ urlpatterns = [
     path('strategies/<int:pk>/delete/', views.admin_strategy_delete_view,
     name='admin_strategy_delete'),
 
+    path('kyc-list/', views.admin_kyc_list_view,name='admin_kyc_list'),
+    path('kyc/<int:kyc_id>/review/', views.admin_kyc_review_view,
+    name='admin_kyc_review'),
+
+
 ]

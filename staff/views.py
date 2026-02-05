@@ -1,8 +1,11 @@
 import time
+import traceback
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.utils import timezone
+from django.conf import settings
 
 from .decorators import admin_staff_only
 from assets.forms import AssetForm
@@ -10,8 +13,9 @@ from assets.models import Asset
 from trading.models import Trade
 from strategies.models import Strategy
 from strategies import forms 
-from account.models import User
+from account.models import User, KYC
 from account.forms import AdminCustomerEditForm
+from notification.email_utils import send_html_email
 
 
 @login_required
@@ -291,3 +295,99 @@ def admin_strategy_delete_view(request, pk):
         'account/admin/strategy_confirm_delete.html',
         context
     )
+
+
+@login_required
+@admin_staff_only
+def admin_kyc_list_view(request):
+    kycs = (
+        KYC.objects
+        .select_related('portfolio__user')
+        .filter(status__in=[KYC.STATUS_PENDING, KYC.STATUS_REJECTED ])
+        .order_by('-submitted_at')
+    )
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "kycs": kycs,
+    }
+
+    return render(request, 'account/admin/kyc_list.html', context)
+
+
+@login_required
+@admin_staff_only
+def admin_kyc_review_view(request, kyc_id):
+    kyc = get_object_or_404(
+        KYC.objects.select_related('portfolio__user'),
+        id=kyc_id
+    )
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        user = kyc.portfolio.user
+
+        if action == "approve":
+            kyc.status = KYC.STATUS_VERIFIED
+            kyc.reviewed_at = timezone.now()
+            kyc.rejection_reason = ""
+            kyc.save()
+            try:
+                send_html_email(
+                    subject="Your Identity Verification Has Been Approved",
+                    to_email=[user.email],
+                    template_name="notification/emails/kyc_approved.html",
+                    context={
+                        "user": user, 
+                        "site_name": settings.SITE_NAME,
+                    },
+                )
+
+                messages.success(
+                    request,
+                    f"KYC approved for {user.email}."
+                )
+            except Exception:
+                # If SMTP not configured, just print OTP
+                print("\nEMAIL ERROR:")
+                traceback.print_exc()
+            return redirect('staff:admin_kyc_list')
+
+        elif action == "reject":
+            reason = request.POST.get("rejection_reason", "").strip()
+
+            if not reason:
+                messages.error(request, "Rejection reason is required.")
+            else:
+                kyc.status = KYC.STATUS_REJECTED
+                kyc.reviewed_at = timezone.now()
+                kyc.rejection_reason = reason
+                kyc.save()
+
+                try:
+                    send_html_email(
+                        subject="Update on Your Verification Request",
+                        to_email=[user.email],
+                        template_name="notification/emails/kyc_rejected.html",
+                        context={
+                            "user": user, 
+                            "site_name": settings.SITE_NAME,
+                            "reason": reason,
+                        },
+                    )
+                    messages.success(
+                        request,
+                        f"KYC rejected for {user.email}."
+                    )
+                except Exception:
+                    # If SMTP not configured, just print OTP
+                    print("\nEMAIL ERROR:")
+                    traceback.print_exc()
+                return redirect('staff:admin_kyc_list')
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "kyc": kyc,
+    }
+
+    return render(request, 'account/admin/kyc_review.html', context)
