@@ -229,7 +229,7 @@ def customer_dashboard_view(request):
     # --------------------------------------------------
     # Render
     # --------------------------------------------------
-    return render(request, "account/customer/dashboard.html", {
+    return render(request, "customer/dashboard.html", {
         "current_url": request.resolver_match.url_name,
         "portfolio": portfolio,
         "holding_count": holding_count,

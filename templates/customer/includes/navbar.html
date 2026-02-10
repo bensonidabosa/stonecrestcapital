@@ -1,0 +1,42 @@
+{% load static %}
+<!-- Mobile Navbar -->
+<nav class="navbar navbar-dark bg-dark d-lg-none px-3">
+  <button class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">☰</button>
+  <span class="navbar-brand ms-2">Command Center</span>
+</nav>
+
+<!-- Mobile Sidebar -->
+<div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="mobileSidebar">
+  <div class="offcanvas-header">
+    <div class="logo">
+      <img src="{% static 'account/images/logo-stone.png' %}" alt="" width="180">
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <!-- <hr class="border-white"> -->
+  <div class="offcanvas-body mt-5">
+    <ul class="nav flex-column">
+      <li><a class="nav-link active" href="#"><i class="bi bi-speedometer2 me-2"></i> Command Center</a></li>
+      <li><a class="nav-link" href="#"><i class="bi bi-briefcase me-2"></i> Capital Allocation</a></li>
+      <li><a class="nav-link" href="#"><i class="bi bi-buildings me-2"></i> Real Estate Trusts</a></li>
+      <li><a class="nav-link" href="#"><i class="bi bi-diagram-3 me-2"></i> Treasury</a></li>
+      <li><a class="nav-link" href="#"><i class="bi bi-people me-2"></i> Security</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Desktop Sidebar -->
+<div class="sidebar d-none d-lg-block">
+  <div class="logo">
+    <img src="{% static 'account/images/logo-stone.png' %}" alt="" width="180">
+  </div>
+  <!-- <hr class="border-white"> -->
+
+  <ul class="nav flex-column mt-5">
+    <li><a class="nav-link active" href="#"><i class="bi bi-speedometer2 me-2"></i> Command Center</a></li>
+    <li><a class="nav-link" href="#"><i class="bi bi-briefcase me-2"></i> Capital Allocation</a></li>
+    <li><a class="nav-link" href="#"><i class="bi bi-buildings me-2"></i> Real Estate Trusts</a></li>
+    <li><a class="nav-link" href="#"><i class="bi bi-diagram-3 me-2"></i> Treasury</a></li>
+    <li><a class="nav-link" href="#"><i class="bi bi-people me-2"></i> Security</a></li>
+  </ul>
+</div>

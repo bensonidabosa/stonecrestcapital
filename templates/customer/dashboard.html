@@ -1,0 +1,144 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 main-head">
+    <h3 class="text-dark">Your Command Center</h3>
+    <i class="bi bi-search fs-5 text-dark"></i>
+</div>
+<hr class="border-dark">
+
+<!-- next -->
+<div class="row">
+    <div class="col-md-4 mb-3 mb-md-0">
+
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-4">Total Mandate Value</h5>
+
+                <div class="donut-chart-container">
+                    <canvas id="donutChart"></canvas>
+                    <div class="center-text">
+                        <span>$1,200,000</span>
+                        <!-- <small>Total</small> -->
+                    </div>
+                </div>
+
+                <a href="" class="btn btn-outline-primary mt-4 rounded-pill">Allocate Capital</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-8">
+        <div class="card glass-card shadow-sm mb-3">
+            <div class="card-body">
+                <h6>Capital Drift Alert</h6>
+                <p class="text-secondary small">Unbalanced: 36% now inside a periodic selection.</p>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Performance Yield</h5>
+
+                <div class="line-chart-container">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- strategy part -->
+<div class="row mt-4">
+    <h5 class="mb-3 text-dark">Strategic Allocations</h5>
+    <div class="col-md-8">
+
+        <div class="row">
+
+
+            <div class="col-md-4 mb-3">
+                <div class="card text-center strategy-card">
+                    <div class="card-body">
+
+                        <div class="icon-circle mx-auto mb-3">
+                            <i class="bi bi-globe"></i>
+                        </div>
+
+                        <h6>The Foundation Plan</h6>
+                        <p class="text-muted">Some text now now now</p>
+                        <a href="" class="btn btn-primary rounded-pill mt-2">
+                            Allocate Capital
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center strategy-card">
+                    <div class="card-body">
+
+                        <div class="icon-circle mx-auto mb-3">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+
+                        <h6>The Alpha Plan</h6>
+                        <p class="text-muted">Some text now now now</p>
+                        <a href="" class="btn btn-primary rounded-pill mt-2">
+                            Allocate Capital
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center strategy-card">
+                    <div class="card-body">
+
+                        <div class="icon-circle mx-auto mb-3">
+                            <i class="bi bi-cpu"></i>
+                        </div>
+
+                        <h6>Digital frontier</h6>
+                        <p class="text-muted">Some text now now now</p>
+                        <a href="" class="btn btn-primary rounded-pill mt-2">
+                            Allocate Capital
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-sm mb-3">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-secondary mb-1">Capital Treasury</p>
+                        <h6 class="mb-0">$5000</h6>
+                    </div>
+
+                    <a class="btn btn-outline-primary btn-sm rounded-pill">
+                        Capital Distribution
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="mb-3 text-dark">Algorithmic Mandate</h6>
+
+                <!-- UP CHART -->
+                <div class="chart-wrapper mb-4">
+                    <canvas id="upChart"></canvas>
+                </div>
+
+                <!-- DOWN CHART -->
+                <div class="chart-wrapper">
+                    <canvas id="downChart"></canvas>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
