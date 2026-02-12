@@ -9,25 +9,23 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import os
+
 from pathlib import Path
-from dotenv import load_dotenv
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = 'django-insecure-k%1^nzu)rmyb0(@u7qdse$u^m*g7r*!@2g=0zcg#6(+0am6=(+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -40,21 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django.contrib.humanize',
-    'django_countries',
-    "anymail",
-
-    'account',
+    # my local apps
     'frontend',
-    'portfolios.apps.PortfoliosConfig',
-    'assets',
-    'staff',
-    'trading',
-    'strategies',
-    'copytrading.apps.CopytradingConfig',
-    'transaction',
-    'notification',
+    'account',
     'otp',
+    'notification',
 ]
 
 MIDDLEWARE = [
@@ -98,7 +86,6 @@ DATABASES = {
     }
 }
 
-DATABASES = {'default': dj_database_url.config(default=os.environ['DATABASE_URL'], engine='django_cockroachdb')}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -131,76 +118,17 @@ USE_I18N = True
 USE_TZ = True
 
 
-AUTH_USER_MODEL = 'account.User'
-LOGIN_URL = 'frontend:login'
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", "static")
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-from django.contrib.messages import constants as messages
-
-MESSAGE_TAGS = {
-    messages.DEBUG: 'secondary',
-    messages.INFO: 'info',
-    messages.SUCCESS: 'success',
-    messages.WARNING: 'warning',
-    messages.ERROR: 'danger',
-}
-
-# Enable or disable OTP login globally
-LOGIN_OTP_ENABLED = True
-SITE_NAME = "StoneCrest Capital"
-SITE_DOMAIN = "noveraonline.com"
-
-EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
-
-ANYMAIL = {
-    "RESEND_API_KEY": os.environ.get("RESEND_API_KEY"),
-}
-
-DEFAULT_FROM_EMAIL = "StoneCrest Capital <noreply@mail.gigifreight.org>"
-SERVER_EMAIL = DEFAULT_FROM_EMAIL
-
-
-# ----------------------------
-# SIMPLE LOGGING CONFIGURATION
-# ----------------------------
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'simple': {
-            'format': '[{levelname}] {name}: {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',  # or INFO in production
-    },
-}
-
-# ----------------------------
-# YOUR OTHER SETTINGS BELOW
-# ----------------------------
+AUTH_USER_MODEL = 'account.User'

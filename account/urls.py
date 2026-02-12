@@ -5,17 +5,11 @@ from . import views
 app_name = 'account'
 
 urlpatterns = [
-    path('dashboard/', views.customer_dashboard_view, name='customer_dashboard'),
-    path("portfolio/", views.portfolio_view, name="portfolio"),
-    path('assets/', views.assets_view, name='assets'),
-    path("assets-detail/", views.asset_detail, name="asset_detail"),
-    path('stocks/', views.stocks_view, name='stocks'),
-    path('stock-detail/', views.stock_detail_view, name='stock_detail'),
-    path('reits/', views.reits_view, name='reits'),
-    path('reits-detail/', views.reit_detail_view, name='reit_detail'),
-    path('crypto/', views.crypto_view, name='crypto'),
-    path('copy-trading/', views.copy_trading_view, name='copy_trading'),
-    path('leader-profile/<leader_id>/', views.leader_profile_view, name='leader_profile'),
-    path('wallet/', views.wallet_view, name='wallet'),
-    path('history/', views.trade_history_view, name='history'),
+    path('register/', views.register_view, name='register'),
+    path('account-created/', views.account_created_view, name='account_created'),
+    path("verify-email/<uidb64>/<token>/", views.verify_email,
+        name="verify_email",),
+    path('resend-verification/', views.resend_verification_view, name='resend_verification'),
+    path('login/', views.EmailLoginView.as_view(), name='login'),
+    path('logout/', views.UserLogoutView.as_view(), name='logout'),
 ]

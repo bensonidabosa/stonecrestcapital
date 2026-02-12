@@ -1,172 +1,131 @@
-{% extends './base/base.html' %}
+{% extends './base.html' %}
 {% load static %}
 
 {% block content %}
-<!-- Banner -->
-<div class="section mt-5 position-relative bg-attach-fixed overflow-hidden mx-auto rounded-4"
-    style="background-image: url(/static/frontend/image/img39.png); height: 70vh; max-width: 1816px;">
-    <div class="bg-overlay"></div>
-    <div class="r-container h-100 position-relative" style="z-index: 2;">
-        <div class="d-flex flex-column w-100 h-100 justify-content-center mx-auto align-items-center text-white gap-3"
-            style="max-width: 895px;">
-            <h2 class="m-0 text-white">Contact Us</h2>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'frontend:home' %}">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
-                </ol>
-            </nav>
+<!-- page-title -->
+<section class="page-title">
+    <div class="bg-layer"
+        style="background-image: url(/static/frontend/new/assets/images/background/page-title-2.jpg);"></div>
+    <div class="auto-container">
+        <div class="content-box">
+            <h1>Contact Us</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="{% url 'frontend:home' %}">Home</a></li>
+                <li><span>Contact</span></li>
+            </ul>
         </div>
-    </div>
-</div>
-<!-- banner end -->
-
-<!-- contact section -->
-<div class="section">
-    <div class="r-container d-flex flex-column gap-4">
-        <div class="row row-cols-xl-2 row-cols-1">
-            <div class="col mb-3">
-                <div class="position-relative h-100 rounded-4 overflow-hidden">
-                    <div class="bg-overlay-2"></div>
-                    <img src="{% static 'frontend/image/img38.png' %}" class="img-fluid rounded-4 h-100 w-100"
-                        style="aspect-ratio: 1/1;" alt="">
-                    <div class="custom-border-2 accent position-absolute bottom-0 end-0">
-                        <a href="" class="icon-box-2">
-                            <i class="rtmicon rtmicon-classic-phone"></i>
-                        </a>
+        <div class="info-content centred">
+            <div class="row clearfix">
+                <!-- <div class="col-lg-3 col-md-6 col-sm-12 info-block">
+                    <div class="info-block-one">
+                        <div class="inner-box">
+                            <div class="icon-box"><img src="assets/images/icons/icon-95.png" alt=""></div>
+                            <h5>Request Call Back</h5>
+                            <p>Share ph num, we will back.</p>
+                            <div class="phone-box"><input type="text" name="phone" placeholder="Ph Num..."></div>
+                        </div>
                     </div>
-                    <div class="position-absolute bottom-0 start-0 w-75 accent-primary ps-5 pb-5" style="z-index: 2;">
-                        <div class="sub-heading cta">
-                            <h6 class="m-0">Contact Us</h6>
+                </div> -->
+                <!-- <div class="col-lg-3 col-md-6 col-sm-12 info-block">
+                    <div class="info-block-one">
+                        <div class="inner-box">
+                            <div class="icon-box"><img src="assets/images/icons/icon-96.png" alt=""></div>
+                            <h5>Chat with Expert</h5>
+                            <p>Live chat with forex specialist.</p>
+                            <div class="phone-box"><button type="button" class="theme-btn btn-two"><span>Start
+                                        Chat</span></button></div>
                         </div>
-                        <h3>Any Question? Let's Ask Our Team</h3>
                     </div>
-                </div>
-            </div>
-            <div class="col mb-3">
-                <div class="d-flex flex-column gap-3 justify-content-center w-100 bg-gradient-footer p-5 rounded-4">
-                    <h4 class="accent-primary">Fill This Form</h4>
-                    <div class="position-relative w-100">
-                        <div class="success_msg toast align-items-center w-100 shadow-none mb-3 border border-success rounded-pill my-4"
-                            role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="d-flex p-2">
-                                <div class="toast-body f-18 d-flex flex-row gap-3 align-items-center text-success">
-                                    <i class="fa-solid fa-check f-36 text-success"></i>
-                                    Your Message Successfully Send.
-                                </div>
-                                <button type="button" class="me-2 m-auto bg-transparent border-0 ps-1 pe-0 text-success"
-                                    data-bs-dismiss="toast" aria-label="Close"><i
-                                        class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        </div>
-                        <div class="error_msg toast align-items-center w-100 shadow-none border-danger mb-3 my-4 border rounded-pill"
-                            role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="d-flex p-2">
-                                <div class="toast-body f-18 d-flex flex-row gap-3 align-items-center text-danger">
-                                    <i class="fa-solid fa-triangle-exclamation f-36 text-danger"></i>
-                                    Something Wrong ! Send Form Failed.
-                                </div>
-                                <button type="button" class="me-2 m-auto bg-transparent border-0 ps-1 pe-0 text-danger"
-                                    data-bs-dismiss="toast" aria-label="Close"><i
-                                        class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        </div>
-                        <div class="w-100">
-                            <div class="d-flex flex-column gap-3 p-lg-4">
-                                <div>
-                                    <form
-                                        class="contact d-flex flex-column h-100 justify-content-center w-100 needs-validation form"
-                                        novalidate="">
-                                        <div class="mb-3">
-                                            <input type="text" class="form-control py-3 px-4" name="name" id="name"
-                                                placeholder="Name" required="">
-                                            <div class="invalid-feedback">
-                                                The field is required.
-                                            </div>
-                                        </div>
-                                        <div class="row row-cols-xl-2 row-cols-1">
-                                            <div class="col mb-3">
-                                                <input type="email" class="form-control py-3 px-4" name="email"
-                                                    id="email" placeholder="Email" required="">
-                                                <div class="invalid-feedback">
-                                                    The field is required.
-                                                </div>
-                                            </div>
-                                            <div class="col mb-3">
-                                                <input type="tel" class="form-control py-3 px-4" name="phone" id="phone"
-                                                    placeholder="Phone" required="">
-                                                <div class="invalid-feedback">
-                                                    The field is required.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="text" class="form-control py-3 px-4" name="subject"
-                                                id="subject" placeholder="Subject" required="">
-                                            <div class="invalid-feedback">
-                                                The field is required.
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <textarea class="form-control py-3 px-4" name="message" rows="5"
-                                                id="message" placeholder="Message" required=""></textarea>
-                                            <div class="invalid-feedback">
-                                                The field is required.
-                                            </div>
-                                        </div>
-
-                                        <button type="submit"
-                                            class="btn btn-accent submit_form py-3 rounded-3 d-flex flex-row gap-2 justify-content-center font-2">
-                                            <span>Send Message</span>
-                                            <i class="rtmicon rtmicon-arrow-up-right fw-bold"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                </div> -->
+                <div class="col-lg-6 col-md-12 col-sm-12 info-block">
+                    <div class="info-block-two">
+                        <div class="inner-box">
+                            <h5>Quick Contact</h5>
+                            <ul class="list-item">
+                                <li><a href="tel:18007661234"><i class="flaticon-phone-call"></i>+1 800 766-1234</a>
+                                </li>
+                                <li><a href="mailto:support@stonecrestcapital.com"><i
+                                            class="flaticon-open-envelope"></i>support@stonecrestcapital.com</a></li>
+                            </ul>
+                            <h4>Business Hours</h4>
+                            <p><span>Mon - Friday :</span> 9 am to 5 pm, <span>Saturday :</span> 10 am to 1 pm</p>
+                            <!-- <h6><img src="{% static 'frontend/new/assets/images/icons/icon-97.png' %}" alt=""><a href="{% url 'frontend:contact' %}">Whatsapp</a>
+                            </h6> -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- contact end -->
+</section>
+<!-- page-title end -->
 
-<!-- address -->
-<div class="section py-0 overflow-visible position-relative" style="margin-bottom: -5rem; z-index: 1000;">
-    <div class="r-container">
-        <div class="row row-cols-xl-3 row-cols-1">
-            <div class="col mb-3">
-                <a href=""
-                    class="link d-flex flex-column h-100 justify-content-center accent-primary bg-gradient-left rounded-4 align-items-center text-center p-4 border border-5 border-primary">
-                    <i class="rtmicon rtmicon-location" style="font-size: 50px;"></i>
-                    <h5 class="fs-5">Location</h5>
-                    <span style="font-size: 14px;">KLLG St, No.99, New York City, ID 28289</span>
-                </a>
+<!-- contact-style-two -->
+<section class="contact-style-two">
+    <div class="auto-container">
+        <div class="title-inner">
+            <div class="sec-title">
+                <h6>Send Message</h6>
+                <h2>Drop a line, Stay in touch</h2>
+                <p>Please do not hesitate to contact us by sending a message.</p>
             </div>
-            <div class="col mb-3">
-                <a href=""
-                    class="link d-flex flex-column h-100 justify-content-center accent-primary bg-gradient-left rounded-4 align-items-center text-center p-4 border border-5 border-primary">
-                    <i class="rtmicon rtmicon-envelope" style="font-size: 50px;"></i>
-                    <h5 class="fs-5">Email</h5>
-                    <span style="font-size: 14px;">support@stonecrestcapital</span>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href=""
-                    class="link d-flex flex-column h-100 justify-content-center accent-primary bg-gradient-left rounded-4 align-items-center text-center p-4 border border-5 border-primary">
-                    <i class="rtmicon rtmicon-globe" style="font-size: 50px;"></i>
-                    <h5 class="fs-5">Website</h5>
-                    <span style="font-size: 14px;">www.stonecrestcapital.com</span>
-                </a>
+            <div class="special-text">
+                <div class="shape" style="background-image: url(/static/frontend/new/assets/images/shape/shape-48.png);"></div>
+                <h6><img src="{% static 'frontend/new/assets/images/icons/icon-63.png' %}" alt=""> Say Hi &amp; Hello</h6>
             </div>
         </div>
+        <div class="form-inner">
+            <form method="post" action="" id="contact-form" class="default-form">
+                <div class="row clearfix">
+                    <div class="col-lg-6 col-md-12 col-sm-12 left-column">
+                        <div class="form-group">
+                            <label><i class="fa-regular fa-user"></i> Your Name</label>
+                            <input type="text" name="username" placeholder="Enter name here" required="">
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label><i class="fa-regular fa-envelope"></i> Email Address</label>
+                                    <input type="email" name="email" placeholder="Email address" required="">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label><i class="fa-solid fa-phone"></i> Phone <span>(optional)</span></label>
+                                    <input type="text" name="phone" required="" placeholder="Ph num">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-regular fa-building"></i> Organization <span>(optional)</span></label>
+                            <input type="text" name="subject" required="" placeholder="Subject">
+                        </div>
+                        <!-- <div class="form-group">
+                            <label><i class="fa-regular fa-comment"></i> Want to Discuss About</label>
+                            <div class="select-box">
+                                <select class="selectmenu">
+                                    <option>Withdrawals</option>
+                                    <option>Currency Pairs</option>
+                                    <option>Platform & Tools</option>
+                                    <option>Monitoring & Support</option>
+                                    <option>Education & Training</option>
+                                </select>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 right-column">
+                        <label><i class="fa-solid fa-text-height"></i> Message</label>
+                        <div class="message-box">
+                            <div class="form-group">
+                                <textarea name="message" placeholder="Message goes here"></textarea>
+                            </div>
+                            <button class="theme-btn btn-two" type="submit" name="submit-form"><span>Send</span></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div class="section p-0">
-    <iframe loading="lazy" class="maps overflow-hidden"
-        src="https://maps.google.com/maps?q=London%20Eye%2C%20London%2C%20United%20Kingdom&t=m&z=14&output=embed&iwloc=near"
-        title="London Eye, London, United Kingdom" aria-label="London Eye, London, United Kingdom"></iframe>
-</div>
+</section>
+<!-- contact-style-two end -->
 {% endblock %}

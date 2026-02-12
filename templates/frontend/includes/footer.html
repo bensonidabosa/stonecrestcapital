@@ -1,0 +1,130 @@
+{% load static %}
+<!-- main-footer -->
+<footer class="main-footer bg-color-2">
+    <div class="footer-top">
+        <div class="auto-container">
+            <div class="footer-top-content">
+                <div class="form-inner">
+                    <form method="post" action="#">
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Your email address...">
+                            <button type="submit" class="theme-btn"><span>subscribe</span></button>
+                        </div>
+                    </form>
+                    <h2>Become a part</h2>
+                </div>
+                <div class="lower-box">
+                    <h2>of our update community...</h2>
+                    <div class="subscriber-box">
+                        <figure class="thumb-box"><img src="{% static 'frontend/assets/images/resource/thumb-1.jpg' %}" alt=""></figure>
+                        <span>5M+</span>
+                        <h6>Subscribers</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="widget-section">
+        <div class="auto-container">
+            <div class="row clearfix">
+                <div class="col-lg-3 col-md-6 col-sm-12 footer-column">
+                    <div class="footer-widget logo-widget">
+                        <figure class="footer-logo"><a href="{% url 'frontend:home' %}"><img src="{% static 'frontend/images/logo-stone.png' %}" alt="footer-logo" width="200"></a>
+                        </figure>
+                        <p>Access valuable insights and expertise download free trading guides today!..</p>
+                        <div class="link-box">
+                            <div class="icon-box"><i class="flaticon-book"></i></div>
+                            <h6><a href="{% url 'frontend:home' %}">Free <br>Trading Guides <i class="flaticon-right-arrow"></i></a>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-12 footer-column">
+                    <div class="footer-widget links-widget">
+                        <div class="widget-title">
+                            <h3>Contact</h3>
+                        </div>
+                        <div class="widget-content">
+                            <ul class="links-list clearfix">
+                                <li><a href="index.html">Email Us</a></li>
+                                <li><a href="index.html">Help Center</a></li>
+                                <li><a href="faq.html">Faq's</a></li>
+                                <li><a href="index.html">Live Chat</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12 footer-column">
+                    <div class="footer-widget links-widget">
+                        <div class="widget-title">
+                            <h3>Useful Links</h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="row clearfix">
+                                <div class="col-lg-6 col-md-6 col-sm-12 links-column">
+                                    <ul class="links-list clearfix">
+                                        <li><a href="{% url 'frontend:home' %}">Home</a></li>
+                                        <li><a href="index.html">Story</a></li>
+                                        <li><a href="index.html">History</a></li>
+                                        <li><a href="team.html">Our Team</a></li>
+                                        <li><a href="index.html">Trading Rules</a></li>
+                                        <li><a href="blog.html">Blog Post</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 links-column">
+                                    <ul class="links-list clearfix">
+                                        <li><a href="index.html">Markets</a></li>
+                                        <li><a href="index.html">Evaluations</a></li>
+                                        <li><a href="index.html">Affiliates</a></li>
+                                        <li><a href="index.html">Pricing</a></li>
+                                        <li><a href="index.html">Get Funded</a></li>
+                                        <li><a href="index.html">Course</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 footer-column">
+                    <div class="footer-widget contact-widget">
+                        <div class="widget-title">
+                            <h3>Social Connect</h3>
+                        </div>
+                        <div class="widget-content">
+                            <!-- <ul class="social-links">
+                                <li><a href="index.html"><i class="flaticon-facebook"></i></a></li>
+                                <li><a href="index.html"><i class="flaticon-user"></i></a></li>
+                                <li><a href="index.html"><i class="flaticon-instagram-logo"></i></a></li>
+                                <li><a href="index.html"><i class="flaticon-youtube"></i></a></li>
+                            </ul> -->
+                            <ul class="download-list">
+                                <li class="app-store">
+                                    <a href="#"><i class="flaticon-apple"></i>App Store</a>
+                                </li>
+                                <li class="play-store">
+                                    <a href="#"><img src="{% static 'frontend/assets/images/icons/icon-18.png' %}" alt="">Google
+                                        Play</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="auto-container">
+            <div class="bottom-inner">
+                <div class="copyright">
+                    <p>&copy; 2026 <a href="{% url 'frontend:home' %}">StoneCrest Capital</a> Made with Expertise, All Rights Reserved.</p>
+                </div>
+                <ul class="footer-nav">
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Legal</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- main-footer end -->

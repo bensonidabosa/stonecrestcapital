@@ -1,1 +1,0 @@
-https://your-vercel-domain.com/assets/tasks/update-prices/  every 5 minutes
