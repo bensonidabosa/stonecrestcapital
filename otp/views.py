@@ -14,11 +14,11 @@ from notification.email_utils import send_html_email
 def login_verify_otp_view(request):
     user_id = request.session.get('otp_user_id')
     if not user_id:
-        return redirect('frontend:login')
+        return redirect('account:login')
 
     user = User.objects.filter(id=user_id).first()
     if not user:
-        return redirect('frontend:login')
+        return redirect('account:login')
 
     if request.method == 'POST':
         otp_input = request.POST.get('otp')
@@ -28,7 +28,7 @@ def login_verify_otp_view(request):
             return redirect('account:customer_dashboard')
         messages.error(request, "Invalid or expired OTP.")
 
-    return render(request, 'otp/new/login_verify_otp.html', {"user": user})
+    return render(request, 'otp/login_verify_otp.html', {"user": user})
 
 
 def resend_otp_view(request):
