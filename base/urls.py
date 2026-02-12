@@ -6,4 +6,6 @@ urlpatterns = [
     path('', include('frontend.urls', namespace='frontend')),
     path('account/', include('account.urls', namespace='account')),
     path('otp/', include('otp.urls', namespace='otp')),
+    path('user/', include('customer.urls', namespace='customer')),
+    path('staff/', include('staff.urls', namespace='staff')),
 ]

@@ -236,4 +236,4 @@ def resend_verification_view(request):
 
 
 class UserLogoutView(LogoutView):
-    next_page = 'frontend:login' 
+    next_page = 'account:login' 
