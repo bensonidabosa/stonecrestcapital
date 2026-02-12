@@ -12,4 +12,11 @@ urlpatterns = [
     name="admin_edit_customer"),
     path("customers/<int:user_id>/delete/", views.admin_delete_customer_view,
     name="admin_delete_customer"),
+
+    path('plans/', views.admin_plan_list_view,name='admin_plan_list'),
+    path('plan/create/', views.admin_plan_create_view,name='admin_plan_create'),
+    path('plan/<int:pk>/edit/', views.admin_plan_edit_view,
+    name='admin_plan_edit'),
+    path('plan/<int:pk>/delete/', views.admin_plan_delete_view,
+    name='admin_plan_delete'),
 ]
