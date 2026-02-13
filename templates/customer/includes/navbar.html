@@ -48,7 +48,12 @@
       </a>
     </li>
     <li><a class="nav-link" href="#"><i class="bi bi-briefcase me-2"></i> Capital Allocation</a></li>
-    <li><a class="nav-link" href="#"><i class="bi bi-buildings me-2"></i> Real Estate Trusts</a></li>
+    <li>
+      <a class="nav-link {% if current_url == 'reits' %}active{% endif %}" href="{% url 'customer:reits' %}">
+        <i class="bi bi-buildings me-2"></i> 
+        Real Estate Trusts
+      </a>
+    </li>
     <li><a class="nav-link" href="#"><i class="bi bi-diagram-3 me-2"></i> Treasury</a></li>
     <li>
       <a class="nav-link {% if current_url == 'copy_experts' %}active{% endif %}"
@@ -91,6 +96,13 @@
         href="{% url 'staff:admin_withdraw_requests' %}">
         <i class="bi bi-arrow-down-circle me-2"></i>
         Withdrawal Requests
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if current_url == 'admin_kyc_list' %}active{% endif %}"
+        href="{% url 'staff:admin_kyc_list' %}">
+        <i class="bi bi-arrow-down-circle me-2"></i>
+        KYC Submissions
       </a>
     </li>
     {% endif %}

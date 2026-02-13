@@ -185,3 +185,29 @@ def customer_withdraw_view(request):
             "pending_withdraw_sum": pending_withdraw_sum,
         }
     )
+
+
+@login_required
+def reits_view(request):
+    portfolio = get_object_or_404(Portfolio, user=request.user)
+    reit_plans = Plan.objects.filter(plantype="REIT")
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "portfolio": portfolio,
+        "reit_plans": reit_plans,
+    }
+    return render(request, "customer/reits.html", context)
+
+
+@login_required
+def all_plans_view(request):
+    portfolio = get_object_or_404(Portfolio, user=request.user)
+    plans = Plan.objects.exclude(plantype=Plan.PlanType.REIT)
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "portfolio": portfolio,
+        "plans": plans,
+    }
+    return render(request, "customer/all_plans.html", context)

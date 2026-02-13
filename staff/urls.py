@@ -22,4 +22,8 @@ urlpatterns = [
 
     path('pending-deposits/', views.admin_deposit_requests_view, name='admin_deposit_requests'),
     path('pending-withdrawals/', views.admin_withdraw_requests_view, name='admin_withdraw_requests'),
+
+    path('kyc-list/', views.admin_kyc_list_view,name='admin_kyc_list'),
+    path('kyc/<int:kyc_id>/review/', views.admin_kyc_review_view,
+    name='admin_kyc_review'),
 ]

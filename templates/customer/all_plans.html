@@ -1,0 +1,65 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<style>
+    .strategy-card {
+        border-radius: 14px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .strategy-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    }
+</style>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col col-md-8">
+            <h4 class="mb-1 text-dark">Investment Plans</h4>
+            <p class="text-muted mb-0">
+                Choose a fully managed Plan. Our system trades automatically on your behalf.
+            </p>
+        </div>
+        <!-- <div class="col col-md-4">
+            <a href="" class="btn btn-primary btn-sm fw-bold mt-md-5">
+                Strategy Performance Ranking
+            </a>
+
+        </div> -->
+    </div>
+</div>
+<hr class="mt-2 pt-2 border-dark">
+{% include "../notification/messages.html" %}
+<div class="row g-4">
+
+    <!-- Conservative Strategy -->
+    {% for plan in plans %}
+    <div class="col-md-3 mb-3">
+        <div class="card text-center strategy-card">
+            <div class="card-body">
+
+                <div class="icon-circle mx-auto mb-3">
+                    <!-- <i class="bi bi-globe"></i> -->
+                    <i class="bi bi-lightning-charge"></i>
+                </div>
+
+                <h6>{{plan.name}}</h6>
+                <p class="text-muted">Assets: {{plan.plantype}}</p>
+                <p class="text-muted">Expected Return: {{plan.percent_increment|floatformat:1}}%</p>
+                <a href="" class="btn btn-primary rounded-pill mt-2">
+                    Activate Plan
+                </a>
+
+            </div>
+        </div>
+    </div>
+    {% empty%}
+    <div class="text-center">
+        No available featured plan
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

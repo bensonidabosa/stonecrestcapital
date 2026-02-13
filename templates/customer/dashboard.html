@@ -54,7 +54,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h5 class="text-dark">Featured Plans</h5>
         <!-- <h5 class="mb-3 text-dark">Strategic Allocations</h5> -->
-        <a href="">View All Plans</a>
+        <a href="{% url 'customer:all_plans' %}">View All Plans</a>
     </div>
     
     <div class="col-md-8">
@@ -124,8 +124,9 @@
             <div class="card shadow-sm mb-3">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                        <p class="text-secondary mb-1">Capital Treasury</p>
-                        <h6 class="mb-0">$5000</h6>
+                        <!-- <p class="text-secondary mb-1">Capital Treasury</p> -->
+                        <p class="text-secondary mb-1">Monthly Dividend</p>
+                        <h6 class="mb-0">$3,000.00</h6>
                     </div>
 
                     <a class="btn btn-outline-primary btn-sm rounded-pill">
