@@ -16,4 +16,12 @@ urlpatterns = [
     # transaction
     path('user/deposit/', views.customer_deposit_view, name='customer_deposit'),
     path('user/withdraw/', views.customer_withdraw_view, name='customer_withdraw'),
+
+    # plan
+    path('active-plans/', views.active_plan_list_view, name='active_plan_list'),
+    path('activate-plan/<plan_id>/', views.activate_plan_view, name='activate_plan'),
+
+    # order
+    path('orderplan-detail/<order_id>/', views.orderplan_detail_view, name='orderplan_detail'),
+    
 ]

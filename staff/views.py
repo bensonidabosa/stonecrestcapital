@@ -5,11 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.utils import timezone
 from django.conf import settings
+from decimal import Decimal
 
+from .services import create_manual_snapshot
 from .decorators import admin_staff_only
 from account.models import User, KYC
 from account.forms import AdminCustomerEditForm
-from plan.models import Plan
+from plan.models import Plan, OrderPlan
 from plan.forms import PlanForm
 from transaction.models import Transaction
 from notification.email_utils import send_html_email
@@ -389,3 +391,25 @@ def admin_kyc_review_view(request, kyc_id):
     }
 
     return render(request, 'staff/kyc_review.html', context)
+
+
+# snapshot
+@login_required
+@admin_staff_only
+def snapshot_positive_view(request, order_id):
+    order = get_object_or_404(OrderPlan, pk=order_id)
+    item = create_manual_snapshot(order_id, order.plan.percent_increment,
+                                  actor=request.user, reason="Staff positive toggle")
+    messages.success(request, f"Positive snapshot created for {order.plan.name}: +{item.delta_amount}")
+    return redirect('orderplan-detail', order_id=order.pk)
+
+
+@login_required
+@admin_staff_only
+def snapshot_negative_view(request, order_id):
+    order = get_object_or_404(OrderPlan, pk=order_id)
+    percent = order.plan.percent_increment * Decimal('-1')
+    item = create_manual_snapshot(order_id, percent,
+                                  actor=request.user, reason="Staff negative toggle")
+    messages.success(request, f"Negative snapshot created for {order.plan.name}: {item.delta_amount}")
+    return redirect('orderplan-detail', order_id=order.pk)

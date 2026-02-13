@@ -49,7 +49,7 @@
                         <h6>{{plan.name}}</h6>
                         <p class="text-muted">Assets: {{plan.plantype}}</p>
                         <p class="text-muted">Expected Return: {{plan.percent_increment|floatformat:1}}%</p>
-                        <a href="" class="btn btn-primary rounded-pill mt-2">
+                        <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-2">
                             Activate Plan
                         </a>
 

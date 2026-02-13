@@ -96,19 +96,19 @@ class OrderPlanItem(models.Model):
         return f"Snapshot {self.snapshot_at} for OrderPlan {self.order_plan_id}"
 
 
-# class TransactionLog(models.Model):
-#     order_plan = models.ForeignKey(OrderPlan, on_delete=models.CASCADE, related_name='transactions')
-#     before_value = models.DecimalField(max_digits=20, decimal_places=2)
-#     change_amount = models.DecimalField(max_digits=20, decimal_places=2)
-#     after_value = models.DecimalField(max_digits=20, decimal_places=2)
-#     reason = models.CharField(max_length=255)
-#     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
-#     created_at = models.DateTimeField(auto_now_add=True)
+class TransactionLog(models.Model):
+    order_plan = models.ForeignKey(OrderPlan, on_delete=models.CASCADE, related_name='transactions')
+    before_value = models.DecimalField(max_digits=20, decimal_places=2)
+    change_amount = models.DecimalField(max_digits=20, decimal_places=2)
+    after_value = models.DecimalField(max_digits=20, decimal_places=2)
+    reason = models.CharField(max_length=255)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#     class Meta:
-#         indexes = [
-#             models.Index(fields=['order_plan', 'created_at']),
-#         ]
+    class Meta:
+        indexes = [
+            models.Index(fields=['order_plan', 'created_at']),
+        ]
 
-#     def __str__(self):
-#         return f"Txn for OrderPlan {self.order_plan_id} at {self.created_at}"
+    def __str__(self):
+        return f"Txn for OrderPlan {self.order_plan_id} at {self.created_at}"

@@ -18,9 +18,9 @@
 <div class="container-fluid mt-3">
     <div class="row">
         <div class="col col-md-8">
-            <h4 class="mb-1 text-dark">Investment Plans</h4>
+            <h4 class="mb-1 text-dark">Active Investment Plans</h4>
             <p class="text-muted mb-0">
-                Choose a fully managed Plan. Our system trades automatically on your behalf.
+                Monitor and manage your active investment plans.
             </p>
         </div>
         <!-- <div class="col col-md-4">
@@ -36,29 +36,28 @@
 <div class="row g-4">
 
     <!-- Conservative Strategy -->
-    {% for plan in plans %}
+    {% for plan in active_plans %}
     <div class="col-md-3 mb-3">
         <div class="card text-center strategy-card">
             <div class="card-body">
 
                 <div class="icon-circle mx-auto mb-3">
-                    <!-- <i class="bi bi-globe"></i> -->
-                    <i class="bi bi-lightning-charge"></i>
+                    <i class="bi bi-globe"></i>
+                    <!-- <i class="bi bi-lightning-charge"></i> -->
                 </div>
 
-                <h6>{{plan.name}}</h6>
-                <p class="text-muted">Assets: {{plan.plantype}}</p>
-                <p class="text-muted">Expected Return: {{plan.percent_increment|floatformat:1}}%</p>
-                <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-2">
-                    Activate Plan
+                <h6>{{plan.plan.name}}</h6>
+                <p class="text-muted">Assets: {{plan.plan.plantype}}</p>
+                <p class="text-muted">Expected Return: {{plan.plan.percent_increment|floatformat:1}}%</p>
+                <a href="{% url 'customer:orderplan_detail' plan.id %}" class="btn btn-primary rounded-pill mt-2">
+                    View Details
                 </a>
-
             </div>
         </div>
     </div>
     {% empty%}
     <div class="text-center">
-        No available featured plan
+        No available Active plan
     </div>
     {% endfor %}
 </div>

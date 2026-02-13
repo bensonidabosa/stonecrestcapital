@@ -26,4 +26,9 @@ urlpatterns = [
     path('kyc-list/', views.admin_kyc_list_view,name='admin_kyc_list'),
     path('kyc/<int:kyc_id>/review/', views.admin_kyc_review_view,
     name='admin_kyc_review'),
+
+    path('snapshot-positive/<int:order_id>/', views.snapshot_positive_view,
+    name='snapshot_positive'),
+    path('snapshot-negative/<int:order_id>/', views.snapshot_negative_view,
+    name='snapshot_negative'),
 ]
