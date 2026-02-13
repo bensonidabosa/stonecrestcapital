@@ -12,6 +12,7 @@ class PlanForm(forms.ModelForm):
             "percent_increment",
             # "duration_days",
             "min_amount",
+            "is_featured",
         ]
 
         widgets = {
@@ -38,5 +39,9 @@ class PlanForm(forms.ModelForm):
             "min_amount": forms.NumberInput(attrs={
                 "class": "form-control",
                 "step": "0.01"
+            }),
+
+            "is_featured": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
             }),
         }

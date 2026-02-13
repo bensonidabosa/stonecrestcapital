@@ -32,6 +32,8 @@ class Plan(models.Model):
         decimal_places=2,
         default=Decimal('0.00')
     )
+
+    is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

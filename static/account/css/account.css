@@ -112,6 +112,7 @@ body {
 .nav-link {
     color: #bbb;
     border-radius: 8px;
+    font-size: 14px;
 }
 
 .sidebar ul.nav li,

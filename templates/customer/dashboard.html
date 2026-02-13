@@ -1,5 +1,6 @@
 {% extends './base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4 main-head">
@@ -19,7 +20,7 @@
                 <div class="donut-chart-container">
                     <canvas id="donutChart"></canvas>
                     <div class="center-text">
-                        <span>$1,200,000</span>
+                        <span>${{ portfolio.cash_balance|floatformat:2|intcomma }}</span>
                         <!-- <small>Total</small> -->
                     </div>
                 </div>
@@ -49,31 +50,45 @@
 </div>
 
 <!-- strategy part -->
-<div class="row mt-4">
-    <h5 class="mb-3 text-dark">Strategic Allocations</h5>
+<div class="row mt-5">
+    <div class="d-flex justify-content-between align-items-center">
+        <h5 class="text-dark">Featured Plans</h5>
+        <!-- <h5 class="mb-3 text-dark">Strategic Allocations</h5> -->
+        <a href="">View All Plans</a>
+    </div>
+    
     <div class="col-md-8">
 
         <div class="row">
 
-
+            {% for plan in plans%}
             <div class="col-md-4 mb-3">
                 <div class="card text-center strategy-card">
                     <div class="card-body">
 
                         <div class="icon-circle mx-auto mb-3">
-                            <i class="bi bi-globe"></i>
+                            <!-- <i class="bi bi-globe"></i> -->
+                             <i class="bi bi-lightning-charge"></i>
                         </div>
 
-                        <h6>The Foundation Plan</h6>
-                        <p class="text-muted">Some text now now now</p>
+                        <h6>{{plan.name}}</h6>
+                        <p class="text-muted">{{plan.plantype}}</p>
                         <a href="" class="btn btn-primary rounded-pill mt-2">
-                            Allocate Capital
+                            Activate Plan
                         </a>
+                        <!-- <a href="" class="btn btn-primary rounded-pill mt-2">
+                            Allocate Capital
+                        </a> -->
 
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
+            {% empty%}
+            <div class="text-center">
+                No available featured plan
+            </div>
+            {% endfor %}
+            <!-- <div class="col-md-4 mb-3">
                 <div class="card text-center strategy-card">
                     <div class="card-body">
 
@@ -84,7 +99,7 @@
                         <h6>The Alpha Plan</h6>
                         <p class="text-muted">Some text now now now</p>
                         <a href="" class="btn btn-primary rounded-pill mt-2">
-                            Allocate Capital
+                            Activate Plan
                         </a>
 
                     </div>
@@ -105,7 +120,7 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="card shadow-sm mb-3">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
