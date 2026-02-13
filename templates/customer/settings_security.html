@@ -14,27 +14,31 @@
                     width="90" height="90" alt="User">
 
                 <div>
-                    <h4 class="mb-1">John Doe</h4>
+                    <h4 class="mb-1">{{portfolio.user.full_name}}</h4>
                     <span class="badge bg-warning">Unverified Trader</span>
                     <span class="badge bg-dark">VIP Level 0</span>
-                    <p class="text-muted small mb-0">Member since Jan 2024</p>
+                    <p class="text-muted small mb-0">Member since {{ portfolio.created_at|date:"F d, Y" }}
+</p>
                 </div>
             </div>
 
             <div>
                 <!-- <button class="btn btn-outline-primary btn-sm me-2">Edit Profile</button> -->
-                <button class="btn btn-primary btn-sm">Deposit Funds</button>
-                <button class="btn btn-danger btn-sm">Withdraw Funds</button>
+                <a href="{% url 'customer:customer_deposit' %}" class="btn btn-primary btn-sm">Deposit Funds</a>
+                <a href="{% url 'customer:customer_withdraw' %}" class="btn btn-danger btn-sm">Withdraw Funds</a>
             </div>
 
         </div>
     </div>
-
+    {% include "../notification/messages.html" %}
     {% if not portfolio.is_kyc_verified %}
     {% if portfolio.kyc and portfolio.kyc.status == "PENDING" %}
     <div class="alert alert-info my-4">
         <strong>KYC Under Review</strong><br>
         Your documents are being reviewed. This usually takes 24-48 hours.
+        <a href="{% url 'customer:verify_kyc' %}" class="btn btn-sm btn-outline-warning">
+            View Update
+        </a>
     </div>
     {% else %}
     <div class="alert alert-warning d-flex justify-content-between align-items-center my-4">
@@ -44,7 +48,7 @@
             your account.
         </div>
 
-        <a href="" class="btn btn-sm btn-outline-warning">
+        <a href="{% url 'customer:verify_kyc' %}" class="btn btn-sm btn-outline-warning">
             Verify Now
         </a>
     </div>
@@ -58,7 +62,7 @@
             <div class="card shadow-sm text-center">
                 <div class="card-body">
                     <small class="text-muted">Account Balance</small>
-                    <h5 class="mt-2">$24,580.00</h5>
+                    <h5 class="mt-2">${{ portfolio.cash_balance|floatformat:2|intcomma }}</h5>
                 </div>
             </div>
         </div>
@@ -93,39 +97,6 @@
     </div>
 
     <div class="row g-4">
-
-        <!-- Trading Statistics -->
-        <!-- <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h6 class="mb-0">Trading Statistics</h6>
-                </div>
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Total Trades</span>
-                        <strong>328</strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Win Rate</span>
-                        <strong class="text-success">64%</strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Average Profit</span>
-                        <strong>$320</strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between">
-                        <span>Risk Level</span>
-                        <span class="badge bg-warning text-dark">Moderate</span>
-                    </div>
-
-                </div>
-            </div>
-        </div> -->
-
         <!-- Verification & Security -->
         <div class="col-lg-6">
             <div class="card shadow-sm">

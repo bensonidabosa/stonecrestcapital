@@ -11,21 +11,23 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k%1^nzu)rmyb0(@u7qdse$u^m*g7r*!@2g=0zcg#6(+0am6=(+'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -40,6 +42,8 @@ INSTALLED_APPS = [
 
     # external apps
     'django.contrib.humanize',
+    'django_countries',
+    "anymail",
 
     # my local apps
     'frontend',
@@ -49,6 +53,7 @@ INSTALLED_APPS = [
     'customer.apps.CustomerConfig',
     'plan',
     'staff',
+    'transaction',
 ]
 
 MIDDLEWARE = [
@@ -154,3 +159,14 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',
 }
+
+
+# email resend anymaikl
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+
+ANYMAIL = {
+    "RESEND_API_KEY": os.environ.get("RESEND_API_KEY"),
+}
+
+DEFAULT_FROM_EMAIL = "StoneCrest Capital <noreply@mail.gigifreight.org>"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
