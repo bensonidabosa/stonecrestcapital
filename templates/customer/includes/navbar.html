@@ -58,7 +58,8 @@
       </a>
     </li>
     <li>
-      <a class="nav-link {% if current_url == 'settings_security' %}active{% endif %}" href="{% url 'customer:settings_security' %}">
+      <a class="nav-link {% if current_url == 'settings_security' %}active{% endif %}"
+        href="{% url 'customer:settings_security' %}">
         <i class="bi bi-people me-2"></i>
         Settings & Security
       </a>
@@ -76,6 +77,20 @@
         href="{% url 'staff:admin_plan_list' %}">
         <i class="bi bi-diagram-3 me-2"></i>
         All Plans
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if current_url == 'admin_deposit_requests' %}active{% endif %}"
+        href="{% url 'staff:admin_deposit_requests' %}">
+        <i class="bi bi-cash-stack me-2"></i>
+        Deposit Requests
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if current_url == 'admin_withdraw_requests' %}active{% endif %}"
+        href="{% url 'staff:admin_withdraw_requests' %}">
+        <i class="bi bi-arrow-down-circle me-2"></i>
+        Withdrawal Requests
       </a>
     </li>
     {% endif %}

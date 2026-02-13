@@ -19,4 +19,7 @@ urlpatterns = [
     name='admin_plan_edit'),
     path('plan/<int:pk>/delete/', views.admin_plan_delete_view,
     name='admin_plan_delete'),
+
+    path('pending-deposits/', views.admin_deposit_requests_view, name='admin_deposit_requests'),
+    path('pending-withdrawals/', views.admin_withdraw_requests_view, name='admin_withdraw_requests'),
 ]
