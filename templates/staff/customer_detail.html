@@ -18,14 +18,18 @@
 
             <!-- Customer Details -->
             <div class="col-md-9">
-                <h3 class="mb-3">John Doe</h3>
+                <h3 class="mb-3">{{customer.full_name}}</h3>
 
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Email:</strong> john.doe@example.com</p>
-                        <p><strong>Phone:</strong> +1 234 567 890</p>
+                        <p><strong>Email:</strong> {{customer.email}}</p>
+                        <p><strong>Country:</strong> {{customer.portfolio.kyc.country}}</p>
                         <p><strong>Status:</strong>
-                            <span class="badge bg-success">Active</span>
+                            {% if customer.is_vip %}
+                                <span class="badge bg-success">VIP</span>
+                            {% else %}
+                                <span class="badge bg-warning">Not VIP</span>
+                            {% endif %}
                         </p>
                     </div>
 
@@ -50,7 +54,7 @@
         </div>
     </div>
 </div>
-
+{% include "../notification/messages.html" %}
 <!-- Active Plans Section -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0 text-dark">Active Plans</h4>
@@ -80,9 +84,9 @@
                     <a href="{% url 'staff:snapshot_negative' order.id %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pause-fill"></i> Spin Down
                     </a>
-                    <a href="{% url 'staff:snapshot_positive' order.id %}" class="btn btn-primary btn-sm">
+                    <!-- <a href="{% url 'staff:snapshot_positive' order.id %}" class="btn btn-primary btn-sm">
                         <i class="bi bi-pencil-square"></i> Edit
-                    </a>
+                    </a> -->
                 </div>
             </div>
         </div>

@@ -402,7 +402,7 @@ def snapshot_positive_view(request, order_id):
     order = get_object_or_404(OrderPlan, pk=order_id)
     item = create_manual_snapshot(order_id, order.plan.percent_increment,
                                   actor=request.user, reason="Staff positive toggle")
-    messages.success(request, f"Positive snapshot created for {order.plan.name}: +{item.delta_amount}")
+    messages.success(request, f"Positive snapshot created for {order.plan.name}: + ${item.delta_amount} gain added to the current value")
     return redirect('staff:admin_customer_detail', user_id=order.portfolio.user.id)
 
 
@@ -413,5 +413,5 @@ def snapshot_negative_view(request, order_id):
     percent = order.plan.percent_increment * Decimal('-1')
     item = create_manual_snapshot(order_id, percent,
                                   actor=request.user, reason="Staff negative toggle")
-    messages.success(request, f"Negative snapshot created for {order.plan.name}: {item.delta_amount}")
+    messages.success(request, f"Negative snapshot created for {order.plan.name}: - ${item.delta_amount} remopved from the current value")
     return redirect('staff:admin_customer_detail', user_id=order.portfolio.user.id)

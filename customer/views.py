@@ -285,7 +285,7 @@ def orderplan_detail_view(request, order_id):
     portfolio = request.user.portfolio
     order = get_object_or_404(OrderPlan, pk=order_id, portfolio=portfolio) 
     
-    snapshots_qs = order.items.order_by('-snapshot_at')
+    snapshots_qs = order.items.order_by('snapshot_at')
 
     # -------- Pagination --------
     paginator = Paginator(snapshots_qs, 15)  # Show 10 snapshots per page
