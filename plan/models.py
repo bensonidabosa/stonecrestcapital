@@ -66,7 +66,7 @@ class OrderPlan(models.Model):
         ]
 
     def __str__(self):
-        return f"OrderPlan #{self.pk} - {self.user} - {self.plan.name}"
+        return f"OrderPlan #{self.pk} - {self.portfolio.user} - {self.plan.name}"
 
     def recompute_current_value(self):
         """Recompute current_value as principal + sum of all delta_amounts from items."""
@@ -79,7 +79,7 @@ class OrderPlan(models.Model):
 
 class OrderPlanItem(models.Model):
     order_plan = models.ForeignKey(OrderPlan, on_delete=models.CASCADE, related_name='items')
-    snapshot_at = models.DateField(db_index=True)
+    snapshot_at = models.DateTimeField()
     delta_amount = models.DecimalField(max_digits=20, decimal_places=2)
     percent_applied = models.DecimalField(max_digits=6, decimal_places=4)
     cumulative_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
@@ -87,7 +87,7 @@ class OrderPlanItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('order_plan', 'snapshot_at')
+        # unique_together = ('order_plan', 'snapshot_at')
         indexes = [
             models.Index(fields=['order_plan', 'snapshot_at']),
         ]

@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Sum
 from decimal import Decimal
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 from .models import Portfolio
 from .forms import KYCForm
@@ -279,17 +280,26 @@ def active_plan_list_view(request):
 def orderplan_detail_view(request, order_id):
     portfolio = request.user.portfolio
     order = get_object_or_404(OrderPlan, pk=order_id, portfolio=portfolio) 
-    snapshots = order.items.order_by('snapshot_at')
+    
+    snapshots_qs = order.items.order_by('-snapshot_at')
 
-    # Prepare chart data 
-    labels = [item.snapshot_at.strftime("%Y-%m-%d") for item in snapshots] 
-    values = [float(item.cumulative_amount or order.principal_amount) for item in snapshots]
+    # -------- Pagination --------
+    paginator = Paginator(snapshots_qs, 15)  # Show 10 snapshots per page
+    page_number = request.GET.get('page')
+    snapshots = paginator.get_page(page_number)
+
+    # -------- Chart Data (Optional: Use ALL snapshots or only current page) --------
+    # If you want chart to show ALL data:
+    all_snapshots = snapshots_qs
+
+    labels = [item.snapshot_at.strftime("%Y-%m-%d") for item in all_snapshots]
+    values = [float(item.cumulative_amount or order.principal_amount) for item in all_snapshots]
 
     context = { 
         'order': order, 
-        'snapshots': snapshots, 
-        'labels': labels, 
-        'values': values, 
+        'snapshots': snapshots,   # paginated snapshots
+        'labels': labels,
+        'values': values,
     }
 
     return render(

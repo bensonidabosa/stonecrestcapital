@@ -15,10 +15,21 @@
 
                 <div>
                     <h4 class="mb-1">{{portfolio.user.full_name}}</h4>
-                    <span class="badge bg-warning">Unverified</span>
-                    <span class="badge bg-dark">VIP Level 0</span>
+                    {% if request.user.portfolio.is_kyc_verified %}
+                        <span class="badge bg-success">Verified</span>
+                    {% else%}
+                        <span class="badge bg-warning">Not Verified</span>
+                    {% endif %}
+
+                    {% if request.user.is_vip %}
+                        <span class="badge bg-success">VIP</span>
+                    {% else%}
+                        <span class="badge bg-dark">Not VIP</span>
+                    {% endif %}
+                    
                     <p class="text-muted small mb-0">Member since {{ portfolio.created_at|date:"F d, Y" }}
-</p>
+                    </p>
+                    <a href="/account/logout" class="btn btn-outline-danger rounded-pill px-4 btn-sm my-3">Sign Out</a>
                 </div>
             </div>
 
@@ -111,13 +122,21 @@
                     </div>
 
                     <div class="d-flex justify-content-between mb-3">
-                        <span>KYC Status</span>
-                        <span class="badge bg-warning">Not Verified</span>
+                        <span>KYC Status</span>\
+                        {% if request.user.portfolio.is_kyc_verified %}
+                            <span class="badge bg-success">Verified</span>
+                        {% else %}
+                            <span class="badge bg-warning">Not Verified</span>
+                        {% endif %}
                     </div>
 
                     <div class="d-flex justify-content-between mb-5">
                         <span>Vip Status</span>
-                        <span class="badge bg-warning">Not Vip</span>
+                        {% if request.user.is_vip %}
+                            <span class="badge bg-success">VIP</span>
+                        {% else %}
+                            <span class="badge bg-warning">Not Vip</span>
+                        {% endif %}
                     </div>
 
                     <button class="btn btn-outline-secondary btn-sm">

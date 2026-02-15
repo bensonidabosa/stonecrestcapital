@@ -9,7 +9,7 @@ def create_manual_snapshot(order_id, percent, actor=None, reason=None):
     """
     Create a new OrderPlanItem with given percent (positive or negative).
     """
-    snapshot_date = timezone.now().date()
+    snapshot_date = timezone.now()
     order = OrderPlan.objects.select_for_update().get(pk=order_id)
 
     with transaction.atomic():

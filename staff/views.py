@@ -34,10 +34,12 @@ def admin_dashboard_view(request):
 @admin_staff_only
 def admin_customer_detail_view(request, user_id):
     customer = get_object_or_404(User, id=user_id, is_staff=False)
+    order_plan = OrderPlan.objects.filter(portfolio=customer.portfolio)
 
     context = {
         "current_url": request.resolver_match.url_name,
         "customer": customer,
+        "order_plan":order_plan,
     }
 
     return render(request, 'staff/customer_detail.html', context)
@@ -401,7 +403,7 @@ def snapshot_positive_view(request, order_id):
     item = create_manual_snapshot(order_id, order.plan.percent_increment,
                                   actor=request.user, reason="Staff positive toggle")
     messages.success(request, f"Positive snapshot created for {order.plan.name}: +{item.delta_amount}")
-    return redirect('orderplan-detail', order_id=order.pk)
+    return redirect('staff:admin_customer_detail', user_id=order.portfolio.user.id)
 
 
 @login_required
@@ -412,4 +414,4 @@ def snapshot_negative_view(request, order_id):
     item = create_manual_snapshot(order_id, percent,
                                   actor=request.user, reason="Staff negative toggle")
     messages.success(request, f"Negative snapshot created for {order.plan.name}: {item.delta_amount}")
-    return redirect('orderplan-detail', order_id=order.pk)
+    return redirect('staff:admin_customer_detail', user_id=order.portfolio.user.id)

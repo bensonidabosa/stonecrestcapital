@@ -1,4 +1,5 @@
 {% extends "../customer/base.html" %}
+{% load humanize %}
 
 {% block title %}Customer Detail{% endblock %}
 
@@ -58,33 +59,37 @@
 <div class="row g-4">
 
     <!-- Plan Card -->
+    {% for order in order_plan %}
     <div class="col-md-4">
         <div class="card shadow-sm h-100">
             <div class="card-body">
-                <h5 class="card-title">Basic Hosting Plan</h5>
+                <h5 class="card-title">{{order.plan.name}}</h5>
                 <!-- <p class="text-muted mb-2">Plan ID: PLAN-001</p> -->
                 <p><strong>Percent:</strong>
-                    15%
+                    {{order.plan.percent_increment|floatformat:1}}%
                 </p>
-                <p><strong>Started:</strong> 01 Feb 2025</p>
-                <p><strong>Allocated:</strong> $80,000</p>
-                <p><strong>Current Value:</strong> $80,000</p>
+                <p><strong>Started:</strong> {{order.created_at}}</p>
+                <p><strong>Allocated:</strong> ${{order.principal_amount|floatformat:2|intcomma}}</p>
+                <p><strong>Current Value:</strong> ${{order.current_value|floatformat:2|intcomma}}</p>
             </div>
             <div class="card-footer bg-white border-0">
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-success btn-sm">
+                    <a href="{% url 'staff:snapshot_positive' order.id %}" class="btn btn-success btn-sm">
                         <i class="bi bi-play-fill"></i> Spin Up
-                    </button>
-                    <button class="btn btn-warning btn-sm">
+                    </a>
+                    <a href="{% url 'staff:snapshot_negative' order.id %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pause-fill"></i> Spin Down
-                    </button>
-                    <button class="btn btn-primary btn-sm">
+                    </a>
+                    <a href="{% url 'staff:snapshot_positive' order.id %}" class="btn btn-primary btn-sm">
                         <i class="bi bi-pencil-square"></i> Edit
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+    {% empty%}
+        <p class="text-muted">No Available Active plan for this customer</p>
+    {% endfor %}
 </div>
 
 {% endblock %}

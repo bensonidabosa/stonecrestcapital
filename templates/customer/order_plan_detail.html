@@ -38,14 +38,23 @@
                 <h5>{{ order.plan.name }}</h5>
             </div>
             <div class="card-body">
-                <p><strong>Allocated:</strong> ${{ order.principal_amount|floatformat:2|intcomma  }}</p>
-                <p><strong>Current Value:</strong> ${{ order.current_value|floatformat:2|intcomma  }}</p>
+                <p><strong>Allocated:</strong> ${{ order.principal_amount|floatformat:2|intcomma }}</p>
+                <p><strong>Current Value:</strong> ${{ order.current_value|floatformat:2|intcomma }}</p>
                 <p><strong>Status:</strong>
                     <span class="badge bg-info">{{ order.status }}</span>
                 </p>
                 <p><strong>Start Date:</strong> {{ order.start_at|date:"Y-m-d" }}</p>
             </div>
+
+            <form action="">
+                {% csrf_token%}
+
+                <button type="submit" class="btn btn-danger btn-sm rounded-pill ms-3 mb-3 px-4">
+                    Stop and Liquidate
+                </button>
+            </form>
         </div>
+
     </div>
 
     <div class="col-md-4">
@@ -58,13 +67,31 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ item.snapshot_at }}
                     <span class="badge bg-success">
-                        {{ item.cumulative_amount }}
+                        $ {{ item.cumulative_amount|floatformat:2|intcomma }}
                     </span>
                 </li>
                 {% empty %}
                 <li class="list-group-item">No snapshots yet.</li>
                 {% endfor %}
             </ul>
+            <div class="pagination mt-3">
+                <span>
+                    Page {{ snapshots.number }} of {{ snapshots.paginator.num_pages }}
+                </span>
+
+                <div>
+                    {% if snapshots.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ snapshots.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    {% if snapshots.has_next %}
+                    <a href="?page={{ snapshots.next_page_number }}">Next</a>
+                    <a href="?page={{ snapshots.paginator.num_pages }}">Last &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
