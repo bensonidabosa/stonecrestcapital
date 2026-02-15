@@ -16,17 +16,17 @@
                 <div>
                     <h4 class="mb-1">{{portfolio.user.full_name}}</h4>
                     {% if request.user.portfolio.is_kyc_verified %}
-                        <span class="badge bg-success">Verified</span>
+                    <span class="badge bg-success">Verified</span>
                     {% else%}
-                        <span class="badge bg-warning">Not Verified</span>
+                    <span class="badge bg-warning">Not Verified</span>
                     {% endif %}
 
                     {% if request.user.is_vip %}
-                        <span class="badge bg-success">VIP</span>
+                    <span class="badge bg-success">VIP</span>
                     {% else%}
-                        <span class="badge bg-dark">Not VIP</span>
+                    <span class="badge bg-dark">Not VIP</span>
                     {% endif %}
-                    
+
                     <p class="text-muted small mb-0">Member since {{ portfolio.created_at|date:"F d, Y" }}
                     </p>
                     <a href="/account/logout" class="btn btn-outline-danger rounded-pill px-4 btn-sm my-3">Sign Out</a>
@@ -124,18 +124,18 @@
                     <div class="d-flex justify-content-between mb-3">
                         <span>KYC Status</span>
                         {% if request.user.portfolio.is_kyc_verified %}
-                            <span class="badge bg-success">Verified</span>
+                        <span class="badge bg-success">Verified</span>
                         {% else %}
-                            <span class="badge bg-warning">Not Verified</span>
+                        <span class="badge bg-warning">Not Verified</span>
                         {% endif %}
                     </div>
 
                     <div class="d-flex justify-content-between mb-5">
                         <span>Vip Status</span>
                         {% if request.user.is_vip %}
-                            <span class="badge bg-success">VIP</span>
+                        <span class="badge bg-success">VIP</span>
                         {% else %}
-                            <span class="badge bg-warning">Not Vip</span>
+                        <span class="badge bg-warning">Not Vip</span>
                         {% endif %}
                     </div>
 
@@ -155,7 +155,7 @@
 
                     <h6 class="mb-2">{{portfolio.user.nick_name}}</h6>
                     {% if is_vip %}
-                        <p class="text-muted small">VIP Member</p>
+                    <p class="text-muted small">VIP Member</p>
                     {% endif %}
 
                     <button class="btn btn-outline-primary btn-sm mt-3">
@@ -208,21 +208,15 @@
                     <h5 class="mb-0">Change Password</h5>
                 </div>
                 <div class="card-body">
-                    <form>
-                        <div class="mb-3">
-                            <label class="form-label">Current Password</label>
-                            <input type="password" class="form-control">
-                        </div>
+                    <form method="POST" action="{% url 'customer:change_password' %}">
+                        {% csrf_token %}
 
+                        {% for field in password_form %}
                         <div class="mb-3">
-                            <label class="form-label">New Password</label>
-                            <input type="password" class="form-control">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control">
-                        </div>
+                        {% endfor %}
 
                         <button class="btn btn-warning">Update Password</button>
                     </form>

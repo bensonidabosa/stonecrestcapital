@@ -23,5 +23,8 @@ urlpatterns = [
 
     # order
     path('orderplan-detail/<order_id>/', views.orderplan_detail_view, name='orderplan_detail'),
+
+    # auth
+    path('change_password/', views.change_password, name='change_password'),
     
 ]

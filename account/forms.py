@@ -1,6 +1,7 @@
 from django import forms
 from django_countries.widgets import CountrySelectWidget
 from django_countries import countries
+from django.contrib.auth.forms import PasswordChangeForm
 
 from account.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -103,6 +104,23 @@ class BootstrapLoginForm(AuthenticationForm):
             'placeholder': 'Enter password',
         })
     )
+
+
+class BootstrapPasswordChangeForm(PasswordChangeForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                'class': 'form-control',
+                # 'placeholder': field.label,
+            })
+
+        # Optional: add custom labels
+        self.fields['old_password'].label = "Current Password"
+        self.fields['new_password1'].label = "New Password"
+        self.fields['new_password2'].label = "Confirm New Password"
 
 
 class AdminCustomerEditForm(forms.ModelForm):
