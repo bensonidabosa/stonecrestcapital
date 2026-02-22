@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Email:</strong> {{customer.email}}</p>
-                        <p><strong>Country:</strong> {{customer.portfolio.kyc.country}}</p>
+                        <p><strong>Country:</strong> {{customer.country}}</p>
                         <p><strong>Status:</strong>
                             {% if customer.is_vip %}
                                 <span class="badge bg-success">VIP</span>
@@ -34,17 +34,23 @@
                     </div>
 
                     <div class="col-md-6">
-                        <p><strong>Customer ID:</strong> CUST-10234</p>
-                        <p><strong>Joined:</strong> 12 Jan 2024</p>
-                        <p><strong>Total Active Plans:</strong> 3</p>
+                        <p><strong>KYC:</strong>
+                            {% if customer.portfolio.is_kyc_verified %}
+                                <span class="badge bg-success">Verified</span>
+                            {% else %}
+                                <span class="badge bg-warning">Not Verified</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Joined:</strong> {{customer.date_joined}}</p>
+                        <p><strong>Total Active Plans:</strong> {{order_plan_count}}</p>
                     </div>
                 </div>
 
                 <!-- Admin Actions -->
                 <div class="mt-3">
-                    <button class="btn btn-outline-primary btn-sm">
+                    <!-- <button class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-pencil"></i> Edit Profile
-                    </button>
+                    </button> -->
                     <!-- <button class="btn btn-outline-danger btn-sm">
                         <i class="bi bi-ban"></i> Suspend
                     </button> -->

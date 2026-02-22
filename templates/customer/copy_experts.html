@@ -15,10 +15,25 @@
 <!-- no vip -->
 <div class="row justify-content-center align-items-center text-center">
     <div class="col-md-8">
+        {% if not user.is_vip and not has_pending_vip_request %}
         <p class="text-dark">
-            This feature is exclusively available to VIP members. To access and enjoy its full benefits, please upgrade your account to VIP status. 
+            This feature is exclusively available to VIP members. To access and enjoy its full benefits, please upgrade
+            your account to VIP status.
         </p>
-        <a href="" class="btn btn-primary rounded-pill">Request Account Upgrade</a>
+
+        <form method="post" action="{% url 'customer:submit_vip_request' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary rounded-pill">Request Account Upgrade</button>
+        </form>
+        {% elif user.is_vip %}
+        <p>You are already a VIP!</p>
+        {% else %}
+        <p class="text-dark">
+            This feature is exclusively available to VIP members. To access and enjoy its full benefits, please upgrade
+            your account to VIP status.
+        </p>
+        <p class="text-info fw-bold">Your VIP request is pending approval.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

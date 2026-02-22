@@ -31,4 +31,9 @@ urlpatterns = [
     name='snapshot_positive'),
     path('snapshot-negative/<int:order_id>/', views.snapshot_negative_view,
     name='snapshot_negative'),
+
+    path('vip-requests/', views.vip_requests_admin,
+    name='vip_requests'),
+    path('vip_request_action/<int:request_id>/<str:action>/', views.vip_request_action,
+    name='vip_request_action'),
 ]

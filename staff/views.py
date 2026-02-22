@@ -9,8 +9,9 @@ from decimal import Decimal
 
 from .services import create_manual_snapshot
 from .decorators import admin_staff_only
-from account.models import User, KYC
+from account.models import User, KYC, VIPRequest
 from account.forms import AdminCustomerEditForm
+from account.utils import approve_vip_request, reject_vip_request
 from plan.models import Plan, OrderPlan
 from plan.forms import PlanForm
 from transaction.models import Transaction
@@ -35,11 +36,13 @@ def admin_dashboard_view(request):
 def admin_customer_detail_view(request, user_id):
     customer = get_object_or_404(User, id=user_id, is_staff=False)
     order_plan = OrderPlan.objects.filter(portfolio=customer.portfolio)
+    order_plan_count = order_plan.count()
 
     context = {
         "current_url": request.resolver_match.url_name,
         "customer": customer,
         "order_plan":order_plan,
+        "order_plan_count":order_plan_count
     }
 
     return render(request, 'staff/customer_detail.html', context)
@@ -415,3 +418,29 @@ def snapshot_negative_view(request, order_id):
                                   actor=request.user, reason="Staff negative toggle")
     messages.success(request, f"Negative snapshot created for {order.plan.name}: - ${item.delta_amount} remopved from the current value")
     return redirect('staff:admin_customer_detail', user_id=order.portfolio.user.id)
+
+
+@login_required
+@admin_staff_only
+def vip_requests_admin(request):
+    vip_requests = VIPRequest.objects.all()
+    return render(request, "staff/vip_requests_admin.html", {"vip_requests": vip_requests})
+
+
+@login_required
+@admin_staff_only
+def vip_request_action(request, request_id, action):
+    vip_request = get_object_or_404(VIPRequest, id=request_id)
+    
+    if action == "approve":
+        if approve_vip_request(vip_request):
+            messages.success(request, f"{vip_request.user.email} has been approved as VIP.")
+        else:
+            messages.error(request, "Cannot approve this request.")
+    elif action == "reject":
+        note = request.POST.get("admin_note")
+        if reject_vip_request(vip_request, note):
+            messages.success(request, f"{vip_request.user.email}'s VIP request was rejected.")
+        else:
+            messages.error(request, "Cannot reject this request.")
+    return redirect("staff:vip_requests")

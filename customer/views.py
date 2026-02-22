@@ -10,8 +10,8 @@ from django.contrib.auth import update_session_auth_hash
 
 from .models import Portfolio
 from .forms import KYCForm
-from account.models import KYC
-from account.forms import BootstrapPasswordChangeForm
+from account.models import KYC, VIPRequest
+from account.forms import BootstrapPasswordChangeForm, VIPRequestForm
 from plan.models import Plan, OrderPlan
 from transaction.forms import CustomerTransactionForm
 
@@ -30,9 +30,12 @@ def customer_dashboard_view(request):
 
 @login_required
 def copy_experts(request):
-
+    user = request.user
+    has_pending_vip_request = VIPRequest.objects.filter(user=user, status='pending').exists()
     context = {
         "current_url": request.resolver_match.url_name,
+        "user": user,
+        "has_pending_vip_request": has_pending_vip_request
     }
     return render(request, "customer/copy_experts.html", context)
 
@@ -331,3 +334,28 @@ def change_password(request):
                 messages.error(request, f"{error}")
 
     return redirect("customer:settings_security")
+
+
+@login_required
+def submit_vip_request(request):
+    user = request.user
+
+    # Only handle POST submissions
+    if request.method != "POST":
+        messages.error(request, "Invalid request method.")
+        return redirect("customer:copy_experts")
+
+    # Check if user is already VIP
+    if user.is_vip:
+        messages.warning(request, "You are already a VIP.")
+        return redirect("customer:copy_experts")
+
+    # Check if user has a pending request
+    if VIPRequest.objects.filter(user=user, status=VIPRequest.PENDING).exists():
+        messages.warning(request, "You already have a pending VIP request.")
+        return redirect("customer:copy_experts")
+
+    # Create the VIP request
+    VIPRequest.objects.create(user=user)
+    messages.success(request, "VIP request submitted successfully!")
+    return redirect("customer:copy_experts")

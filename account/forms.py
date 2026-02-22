@@ -3,7 +3,7 @@ from django_countries.widgets import CountrySelectWidget
 from django_countries import countries
 from django.contrib.auth.forms import PasswordChangeForm
 
-from account.models import User
+from account.models import User, VIPRequest
 from django.contrib.auth.forms import AuthenticationForm
 
 class UserRegistrationForm(forms.ModelForm):
@@ -22,12 +22,6 @@ class UserRegistrationForm(forms.ModelForm):
             'placeholder': 'Confirm password'
         })
     )
-
-    # country = forms.ChoiceField(
-    #     choices=[('', 'Select country')] + list(countries),
-    #     widget=CountrySelectWidget(attrs={'class': 'form-control'}),
-    #     required=False,
-    # )
 
     class Meta:
         model = User
@@ -121,6 +115,12 @@ class BootstrapPasswordChangeForm(PasswordChangeForm):
         self.fields['old_password'].label = "Current Password"
         self.fields['new_password1'].label = "New Password"
         self.fields['new_password2'].label = "Confirm New Password"
+
+
+class VIPRequestForm(forms.ModelForm):
+    class Meta:
+        model = VIPRequest
+        fields = [] 
 
 
 class AdminCustomerEditForm(forms.ModelForm):

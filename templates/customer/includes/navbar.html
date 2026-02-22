@@ -82,6 +82,13 @@
           KYC Submissions
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link {% if current_url == 'vip_requests' %}active{% endif %}"
+          href="{% url 'staff:vip_requests' %}">
+          <i class="bi bi-arrow-down-circle me-2"></i>
+          VIP Requests
+        </a>
+      </li>
       {% endif %}
     </ul>
   </div>
@@ -161,6 +168,13 @@
         KYC Submissions
       </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {% if current_url == 'vip_requests' %}active{% endif %}"
+          href="{% url 'staff:vip_requests' %}">
+          <i class="bi bi-arrow-down-circle me-2"></i>
+          VIP Requests
+        </a>
+      </li>
     {% endif %}
   </ul>
 </div>

@@ -1,0 +1,62 @@
+{% extends "../customer/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    {% include "../notification/messages.html" %}
+    <div class="row">
+        <div class="col-5 col-sm-8">
+            <h4 class="text-dark">Vip Requests</h4>
+        </div>
+    </div>
+
+    <hr class="mt-0 border-dark">
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Requested At</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vip in vip_requests %}
+                <tr>
+                    <td>{{ vip.user.full_name }}</td>
+                    <td>{{ vip.user.email }}</td>
+                    <td>{{ vip.requested_at }}</td>
+                    <td>{{vip.status}}</td>
+                    <td>
+                        {% if vip.status == 'pending' %}
+                        <form method="post" action="{% url 'staff:vip_request_action' vip.id 'approve' %}"
+                            style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-primary btn-sm  text-white">Approve</button>
+                        </form>
+                        <form method="post" action="{% url 'staff:vip_request_action' vip.id 'reject' %}"
+                            style="display:inline;">
+                            {% csrf_token %}
+                            <input type="text" name="admin_note" placeholder="Reason (optional)">
+                            <button type="submit" class="btn-danger">Reject</button>
+                        </form>
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No vip request found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

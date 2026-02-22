@@ -26,5 +26,6 @@ urlpatterns = [
 
     # auth
     path('change_password/', views.change_password, name='change_password'),
+    path('submit-vip-request/', views.submit_vip_request, name='submit_vip_request'),
     
 ]
