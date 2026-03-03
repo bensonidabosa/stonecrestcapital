@@ -47,8 +47,11 @@
     <div class="col-md-8">
         <div class="card glass-card shadow-sm mb-3">
             <div class="card-body">
-                <h6>Capital Drift Alert</h6>
-                <p class="text-secondary small">Unbalanced: 36% now inside a periodic selection.</p>
+                <h6>Portfolio Performance</h6>
+                <p class="text-secondary small">
+                    Portfolio increased by {{ monthly_roi }}% this month.<br>
+                    Current PnL: ${{ monthly_delta|intcomma }}
+                </p>
             </div>
         </div>
         <div class="card shadow-sm">
@@ -196,8 +199,8 @@
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
                         <!-- <p class="text-secondary mb-1">Capital Treasury</p> -->
-                        <p class="text-secondary mb-1">Monthly Dividend</p>
-                        <h6 class="mb-0">$3,000.00</h6>
+                        <p class="text-secondary mb-1">Monthly PNL</p>
+                        <h6 class="mb-0">${{ monthly_delta|intcomma }}</h6>
                     </div>
 
                     <a href="{% url 'customer:active_plan_list' %}" class="btn btn-outline-primary btn-sm rounded-pill">

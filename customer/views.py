@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth import update_session_auth_hash
 import json
 from django.db.models.functions import TruncDate
+from datetime import datetime
 
 from .models import Portfolio
 from .forms import KYCForm
@@ -71,6 +72,30 @@ def customer_dashboard_view(request):
         labels.append(snap["date"].strftime("%d %b"))
         values.append(float(running_total))
 
+    # --- Monthly PnL Calculation ---
+    # Get current month
+    now = datetime.now()
+    
+    monthly_snapshots = (
+        OrderPlanItem.objects
+        .filter(
+            order_plan__in=active_plans,
+            snapshot_at__year=now.year,
+            snapshot_at__month=now.month
+        )
+        .aggregate(monthly_delta=Sum('delta_amount'))
+    )
+
+    monthly_delta = monthly_snapshots['monthly_delta'] or Decimal('0.00')
+
+    # Total principal of active plans
+    total_principal = active_plans.aggregate(total=Sum('principal_amount'))['total'] or Decimal('0.00')
+
+    # Compute % increase this month
+    if total_principal > 0:
+        monthly_roi = (monthly_delta / total_principal) * Decimal('100')
+    else:
+        monthly_roi = Decimal('0.00')
     context = {
         "current_url": request.resolver_match.url_name,
         "portfolio": portfolio,
@@ -81,6 +106,8 @@ def customer_dashboard_view(request):
         "allocation_percentages": allocation_percentages,
         "performance_labels": json.dumps(labels),
         "performance_values": json.dumps(values),
+        "monthly_delta": monthly_delta.quantize(Decimal('0.01')),
+        "monthly_roi": monthly_roi.quantize(Decimal('0.1')),
     }
 
     return render(request, "customer/dashboard.html", context)
