@@ -57,13 +57,13 @@
                     {% if plan.min_amount <= 100 %} 
                         No Minimum 
                     {% else %} 
-                        ${{ plan.min_amount|floatformat:2|intcomma }} 
+                        ${{plan.min_amount|floatformat:2|intcomma }}
                     {% endif%} 
-                    </p>
-                        <a href="{% url 'customer:activate_plan' plan.id %}"
-                            class="btn btn-primary rounded-pill mt-2 w-100">
-                            Activate Strategy
-                        </a>
+                </p>
+                <a href="{% url 'customer:activate_plan' plan.id %}"
+                    class="btn btn-primary rounded-pill mt-2 w-100">
+                    Activate Strategy
+                </a>
 
             </div>
         </div>
