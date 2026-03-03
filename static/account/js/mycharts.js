@@ -1,31 +1,37 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // dashbaord domut chart
-    const ctx = document.getElementById('donutChart');
+    // ===== DASHBOARD DONUT CHART =====
+    const donutCanvas = document.getElementById("donutChart");
+    const donutLabelsEl = document.getElementById("donut-labels");
+    const donutValuesEl = document.getElementById("donut-values");
 
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Used', 'Remaining'],
-            datasets: [{
-                data: [70, 30],
-                backgroundColor: ['#187c59', '#ffffff'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            cutout: '85%',
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    enabled: true
+    if (donutCanvas && donutLabelsEl && donutValuesEl) {
+        const labels = JSON.parse(donutLabelsEl.textContent);
+        const values = JSON.parse(donutValuesEl.textContent);
+
+        new Chart(donutCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        getComputedStyle(document.documentElement).getPropertyValue("--color-primary"),
+                        getComputedStyle(document.documentElement).getPropertyValue("--color-success")
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '85%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
                 }
             }
-        }
-    });
+        });
+    }
 
     // The performance yield 
 

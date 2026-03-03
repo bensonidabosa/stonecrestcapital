@@ -34,12 +34,12 @@
                 <div class="donut-chart-container">
                     <canvas id="donutChart"></canvas>
                     <div class="center-text">
-                        <span>${{ portfolio.cash_balance|floatformat:2|intcomma }}</span>
-                        <!-- <small>Total</small> -->
+                        <span>${{ mandate_value|floatformat:2|intcomma }}</span>
+                        <small>Invested</small>
                     </div>
                 </div>
 
-                <a href="" class="btn btn-outline-primary mt-4 rounded-pill">Allocate Capital</a>
+                <a href="{% url 'customer:all_plans' %}" class="btn btn-outline-primary mt-4 rounded-pill">Allocate Capital</a>
             </div>
         </div>
 
@@ -50,7 +50,8 @@
                 <h6>Portfolio Performance</h6>
                 <p class="text-secondary small">
                     Portfolio increased by {{ monthly_roi }}% this month.<br>
-                    Current PnL: ${{ monthly_delta|intcomma }}
+                    Current PnL: ${{ monthly_delta|intcomma }} <br>
+                    Cash Balance: ${{portfolio.cash_balance|intcomma }}
                 </p>
             </div>
         </div>

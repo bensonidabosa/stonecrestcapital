@@ -96,6 +96,13 @@ def customer_dashboard_view(request):
         monthly_roi = (monthly_delta / total_principal) * Decimal('100')
     else:
         monthly_roi = Decimal('0.00')
+
+    # mandate dognut
+    mandate_value = active_plans.aggregate(total=Sum('current_value'))['total'] or 0
+    cash_value = portfolio.cash_balance or 0
+
+    donut_labels = ["Invested Mandates", "Cash Balance"]
+    donut_values = [float(mandate_value), float(cash_value)]
     context = {
         "current_url": request.resolver_match.url_name,
         "portfolio": portfolio,
@@ -108,6 +115,9 @@ def customer_dashboard_view(request):
         "performance_values": json.dumps(values),
         "monthly_delta": monthly_delta.quantize(Decimal('0.01')),
         "monthly_roi": monthly_roi.quantize(Decimal('0.1')),
+        "donut_labels": json.dumps(donut_labels),
+        "donut_values": json.dumps(donut_values),
+        "mandate_value":mandate_value,
     }
 
     return render(request, "customer/dashboard.html", context)
