@@ -10,11 +10,12 @@ class Plan(models.Model):
         CRYPTO = "CRYPTO", "Crypto"
         REIT = "REIT", "Reit"
         STOCK = "STOCK", "Stock"
+        MANDATE = "ASSET_MANDATES", "Asset Mandates"
 
     name = models.CharField(max_length=200)
 
     plantype = models.CharField(
-        max_length=10,
+        max_length=30,
         choices=PlanType.choices,
         default=PlanType.CRYPTO
     )
@@ -31,6 +32,18 @@ class Plan(models.Model):
         max_digits=20,
         decimal_places=2,
         default=Decimal('0.00')
+    )
+
+    short_description = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="A brief summary of the product (max 255 characters)."
+    )
+    long_description = models.TextField(
+        blank=True,
+        null=True,
+        help_text="A detailed description of the product."
     )
 
     is_featured = models.BooleanField(default=False)

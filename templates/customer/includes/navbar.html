@@ -31,7 +31,12 @@
           Real Estate Trusts
         </a>
       </li>
-      <li><a class="nav-link" href="#"><i class="bi bi-diagram-3 me-2"></i> Asset Management</a></li>
+      <li>
+        <a class="nav-link {% if current_url == 'all_plans' %}active{% endif %}" href="{% url 'customer:all_plans' %}">
+          <i class="bi bi-diagram-3 me-2"></i>
+          Asset Mandates
+        </a>
+      </li>
       <li>
         <a class="nav-link {% if current_url == 'copy_experts' %}active{% endif %}"
           href="{% url 'customer:copy_experts' %}">
@@ -117,7 +122,12 @@
         Real Estate Trusts
       </a>
     </li>
-    <li><a class="nav-link" href="#"><i class="bi bi-diagram-3 me-2"></i> Asset Management</a></li>
+    <li>
+      <a class="nav-link {% if current_url == 'all_plans' %}active{% endif %}" href="{% url 'customer:all_plans' %}">
+        <i class="bi bi-diagram-3 me-2"></i>
+        Asset Mandates
+      </a>
+    </li>
     <li>
       <a class="nav-link {% if current_url == 'copy_experts' %}active{% endif %}"
         href="{% url 'customer:copy_experts' %}">
@@ -169,12 +179,11 @@
       </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if current_url == 'vip_requests' %}active{% endif %}"
-          href="{% url 'staff:vip_requests' %}">
-          <i class="bi bi-arrow-down-circle me-2"></i>
-          VIP Requests
-        </a>
-      </li>
+      <a class="nav-link {% if current_url == 'vip_requests' %}active{% endif %}" href="{% url 'staff:vip_requests' %}">
+        <i class="bi bi-arrow-down-circle me-2"></i>
+        VIP Requests
+      </a>
+    </li>
     {% endif %}
   </ul>
 </div>

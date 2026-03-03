@@ -10,6 +10,8 @@ class PlanForm(forms.ModelForm):
             "name",
             "plantype",
             "percent_increment",
+            "short_description",
+            "long_description",
             # "duration_days",
             "min_amount",
             "is_featured",
@@ -29,6 +31,17 @@ class PlanForm(forms.ModelForm):
                 "class": "form-control",
                 "step": "0.0001",
                 "placeholder": "0.5000"
+            }),
+
+            "short_description": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter a brief description (max 255 chars)"
+            }),
+
+            "long_description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 5,
+                "placeholder": "Enter a detailed description of the plan"
             }),
 
             # "duration_days": forms.NumberInput(attrs={

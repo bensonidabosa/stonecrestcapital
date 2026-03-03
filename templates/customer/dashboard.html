@@ -54,7 +54,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h5 class="text-dark">Strategic Mandates</h5>
         <!-- <h5 class="mb-3 text-dark">Strategic Allocations</h5> -->
-        <a href="{% url 'customer:all_plans' %}">View All Strategies</a>
+        <a href="{% url 'customer:all_plans' %}">View More Mandates</a>
     </div>
 
     <div class="col-md-8">
@@ -62,7 +62,7 @@
         <div class="row">
 
             {% for plan in plans%}
-            <div class="col-md-4 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="card text-center strategy-card">
                     <div class="card-body">
 
@@ -72,9 +72,18 @@
                         </div>
 
                         <h6>{{plan.name}}</h6>
-                        <p class="text-muted">{{plan.plantype}}</p>
-                        <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-2">
-                            Activate Strategy
+                        <p class="text-muted">{{plan.get_plantype_display}}</p>
+                        <p class="text-muted">Yield: {{plan.percent_increment|floatformat:1}}%</p>
+                        <p class="text-muted">
+                            Requirement:
+                            {% if plan.min_amount <= 100 %} 
+                                No Minimum 
+                            {% else %} 
+                                ${{ plan.min_amount|floatformat:2|intcomma }} 
+                            {% endif%} 
+                        </p>
+                        <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-2 w-100">
+                            Activate Mandate
                         </a>
                         <!-- <a href="" class="btn btn-primary rounded-pill mt-2">
                             Allocate Capital
