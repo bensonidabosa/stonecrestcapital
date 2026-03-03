@@ -6,17 +6,17 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 main-head">
     <!-- Title -->
     <h3 class="text-dark mb-2 mb-md-0">Your Command Center</h3>
-    
+
     <!-- Profile section -->
     <div class="d-flex align-items-center">
         {% if user.profile.image %}
-            <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" 
-                 class="rounded-circle me-2" width="40" height="40">
+        <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="40"
+            height="40">
         {% else %}
-            <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center me-2"
-                 style="width: 40px; height: 40px; color: white; font-weight: bold;">
-                {{ portfolio.user.nick_name|slice:":1"|upper }}
-            </div>
+        <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center me-2"
+            style="width: 40px; height: 40px; color: white; font-weight: bold;">
+            {{ portfolio.user.nick_name|slice:":1"|upper }}
+        </div>
         {% endif %}
         <span class="fw-medium text-dark">{{ portfolio.user.nick_name }}</span>
     </div>
@@ -68,35 +68,35 @@
     <div class="col-12">
         <h6 class="fw-semibold mb-3 text-dark">Active Strategic Mandates</h6>
     </div>
-    {% if strategy_cards %}
+    {% if active_plans %}
     <div class="row mb-4">
-        {% for s in strategy_cards %}
+        {% for s in active_plans %}
         <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
-                    <h6 class="card-title">{{ s.name }}</h6>
+                    <h6 class="card-title">{{ s.plan.name }}</h6>
 
-                    <span class="badge bg-secondary mb-2">
+                    <!-- <span class="badge bg-secondary mb-2">
                         {{ s.risk }}
-                    </span>
+                    </span> -->
 
                     <p class="mb-1">
-                        Allocated: <strong>${{ s.allocated_cash|intcomma }}</strong>
+                        Allocated: <strong>${{ s.principal_amount|floatformat:2|intcomma }}</strong>
                     </p>
 
                     <p class="mb-1">
                         Current Value: <strong>${{ s.current_value|floatformat:2|intcomma }}</strong>
                     </p>
 
-                    <p class="mb-1 {% if s.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
-                        P&amp;L: {{ s.pnl|floatformat:2|intcomma }}
+                    <p class="mb-1 {% if s.get_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        P&amp;L: {{ s.get_pnl|floatformat:2|intcomma }}
                     </p>
 
                     <p class="mb-0">
-                        ROI: <strong>{{ s.roi }}%</strong>
+                        ROI: <strong>{{ s.get_roi }}%</strong>
                     </p>
 
-                    <a href="{% url 'strategy:stop_strategy' s.id %}" class="btn btn-sm btn-outline-danger mt-2">
+                    <a href="" class="btn btn-sm btn-outline-danger mt-2">
                         Stop & Liquidate Strategy
                     </a>
                 </div>
@@ -124,7 +124,7 @@
 
             {% for plan in plans%}
             <div class="col-md-6 mb-3">
-                <div class="card text-center strategy-card">
+                <div class="card text-center strategy-card h-100">
                     <div class="card-body">
 
                         <div class="icon-circle mx-auto mb-3">
@@ -137,16 +137,13 @@
                         <p class="text-muted">Yield: {{plan.percent_increment|floatformat:1}}%</p>
                         <p class="text-muted">
                             Requirement:
-                            {% if plan.min_amount <= 100 %} 
-                                No Minimum 
-                            {% else %} 
-                                ${{ plan.min_amount|floatformat:2|intcomma }} 
-                            {% endif%} 
-                        </p>
-                        <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-2 w-100">
-                            Activate Mandate
-                        </a>
-                        <!-- <a href="" class="btn btn-primary rounded-pill mt-2">
+                            {% if plan.min_amount <= 100 %} No Minimum {% else %} ${{
+                                plan.min_amount|floatformat:2|intcomma }} {% endif%} </p>
+                                <a href="{% url 'customer:activate_plan' plan.id %}"
+                                    class="btn btn-primary rounded-pill mt-2 w-100">
+                                    Activate Mandate
+                                </a>
+                                <!-- <a href="" class="btn btn-primary rounded-pill mt-2">
                             Allocate Capital
                         </a> -->
 
@@ -200,7 +197,7 @@
                     </div>
 
                     <a href="{% url 'customer:active_plan_list' %}" class="btn btn-outline-primary btn-sm rounded-pill">
-                        View Active Strategies
+                        View More Active Mandates
                     </a>
 
                 </div>
@@ -210,22 +207,99 @@
 
     </div>
     <div class="col-md-4">
+        <div class="card p-4 h-100">
+            <h6 class="fw-semibold mb-3">Mandate Allocation</h6>
+
+            <div class="chart-container-sm mb-3">
+                <canvas id="allocationChart"></canvas>
+            </div>
+
+            <ul class="list-unstyled mb-0">
+
+                {% if allocation_percentages.REIT > 0 %}
+                <li class="d-flex justify-content-between mb-2">
+                    <span>
+                        <span class="legend-dot bg-warning me-2"></span>
+                        REITs
+                    </span>
+                    <strong>{{ allocation_percentages.REIT }}%</strong>
+                </li>
+                {% endif %}
+
+                {% if allocation_percentages.ASSET_MANDATES > 0 %}
+                <li class="d-flex justify-content-between">
+                    <span>
+                        <span class="legend-dot bg-success me-2"></span>
+                        Asset Mandates
+                    </span>
+                    <strong>{{ allocation_percentages.ASSET_MANDATES }}%</strong>
+                </li>
+                {% endif %}
+
+            </ul>
+
+        </div>
+    </div>
+    <!-- <div class="col-md-4">
         <div class="card">
             <div class="card-body">
                 <h6 class="mb-3 text-dark">Algorithmic Mandate</h6>
 
-                <!-- UP CHART -->
                 <div class="chart-wrapper mb-4">
                     <canvas id="upChart"></canvas>
                 </div>
 
-                <!-- DOWN CHART -->
                 <div class="chart-wrapper">
                     <canvas id="downChart"></canvas>
                 </div>
 
             </div>
         </div>
+    </div> -->
+</div>
+
+<hr class="border-dark">
+<div class="row mt-4">
+    <div class="col-12">
+        <h6 class="fw-semibold mb-3 text-dark">Active Strategic Expert Mirrowing</h6>
     </div>
+    {% if copy_strategy_cards %}
+        {% for card in copy_strategy_cards %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong>Leader: {{ card.trader_name }}</strong>
+                    <span class="badge {% if card.status == 'ACTIVE' %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ card.status }}
+                    </span>
+                </div>
+
+                <small class="text-muted">Strategy: {{ card.strategy_name }}</small>
+
+                <div class="row mt-3 text-center">
+                    <div class="col-4">
+                        <small class="text-muted">ROI</small>
+                        <div class="fw-bold {% if card.roi >= 0 %}text-success{% else %}text-danger{% endif %}">{{ card.roi
+                            }}%</div>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted">PnL</small>
+                        <div class="fw-bold {% if card.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">{{
+                            card.pnl|floatformat:2|intcomma }}</div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Capital Allocated</small>
+                    <strong>${{ card.allocated_cash|floatformat:2|intcomma }}</strong>
+                </div>
+            </div>
+        </div>        
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No Active strategy Mirrowing</p>
+    {% endif %}
 </div>
 {% endblock %}

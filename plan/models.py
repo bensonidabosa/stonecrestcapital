@@ -88,6 +88,25 @@ class OrderPlan(models.Model):
         self.current_value = new_value
         self.save(update_fields=['current_value'])
         return self.current_value
+    
+    def get_pnl(self):
+        """
+        Profit & Loss = current_value - principal_amount
+        """
+        pnl = (self.current_value - self.principal_amount).quantize(
+            Decimal('0.01'), rounding=ROUND_HALF_EVEN
+        )
+        return pnl
+
+    def get_roi(self):
+        """
+        ROI (%) = (PnL / principal_amount) * 100
+        """
+        if self.principal_amount == 0:
+            return Decimal('0.00')
+
+        roi = ((self.current_value - self.principal_amount) / self.principal_amount) * Decimal('100')
+        return roi.quantize(Decimal('0.01'), rounding=ROUND_HALF_EVEN)
 
 
 class OrderPlanItem(models.Model):

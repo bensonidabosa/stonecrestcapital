@@ -7,12 +7,14 @@ from decimal import Decimal
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth import update_session_auth_hash
+import json
+from django.db.models.functions import TruncDate
 
 from .models import Portfolio
 from .forms import KYCForm
 from account.models import KYC, VIPRequest
 from account.forms import BootstrapPasswordChangeForm, VIPRequestForm
-from plan.models import Plan, OrderPlan
+from plan.models import Plan, OrderPlan, OrderPlanItem
 from transaction.forms import CustomerTransactionForm
 
 @login_required
@@ -20,11 +22,67 @@ def customer_dashboard_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
     plans = Plan.objects.filter(is_featured=True)
 
+    active_plans = OrderPlan.objects.filter(
+        portfolio=portfolio,
+        status=OrderPlan.STATUS_ACTIVE
+    ).select_related("plan")
+
+    distribution = (
+        active_plans
+        .values("plan__plantype")
+        .annotate(total=Sum("current_value"))
+    )
+
+    reit_total = Decimal("0.00")
+    mandate_total = Decimal("0.00")
+
+    for item in distribution:
+        if item["plan__plantype"] == Plan.PlanType.REIT:
+            reit_total = item["total"] or Decimal("0.00")
+        elif item["plan__plantype"] == Plan.PlanType.MANDATE:
+            mandate_total = item["total"] or Decimal("0.00")
+
+    allocation_labels = ["REIT", "Asset Mandates"]
+    allocation_values = [float(reit_total), float(mandate_total)]
+
+    total_value = reit_total + mandate_total
+
+    allocation_percentages = {
+        "REIT": round((reit_total / total_value * 100), 2) if total_value > 0 else 0,
+        "ASSET_MANDATES": round((mandate_total / total_value * 100), 2) if total_value > 0 else 0,
+    }
+
+    # Get all snapshots for those plans
+    snapshots = (
+        OrderPlanItem.objects
+        .filter(order_plan__in=active_plans)
+        .annotate(date=TruncDate("snapshot_at"))
+        .values("date")
+        .annotate(total_delta=Sum("delta_amount"))
+        .order_by("date")
+    )
+
+    running_total = 0
+    labels = []
+    values = []
+
+    for snap in snapshots:
+        running_total += snap["total_delta"] or 0
+        labels.append(snap["date"].strftime("%d %b"))
+        values.append(float(running_total))
+
     context = {
         "current_url": request.resolver_match.url_name,
         "portfolio": portfolio,
-        "plans": plans
+        "plans": plans,
+        "active_plans": active_plans,
+        "allocation_labels": json.dumps(allocation_labels),
+        "allocation_values": json.dumps(allocation_values),
+        "allocation_percentages": allocation_percentages,
+        "performance_labels": json.dumps(labels),
+        "performance_values": json.dumps(values),
     }
+
     return render(request, "customer/dashboard.html", context)
 
 
