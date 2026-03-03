@@ -291,7 +291,7 @@ def orderplan_detail_view(request, order_id):
     snapshots_qs = order.items.order_by('snapshot_at')
 
     # -------- Pagination --------
-    paginator = Paginator(snapshots_qs, 15)  # Show 10 snapshots per page
+    paginator = Paginator(snapshots_qs, 10)  # Show 10 snapshots per page
     page_number = request.GET.get('page')
     snapshots = paginator.get_page(page_number)
 
