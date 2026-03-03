@@ -11,7 +11,7 @@ urlpatterns = [
 
     path('verify-kyc/', views.verify_kyc_view, name='verify_kyc'),
     path('reits/', views.reits_view, name='reits'),
-    path('Asset Mandates/', views.all_plans_view, name='all_plans'),
+    path('Asset-Mandates/', views.all_plans_view, name='all_plans'),
 
     # transaction
     path('user/deposit/', views.customer_deposit_view, name='customer_deposit'),
