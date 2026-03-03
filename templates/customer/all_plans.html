@@ -47,8 +47,8 @@
                 </div>
 
                 <h6>{{plan.name}}</h6>
-                <p class="text-muted">Assets: {{plan.plantype}}</p>
-                <p class="text-muted">Expected Return: {{plan.percent_increment|floatformat:1}}%</p>
+                <p class="text-muted">{{plan.short_description}}</p>
+                <p class="text-muted">Yield: {{plan.percent_increment|floatformat:1}}%</p>
                 <p class="text-muted">
                     Requirement:
                     {% if plan.min_amount <= 100 %} 
