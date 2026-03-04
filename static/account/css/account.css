@@ -71,7 +71,7 @@
     color: #fff;
 }
 
-.card {
+.card_get_border {
     border-left: 4px solid #01462b;
     border-right: 4px solid #01462b;
     background-color: rgb(235, 235, 235);
