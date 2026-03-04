@@ -38,17 +38,18 @@
     <!-- Conservative Strategy -->
     {% for plan in active_plans %}
     <div class="col-md-4 mb-3">
-        <div class="card text-center strategy-card">
+        <div class="card strategy-card h-100">
             <div class="card-body">
 
-                <div class="icon-circle mx-auto mb-3">
+                <div class="icon-circle mx-auto mb-3 d-md-none">
                     <i class="bi bi-globe"></i>
                     <!-- <i class="bi bi-lightning-charge"></i> -->
                 </div>
 
-                <h6>{{plan.plan.name}}</h6>
-                <p class="text-muted">Mandate: {{plan.plan.get_plantype_display}}</p>
-                <p class="text-muted">Monthly Yield: {{plan.plan.percent_increment|floatformat:1}}%</p>
+                <h5 class="text-success">{{plan.plan.name}}</h5>
+                <hr class="border-dark">
+                <p class="text-dark paragraphs">{{plan.plan.short_description}}</p>
+                <p class="text-dark paragraphs">Monthly Yield: {{plan.plan.percent_increment|floatformat:1}}%</p>
                 <a href="{% url 'customer:orderplan_detail' plan.id %}" class="btn btn-primary rounded-pill mt-2 w-100">
                     View Details
                 </a>

@@ -39,7 +39,13 @@
                 <div class="donut-chart-container">
                     <canvas id="donutChart"></canvas>
                     <div class="center-text">
-                        <span>${{ mandate_value|floatformat:2|intcomma }}</span>
+                        $ <span>
+                            {% if mandate_value > 100 %}
+                                {{ mandate_value|floatformat:2|intcomma }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </span>
                         <small>Invested</small>
                     </div>
                 </div>
@@ -62,6 +68,7 @@
                 </p>
             </div>
         </div>
+        {% if has_performance %}
         <div class="card shadow-sm">
             <div class="card-body">
                 <h5 class="card-title mb-4">Performance Yield</h5>
@@ -71,6 +78,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 
@@ -187,6 +195,7 @@
         </div>
 
     </div>
+    {% if has_allocation %}
     <div class="col-md-4">
         <div class="card p-4 h-100">
             <h6 class="fw-semibold mb-3">Mandate Allocation</h6>
@@ -221,6 +230,7 @@
 
         </div>
     </div>
+    {% endif %}
     <!-- <div class="col-md-4">
         <div class="card">
             <div class="card-body">

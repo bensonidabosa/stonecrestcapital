@@ -52,6 +52,7 @@ def customer_dashboard_view(request):
         "REIT": round((reit_total / total_value * 100), 2) if total_value > 0 else 0,
         "ASSET_MANDATES": round((mandate_total / total_value * 100), 2) if total_value > 0 else 0,
     }
+    has_allocation = total_value > 0
 
     # Get all snapshots for those plans
     snapshots = (
@@ -71,6 +72,7 @@ def customer_dashboard_view(request):
         running_total += snap["total_delta"] or 0
         labels.append(snap["date"].strftime("%d %b"))
         values.append(float(running_total))
+    has_performance = any(values)
 
     # --- Monthly PnL Calculation ---
     # Get current month
@@ -98,8 +100,8 @@ def customer_dashboard_view(request):
         monthly_roi = Decimal('0.00')
 
     # mandate dognut
-    mandate_value = active_plans.aggregate(total=Sum('current_value'))['total'] or 0
-    cash_value = portfolio.cash_balance or 0
+    mandate_value = active_plans.aggregate(total=Sum('current_value'))['total'] or 10
+    cash_value = portfolio.cash_balance or 20
 
     donut_labels = ["Invested Mandates", "Cash Balance"]
     donut_values = [float(mandate_value), float(cash_value)]
@@ -111,8 +113,10 @@ def customer_dashboard_view(request):
         "allocation_labels": json.dumps(allocation_labels),
         "allocation_values": json.dumps(allocation_values),
         "allocation_percentages": allocation_percentages,
+        "has_allocation": has_allocation,
         "performance_labels": json.dumps(labels),
         "performance_values": json.dumps(values),
+        "has_performance": has_performance,
         "monthly_delta": monthly_delta.quantize(Decimal('0.01')),
         "monthly_roi": monthly_roi.quantize(Decimal('0.1')),
         "donut_labels": json.dumps(donut_labels),
