@@ -38,18 +38,18 @@
     <!-- Conservative Strategy -->
     {% for plan in plans %}
     <div class="col-md-4 mb-3">
-        <div class="card text-center strategy-card h-100">
+        <div class="card strategy-card h-100">
             <div class="card-body">
 
-                <div class="icon-circle mx-auto mb-3">
+                <!-- <div class="icon-circle mx-auto mb-3">
                     <i class="bi bi-globe"></i>
-                    <!-- <i class="bi bi-lightning-charge"></i> -->
-                </div>
+                </div> -->
 
-                <h6>{{plan.name}}</h6>
-                <p class="text-muted">{{plan.short_description}}</p>
-                <p class="text-muted">Yield: {{plan.percent_increment|floatformat:1}}%</p>
-                <p class="text-muted">
+                <h5 class="text-success">{{plan.name}}</h5>
+                <hr class="border-dark">
+                <p class="text-dark paragraphs">{{plan.short_description}}</p>
+                <p class="text-dark paragraphs">Yield: {{plan.percent_increment|floatformat:1}}%</p>
+                <p class="text-dark paragraphs">
                     Requirement:
                     {% if plan.min_amount <= 100 %} 
                         No Minimum 

@@ -77,6 +77,10 @@
     background-color: rgb(235, 235, 235);
 }
 
+.paragraphs{
+        font-size: 14px !important;
+    }
+
 .table td, .table th {
     vertical-align: middle;
 }
