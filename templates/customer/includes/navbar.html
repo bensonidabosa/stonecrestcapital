@@ -1,7 +1,7 @@
 {% load static %}
 <!-- Mobile Navbar -->
-<nav class="navbar navbar-dark bg-dark d-lg-none px-3">
-  <button class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">☰</button>
+<nav class="navbar navbar-dark bg-light d-lg-none px-3">
+  <button class="btn btn-outline-dark text-dark" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">☰</button>
   {% if user.profile.image %}
     <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="40"
         height="40">
