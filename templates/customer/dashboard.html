@@ -3,17 +3,10 @@
 {% load humanize %}
 
 {% block content %}
-<!-- <style>
-    .paragraphs{
-        font-size: 16px !important;
-    }
-</style> -->
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-2 main-head">
-    <!-- Title -->
+<!-- <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-2 main-head">
     <h3 class="text-dark mb-2 mb-md-0">Your Command Center</h3>
 
-    <!-- Profile section -->
-    <!-- <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center">
         {% if user.profile.image %}
         <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="40"
             height="40">
@@ -24,8 +17,8 @@
         </div>
         {% endif %}
         <span class="fw-medium text-dark">{{ portfolio.user.nick_name }}</span>
-    </div> -->
-</div>
+    </div>
+</div> -->
 <hr class="border-dark mb-1">
 {% include "../notification/messages.html" %}
 <!-- next -->
