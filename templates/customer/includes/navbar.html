@@ -2,18 +2,26 @@
 <!-- Mobile Navbar -->
 <nav class="navbar navbar-dark bg-light d-lg-none px-3">
   <button class="btn btn-outline-dark text-dark" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">☰</button>
-  {% if user.profile.image %}
-    <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="40"
-        height="40">
-        
-  {% else %}
-    <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center me-2"
-        style="width: 40px; height: 40px; color: white; font-weight: bold;">
-        {{ portfolio.user.nick_name|slice:":1"|upper }}
-    </div>
-  {% endif %}
-  
-  <!-- <span class="navbar-brand ms-2">Command Center</span> -->
+
+  <div class="d-flex align-items-center ms-auto">
+    
+    <span class="me-2 text-dark fw-semibold">
+        {{ request.user.nick_name }}
+    </span>
+
+    {% if user.profile.image %}
+      <img src="{{ request.user.profile.image.url }}" 
+           alt="{{ user.username }}" 
+           class="rounded-circle" 
+           width="40" height="40">
+    {% else %}
+      <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center"
+           style="width: 40px; height: 40px; color: white; font-weight: bold;">
+           {{ request.user.nick_name|slice:":1"|upper }}
+      </div>
+    {% endif %}
+
+  </div>
 </nav>
 
 <!-- Mobile Sidebar -->
@@ -95,7 +103,7 @@
         <a class="nav-link {% if current_url == 'admin_withdraw_requests' %}active{% endif %}"
           href="{% url 'staff:admin_withdraw_requests' %}">
           <i class="bi bi-arrow-down-circle me-2"></i>
-          Withdrawal Requests
+          Withdraw Requests
         </a>
       </li>
       <li class="nav-item">
@@ -193,7 +201,7 @@
       <a class="nav-link {% if current_url == 'admin_withdraw_requests' %}active{% endif %}"
         href="{% url 'staff:admin_withdraw_requests' %}">
         <i class="bi bi-arrow-down-circle me-2"></i>
-        Withdrawal Requests
+        Withdraw Requests
       </a>
     </li>
     <li class="nav-item">

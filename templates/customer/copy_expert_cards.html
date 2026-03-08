@@ -40,17 +40,19 @@
                     <strong>{{ portfolio.followers_count }}890</strong>
                 </div>
 
-                {% if user.is_authenticated and portfolio != request.user.portfolio %}
-                    {% if portfolio.id in followed_portfolios %}
-                        <a href="" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                            Stop Copying - Liquidate
-                        </a>
-                    {% else %}
-                        <a href="" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                            Start Mirrowing
-                        </a>
+                {% for portfolio in portfolios %}
+                    {% if user.is_authenticated and portfolio != request.user.portfolio %}
+                        {% if portfolio.id in followed_portfolios %}
+                            <a href="" class="btn btn-outline-danger btn-sm w-100 mt-3">
+                                Stop Mirroring - Liquidate
+                            </a>
+                        {% else %}
+                            <a href="{% url 'copytrade:start_copy' portfolio.id %}" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                Start Mirroring
+                            </a>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
+                {% endfor %}
             </div>
         </div>
     {% endfor %}

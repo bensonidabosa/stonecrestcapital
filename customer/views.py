@@ -17,19 +17,34 @@ from account.models import KYC, VIPRequest
 from account.forms import BootstrapPasswordChangeForm, VIPRequestForm
 from plan.models import Plan, OrderPlan, OrderPlanItem
 from transaction.forms import CustomerTransactionForm
+from copytrade.models import CopyRelationship
 
 @login_required
 def customer_dashboard_view(request):
     portfolio = Portfolio.objects.get(user=request.user)
     plans = Plan.objects.filter(is_featured=True)
 
-    active_plans = OrderPlan.objects.filter(
+    # All active plans for this portfolio (mirrored or not)
+    all_active_plans = OrderPlan.objects.filter(
         portfolio=portfolio,
         status=OrderPlan.STATUS_ACTIVE
     ).select_related("plan")
 
+    active_plans = OrderPlan.objects.filter(
+        portfolio=portfolio,
+        status=OrderPlan.STATUS_ACTIVE,
+        is_mirrowed = False
+    ).select_related("plan")
+    
+    # Mirrored active plans (copied from leaders)
+    mirrored_plans = OrderPlan.objects.filter(
+        portfolio=portfolio,
+        status=OrderPlan.STATUS_ACTIVE,
+        is_mirrowed=True  # only mirrored plans
+    ).select_related("plan")
+
     distribution = (
-        active_plans
+        all_active_plans
         .values("plan__plantype")
         .annotate(total=Sum("current_value"))
     )
@@ -57,7 +72,7 @@ def customer_dashboard_view(request):
     # Get all snapshots for those plans
     snapshots = (
         OrderPlanItem.objects
-        .filter(order_plan__in=active_plans)
+        .filter(order_plan__in=all_active_plans)
         .annotate(date=TruncDate("snapshot_at"))
         .values("date")
         .annotate(total_delta=Sum("delta_amount"))
@@ -122,6 +137,7 @@ def customer_dashboard_view(request):
         "donut_labels": json.dumps(donut_labels),
         "donut_values": json.dumps(donut_values),
         "mandate_value":mandate_value,
+        "mirrored_plans":mirrored_plans,
     }
 
     return render(request, "customer/dashboard.html", context)
@@ -130,6 +146,9 @@ def customer_dashboard_view(request):
 @login_required
 def copy_experts(request):
     user = request.user
+    user_portfolio = user.portfolio
+
+    # Get all expert portfolios (excluding self and staff)
     portfolios = (
         Portfolio.objects
         .filter(user__can_be_copied=True)
@@ -137,13 +156,24 @@ def copy_experts(request):
         .exclude(user__is_staff=True)
     )
 
+    # Get all leaders the current user is already copying
+    followed_relationships = CopyRelationship.objects.filter(
+        follower=user_portfolio,
+        is_active=True
+    )
+    followed_portfolios = set(rel.leader.id for rel in followed_relationships)
+
+    # Check if user has a pending VIP request
     has_pending_vip_request = VIPRequest.objects.filter(user=user, status='pending').exists()
+
     context = {
         "current_url": request.resolver_match.url_name,
         "user": user,
+        "portfolios": portfolios,
+        "followed_portfolios": followed_portfolios,
         "has_pending_vip_request": has_pending_vip_request,
-        "portfolios": portfolios
     }
+
     return render(request, "customer/copy_experts.html", context)
 
 

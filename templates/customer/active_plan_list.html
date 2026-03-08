@@ -50,6 +50,9 @@
                 <hr class="border-dark">
                 <p class="text-dark paragraphs">{{plan.plan.short_description}}</p>
                 <p class="text-dark paragraphs">Monthly Yield: {{plan.plan.percent_increment|floatformat:1}}%</p>
+                {% if plan.is_mirrowed %}
+                    <p class="text-muted">Mirrowed Plan</p>
+                {% endif %}
                 <a href="{% url 'customer:orderplan_detail' plan.id %}" class="btn btn-primary rounded-pill mt-2 w-100">
                     View Details
                 </a>

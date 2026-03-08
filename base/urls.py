@@ -10,5 +10,6 @@ urlpatterns = [
     path('otp/', include('otp.urls', namespace='otp')),
     path('user/', include('customer.urls', namespace='customer')),
     path('staff/', include('staff.urls', namespace='staff')),
+    path('mirrow-expert/', include('copytrade.urls', namespace='copytrade')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
