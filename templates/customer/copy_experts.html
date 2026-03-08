@@ -20,10 +20,14 @@
             <li class="mb-3 paragraphs"><strong>Status: </strong> Ristricted</li>
             <li class="mb-3 paragraphs"><strong>Access Threshold: </strong> Accounts $100,000+</li>
             <li class="mb-3 paragraphs"><strong>The Value: </strong> Absolute synchronization with StoneCrest Lead Desk Portfolio Managers.</li>
-            <li class="mb-3 paragraphs"><strong>Mechanism: </strong> Your capital mirrors institutional-grade pivots in real-time, capturing market inefficiencies before they are accessible to the public.</li>
-            <li>
-                <strong>Instructions: </strong>
-                {% if not user.is_vip and not has_pending_vip_request %}
+            <li class="mb-3 paragraphs"><strong>Mechanism: </strong> Your capital mirrors institutional grade pivots in real-time, capturing market inefficiencies before they are accessible to the public.</li>
+    </div>
+</div>
+<hr class="border-dark">
+<div class="row">
+    <div class="col-md-12">
+        {% if not user.is_vip and not has_pending_vip_request %}
+        <strong>Instructions: </strong>
         <p class="text-dark paragraphs">
             This feature is exclusively available to VIP members. To access and enjoy its full benefits, please upgrade
             your account to VIP status.
@@ -34,7 +38,11 @@
             <button type="submit" class="btn btn-primary rounded-pill">Request Account Upgrade</button>
         </form>
         {% elif user.is_vip %}
-        <p>You are already a VIP!</p>
+            <div class="row">
+                <div class="col-md-12">
+                    {% include './copy_expert_cards.html' %}
+                </div>
+            </div>
         {% else %}
         <p class="text-dark">
             This feature is exclusively available to VIP members. To access and enjoy its full benefits, please upgrade
@@ -44,8 +52,6 @@
         {% endif %}
             </li>
         </ul>
-
-        
     </div>
 </div>
 {% endblock %}

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from decimal import Decimal
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -130,11 +130,19 @@ def customer_dashboard_view(request):
 @login_required
 def copy_experts(request):
     user = request.user
+    portfolios = (
+        Portfolio.objects
+        .filter(user__can_be_copied=True)
+        .exclude(user=user)
+        .exclude(user__is_staff=True)
+    )
+
     has_pending_vip_request = VIPRequest.objects.filter(user=user, status='pending').exists()
     context = {
         "current_url": request.resolver_match.url_name,
         "user": user,
-        "has_pending_vip_request": has_pending_vip_request
+        "has_pending_vip_request": has_pending_vip_request,
+        "portfolios": portfolios
     }
     return render(request, "customer/copy_experts.html", context)
 
@@ -312,7 +320,8 @@ def reits_view(request):
 @login_required
 def all_plans_view(request):
     portfolio = get_object_or_404(Portfolio, user=request.user)
-    plans = Plan.objects.exclude(plantype=Plan.PlanType.REIT)
+    plans = Plan.objects.all()
+    # plans = Plan.objects.exclude(plantype=Plan.PlanType.REIT)
 
     context = {
         "current_url": request.resolver_match.url_name,
@@ -458,3 +467,28 @@ def submit_vip_request(request):
     VIPRequest.objects.create(user=user)
     messages.success(request, "VIP request submitted successfully!")
     return redirect("customer:copy_experts")
+
+
+@login_required
+def wallet_view(request):
+    portfolio = request.user.portfolio
+
+    totals = OrderPlan.objects.filter(
+        portfolio=portfolio
+    ).aggregate(
+        non_mirrored=Sum('principal_amount', filter=Q(is_mirrowed=False)),
+        mirrored=Sum('principal_amount', filter=Q(is_mirrowed=True))
+    )
+
+    non_mirrored_total = totals['non_mirrored'] or 0
+    mirrored_total = totals['mirrored'] or 0
+
+    transactions = portfolio.transactions.all()
+
+    return render(request, "customer/wallet.html", {
+        "current_url": "wallet",
+        "portfolio": portfolio,
+        "non_mirrored_total": non_mirrored_total,
+        "mirrored_total": mirrored_total,
+        "transactions": transactions,
+    })
