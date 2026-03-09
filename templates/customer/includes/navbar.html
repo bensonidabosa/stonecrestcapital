@@ -3,7 +3,7 @@
 <nav class="navbar navbar-dark bg-light d-lg-none px-3">
   <button class="btn btn-outline-success text-success" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">☰</button>
 
-  <img src="{% static 'account/images/stone-crest-logo.png' %}" alt="Stonecrest Logo" class="logo ms-auto" width="150">
+  <img src="{% static 'account/images/stone-crest-logo.png' %}" alt="Stonecrest Logo" class="logo ms-2" width="200">
 
   <div class="d-flex align-items-center ms-auto">
     
@@ -17,8 +17,8 @@
            class="rounded-circle" 
            width="40" height="40">
     {% else %}
-      <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center"
-           style="width: 40px; height: 40px; color: white; font-weight: bold;">
+      <div class="rounded-circle  d-flex justify-content-center align-items-center"
+           style="width: 40px; height: 40px; color: white; font-weight: bold; background-color: rgb(22, 52, 22);">
            {{ request.user.nick_name|slice:":1"|upper }}
       </div>
     {% endif %}

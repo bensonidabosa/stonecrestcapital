@@ -8,7 +8,7 @@
         border-radius:14px;
         overflow:hidden;
         transition:all .2s ease-in-out;
-        background:#fff;
+        background:#efeded;
     }
 
     .strategy-card:hover{
@@ -19,7 +19,7 @@
     /* IMAGE WRAPPER */
 
     .image_wrapper{
-        height:170px;
+        height:198px;
         width:100%;
         position:relative;
         overflow:hidden;
@@ -113,7 +113,7 @@
     width:100%;
     height:100%;
 
-    background:white;
+    background:#efeded;
 
     /* fade into the image */
     mask-image: linear-gradient(to top, black 60%, transparent 100%);
@@ -136,7 +136,7 @@
 }
 </style>
 
-<div class="container-fluid mt-3">
+<div class="container-fluid mt-3 mb-2">
     <div class="row">
         <div class="col col-md-8">
             <h4 class="mb-1 text-dark">Strategic Asset Mandates</h4>
@@ -146,16 +146,16 @@
         </div>
     </div>
 </div>
-<hr class="mt-2 pt-2 border-dark">
+<!-- <hr class="mt-2 pt-2 border-dark"> -->
 {% include "../notification/messages.html" %}
 <div class="row g-4">
 
     <!-- Conservative Strategy -->
     {% for plan in plans %}
-        <div class="col-md-6 mb-4">
-            <div class="card strategy-card border-0 shadow-sm h-100 shadow">
+        <div class="col-md-6 mb-0">
+            <div class="card strategy-card border-0 shadow-lg h-100 shadow">
 
-                <div class="card-body px-1">
+                <div class="card-body px-1 shadow border-dark">
                     <div class="row g-0 gx-0 ">
 
                         <!-- Image Side -->
@@ -172,9 +172,9 @@
                             
                         </div>
                         <!-- Text Side -->
-                        <div class="col-7 p-3">
+                        <div class="col-7 p-1">
 
-                            <h5 class="fw-bold text-success plan_name">
+                            <h5 class=" text-success plan_name">
                                 {{ plan.name }}
                             </h5>
 
@@ -202,7 +202,7 @@
                     </div>
 
 
-                    <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-2 w-100">
+                    <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-1 w-100 fw-bold">
                         Activate Mandate
                     </a>
                 </div>

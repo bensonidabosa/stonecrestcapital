@@ -350,8 +350,8 @@ def reits_view(request):
 @login_required
 def all_plans_view(request):
     portfolio = get_object_or_404(Portfolio, user=request.user)
-    plans = Plan.objects.all()
-    # plans = Plan.objects.exclude(plantype=Plan.PlanType.REIT)
+    # plans = Plan.objects.all()
+    plans = Plan.objects.exclude(plantype=Plan.PlanType.REIT)
 
     context = {
         "current_url": request.resolver_match.url_name,
