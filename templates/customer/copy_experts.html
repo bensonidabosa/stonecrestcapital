@@ -3,6 +3,15 @@
 {% load humanize %}
 
 {% block content %}
+<style>
+    .icon-logo{
+        width: 50px;
+        height: 50px;
+        /* object-fit: cover; */
+        margin-right: 20px;
+    }
+</style>
+{% include "../notification/messages.html" %}
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
     <div>
@@ -15,61 +24,62 @@
     </div>
 </div>
 
-<div class="row justify-content-center align-items-center">
+{% if not user.is_vip and not has_pending_vip_request %}
+<div class="row justify-content-center align-items-center px-2">
     <div class="col-md-7">
         <div class="card strategy-card shadow-lg h-100 p-3">
 
             <ul style="list-style: none;"> 
-                {% if not request.user.is_vip %}
-                <li class="mb-3 paragraphs"><strong>Status: </strong> Ristricted</li>
-                {% endif %}
-                <li class="mb-3 paragraphs"><strong>Access Threshold: $100,000+ 
-                </strong><br> 
-                <small>Minimum balance required for synchronization</small>
+                <li class="mb-3 d-flex">
+                    <img src="{% static 'account/images/lock-icon.png' %}" alt="" class="icon-logo">
+                    <div class="text-mirrow paragraphs">
+                        <strong>Restricted Access 
+                        </strong><br> 
+                        <small>Invitation only, exclusive service</small>
+                    </div>
+                </li>
+                <hr class="border-dark">
+                <li class="mb-3 d-flex">
+                    <img src="{% static 'account/images/money.png' %}" alt="" class="icon-logo">
+                    <div class="text-mirrow paragraphs">
+                        <strong>Access Threshold: $100,000+ 
+                        </strong><br> 
+                        <small>Minimum balance required for synchronization</small>
+                    </div>
+                </li>
+                <hr class="border-dark">
+                <li class="mb-3 d-flex">
+                    <img src="{% static 'account/images/security.png' %}" alt="" class="icon-logo">
+                    <div class="text-mirrow paragraphs">
+                        <strong>Institutional Sync
+                        </strong><br> 
+                        <small>Portfolio Managers optimize your investments in real-time, capturing market shifts before they reach the public.</small>
+                    </div>
                 </li>
             </ul>
+            
+                <div class="access-btn px-3">
+                    <form method="post" action="{% url 'customer:submit_vip_request' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary rounded-pill w-100 fw-bold">Request Access</button>
+                    </form>
+                </div>
         </div>
     </div>
 </div>
-<!-- no vip -->
-<div class="row text-start">
-<!-- <div class="row justify-content-center align-items-center text-center"> -->
-    <div class="col-md-8">
-        <ul class="text-dark mt-4 mb-4">
-            <li class="mb-3 paragraphs"><strong>Status: </strong> Ristricted</li>
-            <li class="mb-3 paragraphs"><strong>Access Threshold: </strong> Accounts $100,000+</li>
-            <li class="mb-3 paragraphs"><strong>The Value: </strong> Absolute synchronization with StoneCrest Lead Desk Portfolio Managers.</li>
-            <li class="mb-3 paragraphs"><strong>Mechanism: </strong> Your capital mirrors institutional grade pivots in real-time, capturing market inefficiencies before they are accessible to the public.</li>
+{% elif user.is_vip %}
+    <div class="row">
+        <div class="col-md-12">
+            {% include './copy_expert_cards.html' %}
+        </div>
     </div>
-</div>
-<hr class="border-dark">
+{% else %}
 <div class="row">
-    <div class="col-md-12">
-        {% if not user.is_vip and not has_pending_vip_request %}
-        <p class="text-dark paragraphs">
-            This feature is exclusively available to VIP members. To access and enjoy its full benefits, please upgrade
-            your account to VIP status.
-        </p>
-
-        <form method="post" action="{% url 'customer:submit_vip_request' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary rounded-pill">Request Account Upgrade</button>
-        </form>
-        {% elif user.is_vip %}
-            <div class="row">
-                <div class="col-md-12">
-                    {% include './copy_expert_cards.html' %}
-                </div>
-            </div>
-        {% else %}
-        <p class="text-dark">
-            This feature is exclusively available to VIP members. To access and enjoy its full benefits, please upgrade
-            your account to VIP status.
-        </p>
-        <p class="text-info fw-bold">Your VIP request is pending approval.</p>
-        {% endif %}
-            </li>
-        </ul>
+        <div class="col-md-12">
+            <p class="text-success text-center">Your request for access to Strategic Mirroring is currently being processed. We will keep you informed of any updates via email.</p>
+        </div>
     </div>
-</div>
+{% endif %}
+
+
 {% endblock %}
