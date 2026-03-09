@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .card{
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+  width:360px;
+}
+
+.image-wrap{
+  position:relative;
+}
+
+.image-wrap img{
+  width:100%;
+  display:block;
+
+  /* fade bottom + right */
+  -webkit-mask-image:
+    linear-gradient(to right, black 70%, transparent),
+    linear-gradient(to bottom, black 70%, transparent);
+
+  -webkit-mask-composite: destination-in;
+  mask-composite: intersect;
+}
+
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+}
+
+.image{
+  position:relative;
+}
+
+.image img{
+  width:100%;
+  display:block;
+
+  mask-image:
+    linear-gradient(to right, black 65%, transparent 100%),
+    linear-gradient(to bottom, black 65%, transparent 100%);
+
+  mask-composite: intersect;
+  -webkit-mask-composite: destination-in;
+}
+
+.image::after{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:rgba(0,150,90,0.7); /* green tint */
+  mix-blend-mode:multiply;
+
+  pointer-events:none;
+}
+    </style>
+</head>
+<body>
+    <div class="card">
+  <div class="image-wrap">
+    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31">
+  </div>
+
+  <div class="content">
+    <h3>Data Fortress</h3>
+    <p>AI Infrastructure</p>
+  </div>
+</div>
+</body>
+</html>

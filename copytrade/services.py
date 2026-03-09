@@ -22,6 +22,9 @@ def start_copy_service(*, follower, leader, allocated_cash):
 
     if allocated_cash > follower.cash_balance:
         raise ValidationError("Allocated cash exceeds your available balance.")
+    
+    if allocated_cash < 100000:
+        raise ValidationError("Allocated cash exceeds your available balance.")
 
     # Deduct cash from follower
     follower.cash_balance -= allocated_cash

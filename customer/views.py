@@ -358,7 +358,7 @@ def all_plans_view(request):
         "portfolio": portfolio,
         "plans": plans,
     }
-    return render(request, "customer/all_plans.html", context)
+    return render(request, "customer/all_plan_test.html", context)
 
 
 @login_required

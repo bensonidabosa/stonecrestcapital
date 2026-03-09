@@ -1,0 +1,218 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<style>
+    .strategy-card{
+        border-radius:14px;
+        overflow:hidden;
+        transition:all .2s ease-in-out;
+        background:#fff;
+    }
+
+    .strategy-card:hover{
+        transform:translateY(-4px);
+        box-shadow:0 12px 28px rgba(0,0,0,0.08);
+    }
+
+    /* IMAGE WRAPPER */
+
+    .image_wrapper{
+        height:170px;
+        width:100%;
+        position:relative;
+        overflow:hidden;
+
+        border-top-left-radius:14px;
+        border-bottom-left-radius:14px;
+    }
+
+    /* IMAGE */
+
+    .strategy-image{
+    height:100%;
+    width:100%;
+    object-fit:cover;
+    display:block;
+
+    /* stronger smooth fade */
+    -webkit-mask-image:
+        linear-gradient(to right, black 55%, rgba(0,0,0,0.6) 75%, transparent 100%),
+        linear-gradient(to bottom, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%);
+
+    -webkit-mask-composite: destination-in;
+    mask-composite: intersect;
+    z-index:1;
+}
+
+    /* RIGHT + BOTTOM FADE */
+
+    .image_wrapper::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(to right, transparent 40%, rgba(255,255,255,.85) 75%, #fff 100%),
+        linear-gradient(to bottom, transparent 50%, rgba(255,255,255,.9) 85%, #fff 100%);
+
+    pointer-events:none;
+}
+
+    /* GREEN TINT */
+
+    .image_wrapper::after{
+    content:"";
+    position:absolute;
+
+    /* inset:0;
+
+    background:linear-gradient(
+        to right,
+        rgba(16,120,80,.35) 0%,
+        rgba(16,120,80,.25) 45%,
+        rgba(16,120,80,.12) 65%,
+        rgba(16,120,80,.05) 75%,
+        rgba(16,120,80,0) 90%
+    ); */
+
+    right:-40px;
+    bottom:-40px;
+
+    width:180px;
+    height:180px;
+
+    background:#fff;
+    filter:blur(60px);
+    opacity:.9;
+
+    pointer-events:none;
+}
+
+    /* OPTIONAL EXTRA BLEND SHADOW */
+
+    .image_wrapper{
+        box-shadow: inset -30px 0 30px -10px #fff,
+                    inset 0 -30px 30px -10px #fff;
+    }
+
+/* section below the image */
+.below_pic{
+    position:absolute;
+    bottom:0;
+    left:0;
+
+    width:100%;
+    height:70px;
+
+    pointer-events:none;
+}
+
+.below-pic-content{
+    width:100%;
+    height:100%;
+
+    background:white;
+
+    /* fade into the image */
+    mask-image: linear-gradient(to top, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, black 60%, transparent 100%);
+}
+
+.below_pic::before{
+    content:"";
+    position:absolute;
+
+    top:-30px;
+    left:0;
+
+    width:100%;
+    height:80px;
+
+    background:white;
+    filter:blur(30px);
+    opacity:.9;
+}
+</style>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col col-md-8">
+            <h4 class="mb-1 text-dark">Strategic Asset Mandates</h4>
+            <p class="text-muted mb-0 paragraphs">
+                High-velocity liquidity provisions in industries with extreme demand-supply gaps.
+            </p>
+        </div>
+    </div>
+</div>
+<hr class="mt-2 pt-2 border-dark">
+{% include "../notification/messages.html" %}
+<div class="row g-4">
+
+    <!-- Conservative Strategy -->
+    {% for plan in plans %}
+        <div class="col-md-6 mb-4">
+            <div class="card strategy-card border-0 shadow-sm h-100 shadow">
+
+                <div class="card-body px-1">
+                    <div class="row g-0 gx-0 ">
+
+                        <!-- Image Side -->
+                        <div class="col-5 p-0">
+                            <div class="image_wrapper">
+                                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31"
+                                class="strategy-image img-fluid" alt="Strategy">
+
+                                <!-- white blend layer -->
+                                <div class="below_pic">
+                                    <div class="below-pic-content"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <!-- Text Side -->
+                        <div class="col-7 p-3">
+
+                            <h5 class="fw-bold text-success plan_name">
+                                {{ plan.name }}
+                            </h5>
+
+                            <hr class="my-2">
+
+                            <p class="small text-muted">
+                                {{ plan.short_description }}
+                            </p>
+
+                            <p class="mb-1 small">
+                                <strong>Yield:</strong>
+                                {{ plan.percent_increment|floatformat:1 }}%
+                            </p>
+
+                            <p class="small">
+                                <strong>Requirement:</strong>
+
+                                {% if plan.min_amount <= 100 %} 
+                                    No Minimum 
+                                {% else %} 
+                                    $
+                                {{ plan.min_amount|floatformat:2|intcomma }} {% endif %} </p>
+                        </div>
+
+                    </div>
+
+
+                    <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-2 w-100">
+                        Activate Mandate
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    {% empty%}
+        <div class="text-center">
+            No available featured plan
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
