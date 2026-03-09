@@ -6,12 +6,31 @@
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
     <div>
-        <h5 class="fw-semibold mb-2 text-dark">Strategic Mirroring (Institutional Sync)</h5>
-        <small class="text-dark paragraphs">Automatically synchronize your capital with the exact moves of our Lead Portfolio Managers. <br> When they adjust for risk or capture a new growth opportunity, your portfolio mirrors that action automatically. <br> You gain the benefit of their expertise without the stress of constant monitoring.</small>
+        <h5 class="fw-semibold mb-0 text-dark text-center">Strategic Mirroring</h5>
+        <p class="text-dark text-center mt-0">(Institutional Sync)</p>
+        <p class="text-dark paragraphs text-center">Automatically synchronize your capital with the  moves of Stonecrest's Lead Portfolio Managers.</p>
+        <p class="text-center mt-0 text-muted small">
+            Mirrow their adjustment for risk or new growth opportuinities in real-time, benefitting from their expertise without the burden of constant monitoring.
+        </p>
     </div>
 </div>
-<hr class="border-dark">
 
+<div class="row justify-content-center align-items-center">
+    <div class="col-md-7">
+        <div class="card strategy-card shadow-lg h-100 p-3">
+
+            <ul style="list-style: none;"> 
+                {% if not request.user.is_vip %}
+                <li class="mb-3 paragraphs"><strong>Status: </strong> Ristricted</li>
+                {% endif %}
+                <li class="mb-3 paragraphs"><strong>Access Threshold: $100,000+ 
+                </strong><br> 
+                <small>Minimum balance required for synchronization</small>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 <!-- no vip -->
 <div class="row text-start">
 <!-- <div class="row justify-content-center align-items-center text-center"> -->

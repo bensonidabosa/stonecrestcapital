@@ -19,11 +19,11 @@
 
     <!-- Conservative Strategy -->
     {% for plan in plans %}
-        <div class="col-md-6 mb-0">
+        <div class="col-md-6 mb-2">
             <div class="card strategy-card  shadow-lg h-100">
 
-                <div class="card-body shadow mt-3 mb-2 ms-2 me-2">
-                    <div class="row g-0 gx-0 ">
+                <div class="card-body shadow mt-3 mb-2 ms-2 me-2 p-0">
+                    <div class="row g-0">
 
                         <!-- Image Side -->
                         <div class="col-5 p-0">
@@ -68,10 +68,12 @@
 
                     </div>
 
-
-                    <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-1 w-100 fw-bold">
+                    <div class="activating-button px-3">
+                        <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-1 w-100 fw-bold mb-2 px-0">
                         Activate Mandate
                     </a>
+                    </div>
+                    
                 </div>
             </div>
 

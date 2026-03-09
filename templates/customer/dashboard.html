@@ -19,7 +19,7 @@
         <span class="fw-medium text-dark">{{ portfolio.user.nick_name }}</span>
     </div>
 </div> -->
-<hr class="border-dark mb-1">
+<!-- <hr class="border-dark mb-1"> -->
 {% include "../notification/messages.html" %}
 <!-- next -->
 <div class="row">
@@ -75,7 +75,7 @@
     </div>
 </div>
 
-<hr class="border-dark mb-1">
+<!-- <hr class="border-dark mb-1"> -->
 <div class="row mt-2">
     <div class="col-12">
         <h6 class="fw-semibold mb-3 text-dark">Active Strategic Mandates</h6>
@@ -120,10 +120,10 @@
     <p class="text-muted">No available Strategic Mandates</p>
     {% endif %}
 </div>
-<hr class="border-dark mt-0">
+<!-- <hr class="border-dark mt-0"> -->
 
 <!-- strategy part -->
-<div class="row mt-5">
+<div class="row mt-2">
     <div class="d-flex justify-content-between align-items-center">
         <h5 class="text-dark">Strategic Mandates</h5>
         <!-- <h5 class="mb-3 text-dark">Strategic Allocations</h5> -->
@@ -135,36 +135,64 @@
         <div class="row">
 
             {% for plan in plans%}
-            <div class="col-md-6 mb-3">
-                <div class="card strategy-card h-100">
-                    <div class="card-body">
+            <div class="col-md-6 mb-2">
+                <div class="card strategy-card  shadow-lg h-100">
 
-                        <div class="icon-circle mx-auto  mb-3 d-md-none">
-                            <i class="bi bi-lightning-charge"></i>
+                    <div class="card-body shadow mt-3 mb-2 ms-2 me-2 p-0">
+                        <div class="row g-0">
+
+                            <!-- Image Side -->
+                            <div class="col-5 p-0">
+                                <div class="image_wrapper">
+                                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31"
+                                    class="strategy-image img-fluid" alt="Strategy">
+
+                                    <!-- white blend layer -->
+                                    <div class="below_pic">
+                                        <div class="below-pic-content"></div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <!-- Text Side -->
+                            <div class="col-7 p-1">
+
+                                <h5 class=" text-success plan_name">
+                                    {{ plan.name }}
+                                </h5>
+
+                                <hr class="my-2">
+
+                                <p class="small text-muted">
+                                    {{ plan.short_description }}
+                                </p>
+
+                                <p class="mb-1 small">
+                                    <strong>Yield:</strong>
+                                    {{ plan.percent_increment|floatformat:1 }}%
+                                </p>
+
+                                <p class="small">
+                                    <strong>Requirement:</strong>
+
+                                    {% if plan.min_amount <= 100 %} 
+                                        No Minimum 
+                                    {% else %} 
+                                        $
+                                    {{ plan.min_amount|floatformat:2|intcomma }} {% endif %} </p>
+                            </div>
+
                         </div>
 
-                        <h5 class="text-success">{{plan.name}}</h5>
-                        <hr class="border-dark">
-                        <p class="text-dark paragraphs">{{plan.short_description}}</p>
-                        <p class="text-dark paragraphs">Yield: {{plan.percent_increment|floatformat:1}}%</p>
-                        <p class="text-dark paragraphs">
-                            Requirement:
-                            {% if plan.min_amount <= 100 %} 
-                                No Minimum 
-                            {% else %} 
-                                ${{plan.min_amount|floatformat:2|intcomma }}
-                            {% endif%} 
-                        </p>
-                        <a href="{% url 'customer:activate_plan' plan.id %}"
-                                    class="btn btn-primary rounded-pill mt-2 w-100 fw-bold">
+                        <div class="activating-button px-3">
+                            <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-1 w-100 fw-bold mb-2 px-0">
                             Activate Mandate
                         </a>
-                                <!-- <a href="" class="btn btn-primary rounded-pill mt-2">
-                            Allocate Capital
-                        </a> -->
-
+                        </div>
+                        
                     </div>
                 </div>
+
             </div>
             {% empty%}
             <div class="text-center">
