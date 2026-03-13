@@ -34,12 +34,12 @@
                             <!-- <img src="{% static 'account/images/logo-stone.png' %}" alt="footer-logo" width="200"> -->
                         </a>
                         </figure>
-                        <p>Access valuable insights and expertise download free trading guides today!..</p>
-                        <div class="link-box">
+                        <p>Stonecrest Capital is an asset management firm dedicated to preserving and growing client capital through disciplined portfolio construction and strategic allocation..</p>
+                        <!-- <div class="link-box">
                             <div class="icon-box"><i class="flaticon-book"></i></div>
                             <h6><a href="{% url 'frontend:home' %}">Free <br>Trading Guides <i class="flaticon-right-arrow"></i></a>
                             </h6>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6 col-sm-12 footer-column">
@@ -49,10 +49,10 @@
                         </div>
                         <div class="widget-content">
                             <ul class="links-list clearfix">
-                                <li><a href="index.html">Email Us</a></li>
-                                <li><a href="index.html">Help Center</a></li>
-                                <li><a href="faq.html">Faq's</a></li>
-                                <li><a href="index.html">Live Chat</a></li>
+                                <!-- <li><a href="index.html">Contact Us</a></li> -->
+                                <li><a href="{% url 'frontend:contact' %}">Help Center</a></li>
+                                <li><a href="{% url 'frontend:faq' %}">Faq's</a></li>
+                                <li><a href="{% url 'frontend:mandates' %}">Mandates</a></li>
                             </ul>
                         </div>
                     </div>
@@ -67,21 +67,21 @@
                                 <div class="col-lg-6 col-md-6 col-sm-12 links-column">
                                     <ul class="links-list clearfix">
                                         <li><a href="{% url 'frontend:home' %}">Home</a></li>
-                                        <li><a href="index.html">Story</a></li>
-                                        <li><a href="index.html">History</a></li>
-                                        <li><a href="team.html">Our Team</a></li>
-                                        <li><a href="index.html">Trading Rules</a></li>
-                                        <li><a href="blog.html">Blog Post</a></li>
+                                        <li><a href="{% url 'frontend:about' %}">About Us</a></li>
+                                        <li><a href="{% url 'frontend:mandates' %}">Mandates</a></li>
+                                        <li><a href="{% url 'frontend:faq' %}">Faqs</a></li>
+                                        <li><a href="{% url 'frontend:contact' %}">Contact</a></li>
+                                        <!-- <li><a href="blog.html">Blog Post</a></li> -->
                                     </ul>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-12 links-column">
                                     <ul class="links-list clearfix">
-                                        <li><a href="index.html">Markets</a></li>
-                                        <li><a href="index.html">Evaluations</a></li>
-                                        <li><a href="index.html">Affiliates</a></li>
-                                        <li><a href="index.html">Pricing</a></li>
-                                        <li><a href="index.html">Get Funded</a></li>
-                                        <li><a href="index.html">Course</a></li>
+                                        <li><a href="{% url 'account:register' %}">Register</a></li>
+                                        <li><a href="{% url 'account:login' %}">Login</a></li>
+                                        <li><a href="{% url 'account:login' %}">Portfolio</a></li>
+                                        <li><a href="{% url 'account:login' %}">Deposit</a></li>
+                                        <li><a href="{% url 'account:login' %}">Withdraw</a></li>
+                                        <li><a href="{% url 'account:login' %}">Settings</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -90,9 +90,9 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12 footer-column">
                     <div class="footer-widget contact-widget">
-                        <div class="widget-title">
+                        <!-- <div class="widget-title">
                             <h3>Social Connect</h3>
-                        </div>
+                        </div> -->
                         <div class="widget-content">
                             <!-- <ul class="social-links">
                                 <li><a href="index.html"><i class="flaticon-facebook"></i></a></li>
@@ -100,7 +100,7 @@
                                 <li><a href="index.html"><i class="flaticon-instagram-logo"></i></a></li>
                                 <li><a href="index.html"><i class="flaticon-youtube"></i></a></li>
                             </ul> -->
-                            <ul class="download-list">
+                            <!-- <ul class="download-list">
                                 <li class="app-store">
                                     <a href="#"><i class="flaticon-apple"></i>App Store</a>
                                 </li>
@@ -108,7 +108,7 @@
                                     <a href="#"><img src="{% static 'frontend/assets/images/icons/icon-18.png' %}" alt="">Google
                                         Play</a>
                                 </li>
-                            </ul>
+                            </ul> -->
                         </div>
                     </div>
                 </div>

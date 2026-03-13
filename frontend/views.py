@@ -8,3 +8,9 @@ def about_view(request):
 
 def contact_view(request):
     return render(request, 'frontend/contact.html')
+
+def faq_view(request):
+    return render(request, 'frontend/faq.html')
+
+def mandates_view(request):
+    return render(request, 'frontend/mandates.html')
