@@ -2,4 +2,303 @@
 {% load static %}
 
 {% block content %}
+<style>
+    .my_list_list li{
+        list-style-type: disc !important;
+        /* color: #000 !important; */
+    }
+</style>
+<!-- page-title -->
+<section class="page-title">
+    <div class="bg-layer" style="background-image: url(/static/frontend/assets/images/background/page-title.jpg);">
+    </div>
+    <div class="auto-container">
+        <div class="content-box">
+            <h1>Our Mandates</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="{% url 'frontend:home' %}">Home</a></li>
+                <li>Services</li>
+                <li><span>Mandates</span></li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- page-title end -->
+
+<!-- service-details -->
+<section class="account-details service-details">
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
+                <div class="account-sidebar default-sidebar">
+                    
+                    <div class="sidebar-widget category-widget">
+                        <div class="widget-title">
+                            <h3>Mandates</h3>
+                        </div>
+                        <div class="widget-content">
+                            <ul class="category-list clearfix">
+                                <li><a href="#number-one-section" class="current"><span>Foundational Infrastructure (The Bedrock)</span><i
+                                            class="flaticon-right-arrow-1"></i></a></li>
+                                <li><a href="#number-two-section"><span>High-Velocity Growth (The Engine)</span><i
+                                            class="flaticon-right-arrow-1"></i></a></li>
+                                <li><a href="#number-three-section"><span>Strategic Mirroring (The Apex)</span><i
+                                            class="flaticon-right-arrow-1"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-widget contact-widget">
+                        <div class="widget-content"
+                            style="background-image: url(/static/frontend/assets/images/resource/sidebar-1.jpg);">
+                            <div class="shape-1" style="background-image: url(/static/frontend/assets/images/shape/shape-43.png);"></div>
+                            <div class="shape-2" style="background-image: url(/static/frontend/assets/images/shape/shape-44.png);"></div>
+                            <h3>The Strategic <br> Allocation Architecture <br>with <span>Stonecrest</span>Capital!...</h3>
+                            
+                            <p>Managing assets, Maximizing Profits.</p>
+                            <!-- <a href="tel:18007661234" class="phone"><span>Phone: +1 800 766-1234</span></a> -->
+                            <a href="{% url 'account:register' %}" class="theme-btn btn-two"><span>Start Now</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-12 col-sm-12 content-side">
+                <div class="account-details-content">
+                    <div class="content-one">
+                        <h2>The Institutional Logic</h2>
+                        <p>At Stonecrest Capital, we have replaced traditional "investing" with Institutional Mandates. We do not speculate on market prices. We own the machinery of the modern economy. By funding infrastructure directly, we remove the middle-man banks that typically capture 80% of the profit. At Stonecrest, the bank's margin becomes your yield.</p>
+                        <figure class="image-box"><img src="{% static 'frontend/assets/images/resource/account-8.jpg' %}" alt=""></figure>
+                    </div>
+                    <section id="number-one-section">
+                        <div class="content-two">
+                            <div class="text-box">
+                                <h2>Foundational Infrastructure (The Bedrock)</h2>
+                                <p>These mandates are anchored in physical deeds and heavy assets. This is the "safe harbor" designed for absolute preservation and steady, low-volatility growth.
+                                </p>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>4.5% Monthly Yield</h4>
+                                        <h3>Urban Horizon</h3>
+                                        <ul class="my_list_list">
+                                            <li><strong>The Strategy: </strong>Multi-Family Residential Clusters.</li>
+                                            <li><strong>The Blueprint: </strong>You are the landlord of the modern workforce. By owning a share of high-occupancy sustainable housing, you capture the most fundamental human necessity: shelter.</li>
+                                            <li><strong>The Backing: </strong>Direct equity in physical residential property.</li>
+                                            <li><strong>Entry: </strong>No Minimum Requirement.</li>
+                                        </ul>
+                                        <!-- <p>Again is there anyone who loves or pursue or desires to obtain pain.</p> -->
+                                        <div class="overlay-content">
+                                            <h3>Urban Horizon | 4.5% Monthly Yield</h3>
+                                            <ul class="my_list_list">
+                                                <li><strong>The Strategy: </strong>Multi-Family Residential Clusters.</li>
+                                                <li><strong>The Blueprint: </strong>You are the landlord of the modern workforce. By owning a share of high-occupancy sustainable housing, you capture the most fundamental human necessity: shelter.</li>
+                                                <li><strong>The Backing: </strong>Direct equity in physical residential property.</li>
+                                                <li><strong>Entry: </strong>No Minimum Requirement.</li>
+                                            </ul>
+                                            <!-- <p>Frequently occur that pleasures have to be repudiated and annoyances matters
+                                                to this principle of selection endures.</p> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>6.8% Monthly Yield</h4>
+                                        <h3>Data Fortress</h3>
+                                        <ul class="my_list_list">
+                                            <li><strong>The Strategy: </strong>Hyperscale Data Center Real Estate.</li>
+                                            <li><strong>The Blueprint: </strong>You own the "Real Estate of the Internet." Every byte of AI and Cloud data lives in a physical building. We own those buildings and collect rent from the world's largest tech providers.</li>
+                                            <li><strong>The Backing: </strong>Industrial deeds and long-term institutional leases.</li>
+                                            <li><strong>Entry: </strong>$25,000 Minimum.</li>
+                                        </ul>
+                                        <div class="overlay-content">
+                                            <h3>Data Fortress | 6.8% Monthly Yield</h3>
+                                            <ul class="my_list_list">
+                                                <li><strong>The Strategy: </strong>Hyperscale Data Center Real Estate.</li>
+                                                <li><strong>The Blueprint: </strong>You own the "Real Estate of the Internet." Every byte of AI and Cloud data lives in a physical building. We own those buildings and collect rent from the world's largest tech providers.</li>
+                                                <li><strong>The Backing: </strong>Industrial deeds and long-term institutional leases.</li>
+                                                <li><strong>Entry: </strong>$25,000 Minimum.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>8.2% Monthly Yield</h4>
+                                        <h3>Health Core</h3>
+                                        <ul class="my_list_list">
+                                            <li><strong>The Strategy: </strong>Bio-Tech Estates & Medical Infrastructure.</li>
+                                            <li><strong>The Blueprint: </strong>Recession-proof laboratory space. While markets fluctuate, the demand for medical research and longevity facilities is constant. These assets carry 10-15 year guaranteed leases.</li>
+                                            <li><strong>The Backing: </strong>Specialized medical facility infrastructure.</li>
+                                            <li><strong>Entry: </strong>$50,000 Minimum.</li>
+                                        </ul>
+                                        <div class="overlay-content">
+                                            <h3>Health Core | 8.2% Monthly Yield</h3>
+                                            <ul class="my_list_list">
+                                                <li><strong>The Strategy: </strong>Bio-Tech Estates & Medical Infrastructure.</li>
+                                                <li><strong>The Blueprint: </strong>Recession-proof laboratory space. While markets fluctuate, the demand for medical research and longevity facilities is constant. These assets carry 10-15 year guaranteed leases.</li>
+                                                <li><strong>The Backing: </strong>Specialized medical facility infrastructure.</li>
+                                                <li><strong>Entry: </strong>$50,000 Minimum.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>04.</h4>
+                                        <h3>Profit Potential</h3>
+                                        <p>Again is there anyone who loves or pursue or desires to obtain pain.</p>
+                                        <div class="overlay-content">
+                                            <h3>Profit Potential</h3>
+                                            <p>Frequently occur that pleasures have to be repudiated and annoyances matters
+                                                to this principle of selection endures.</p>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <!-- <div class="scroll-text">
+                                <ul class="text-list">
+                                    <li><i class="flaticon-checked-1"></i>Evaluating Your Progress</li>
+                                    <li><i class="flaticon-checked-1"></i>Continuous Improvement</li>
+                                    <li><i class="flaticon-checked-1"></i>24/7 Customer Support</li>
+                                    <li><i class="flaticon-checked-1"></i>Evaluating Your Progress</li>
+                                    <li><i class="flaticon-checked-1"></i>Continuous Improvement</li>
+                                    <li><i class="flaticon-checked-1"></i>24/7 Customer Support</li>
+                                    <li><i class="flaticon-checked-1"></i>Evaluating Your Progress</li>
+                                    <li><i class="flaticon-checked-1"></i>Continuous Improvement</li>
+                                    <li><i class="flaticon-checked-1"></i>24/7 Customer Support</li>
+                                </ul>
+                            </div> -->
+                        </div>
+                    </section>
+                    <section id="number-two-section">
+                        <div class="content-two">
+                            <div class="text-box">
+                                <h2>High-Velocity Growth (The Engine)</h2>
+                                <p>These mandates identify "bottlenecks" in the global economy. Your capital provides the liquid "fuel" to move goods and data faster than traditional banks can handle.
+                                </p>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>11% Monthly Yield</h4>
+                                        <h3>Velocity Tier</h3>
+                                        <ul class="my_list_list">
+                                            <li><strong>The Strategy: </strong>FinTech Liquidity & Settlement Gaps.</li>
+                                            <li><strong>The Blueprint: </strong>You are the "Digital Toll Booth." Millions move across borders every second. We provide the instant cash (liquidity) that allows these transfers to happen, capturing a micro-fee on every transaction.</li>
+                                            <li><strong>The Backing: </strong>Liquid capital reserves secured by transaction ledgers.</li>
+                                            <li><strong>Entry: </strong>No Minimum Requirement.</li>
+                                        </ul>
+                                        <!-- <p>Again is there anyone who loves or pursue or desires to obtain pain.</p> -->
+                                        <div class="overlay-content">
+                                            <h3>Velocity Tier | 11% Monthly Yield</h3>
+                                            <ul class="my_list_list">
+                                                <li><strong>The Strategy: </strong>FinTech Liquidity & Settlement Gaps.</li>
+                                                <li><strong>The Blueprint: </strong>You are the "Digital Toll Booth." Millions move across borders every second. We provide the instant cash (liquidity) that allows these transfers to happen, capturing a micro-fee on every transaction.</li>
+                                                <li><strong>The Backing: </strong>Liquid capital reserves secured by transaction ledgers.</li>
+                                                <li><strong>Entry: </strong>No Minimum Requirement.</li>
+                                            </ul>
+                                            <!-- <p>Frequently occur that pleasures have to be repudiated and annoyances matters
+                                                to this principle of selection endures.</p> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>18% Monthly Yield</h4>
+                                        <h3>Quantum Tier</h3>
+                                        <ul class="my_list_list">
+                                            <li><strong>The Strategy: </strong>Applied AI Computing Clusters.</li>
+                                            <li><strong>The Blueprint: </strong>You own the "thinking power" of the AI era. Instead of building their own, AI firms rent our specialized GPU hardware. Your yield is the direct rental income paid by the tech industry.</li>
+                                            <li><strong>The Backing: </strong>Physical GPU hardware serial numbers and rental contracts.</li>
+                                            <li><strong>Entry: </strong>$50,000 Minimum.</li>
+                                        </ul>
+                                        <div class="overlay-content">
+                                            <h3>Quantum Tier | 18% Monthly Yield</h3>
+                                            <ul class="my_list_list">
+                                                <li><strong>The Strategy: </strong>Applied AI Computing Clusters.</li>
+                                                <li><strong>The Blueprint: </strong>You own the "thinking power" of the AI era. Instead of building their own, AI firms rent our specialized GPU hardware. Your yield is the direct rental income paid by the tech industry.</li>
+                                                <li><strong>The Backing: </strong>Physical GPU hardware serial numbers and rental contracts.</li>
+                                                <li><strong>Entry: </strong>$50,000 Minimum.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>25% Monthly Yield</h4>
+                                        <h3>Sovereign Tier</h3>
+                                        <ul class="my_list_list">
+                                            <li><strong>The Strategy: </strong>Rare Earth & Energy Trade Financing.</li>
+                                            <li><strong>The Blueprint: </strong>You are the "Bridge of Global Trade." We fund the gap between the shipping and delivery of essential energy minerals. Because we move faster than banks, we capture a massive "speed premium" on every shipment.</li>
+                                            <li><strong>The Backing: </strong>Specialized medical facility infrastructure.</li>
+                                            <li><strong>Entry: </strong>$50,000 Minimum.</li>
+                                        </ul>
+                                        <div class="overlay-content">
+                                            <h3>Sovereign Tier | 25% Monthly Yield</h3>
+                                            <ul class="my_list_list">
+                                                <li><strong>The Strategy: </strong>Rare Earth & Energy Trade Financing.</li>
+                                                <li><strong>The Blueprint: </strong>You are the "Bridge of Global Trade." We fund the gap between the shipping and delivery of essential energy minerals. Because we move faster than banks, we capture a massive "speed premium" on every shipment.</li>
+                                                <li><strong>The Backing: </strong>Physical trade manifests and shipping insurance.</li>
+                                                <li><strong>Entry: </strong>$100,000 Minimum.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section id="number-three-section">
+                        <div class="content-two">
+                            <div class="text-box">
+                                <h2>Strategic Mirroring (The Apex)</h2>
+                                <p>The ultimate level of capital governance for partners seeking total institutional alignment.
+                                </p>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-lg-6 col-md-6 col-sm-12 single-column">
+                                    <div class="single-item">
+                                        <h4>Lead-Desk Execution</h4>
+                                        <h3>Institutional Sync</h3>
+                                        <ul class="my_list_list">
+                                            <li><strong>The Strategy: </strong>Restricted Access</li>
+                                            <li><strong>The Blueprint: </strong>Absolute synchronization with the Stonecrest Lead Desk. Your capital moves in real-time alongside our Portfolio Managers. When the firm identifies a new market inefficiency, your account pivots automatically to capture it.</li>
+                                            <li><strong>The Value: </strong>Proactive market capture before it is accessible to the public.</li>
+                                            <li><strong>Threshold: </strong>Accounts $100,000+.</li>
+                                        </ul>
+                                        <!-- <p>Again is there anyone who loves or pursue or desires to obtain pain.</p> -->
+                                        <div class="overlay-content">
+                                            <h3>Institutional Sync | Lead-Desk Execution</h3>
+                                            <ul class="my_list_list">
+                                                <li><strong>The Strategy: </strong>Restricted Access</li>
+                                                <li><strong>The Blueprint: </strong>Absolute synchronization with the Stonecrest Lead Desk. Your capital moves in real-time alongside our Portfolio Managers. When the firm identifies a new market inefficiency, your account pivots automatically to capture it.</li>
+                                                <li><strong>The Value: </strong>Proactive market capture before it is accessible to the public.</li>
+                                                <li><strong>Threshold: </strong>Accounts $100,000+.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            <div class="scroll-text">
+                                <ul class="text-list">
+                                    <li><i class="flaticon-checked-1"></i>Evaluating Your Progress</li>
+                                    <li><i class="flaticon-checked-1"></i>Continuous Improvement</li>
+                                    <li><i class="flaticon-checked-1"></i>24/7 Customer Support</li>
+                                    <li><i class="flaticon-checked-1"></i>Evaluating Your Progress</li>
+                                    <li><i class="flaticon-checked-1"></i>Continuous Improvement</li>
+                                    <li><i class="flaticon-checked-1"></i>24/7 Customer Support</li>
+                                    <li><i class="flaticon-checked-1"></i>Evaluating Your Progress</li>
+                                    <li><i class="flaticon-checked-1"></i>Continuous Improvement</li>
+                                    <li><i class="flaticon-checked-1"></i>24/7 Customer Support</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- service-details end -->
 {% endblock %}
