@@ -63,7 +63,7 @@
                                 Disciplined execution.
                             </h2>
                             <div class="btn-box">
-                                <a href="{% url 'account:register' %}" class="theme-btn btn-one">
+                                <a href="{% url 'frontend:mandates' %}" class="theme-btn btn-one">
                                     <span>Explore Our Mandates</span>
                                 </a>
                             </div>
@@ -106,7 +106,7 @@
                                 Institutional security.
                             </h2>
                             <div class="btn-box">
-                                <a href="{% url 'account:register' %}" class="theme-btn btn-one">
+                                <a href="{% url 'frontend:contact' %}" class="theme-btn btn-one">
                                     <span>Request Portfolio Access</span>
                                 </a>
                             </div>
@@ -154,14 +154,14 @@
                 <div class="service-block-one">
                     <div class="inner-box">
                         <h6>01</h6>
-                        <h3><a href="{% url 'account:login' %}">Mandate Structuring & Allocation</a></h3>
+                        <h3><a href="{% url 'frontend:mandates' %}">Mandate Structuring & Allocation</a></h3>
                         <p>Customized capital allocation frameworks aligned with clearly defined risk parameters and long-term objectives.</p>
                         <div class="image-box">
                             <figure class="image">
                                 <img src="{% static 'frontend/assets/images/banner/mybanner/land1.jpg' %}" alt="">
                             </figure>
                             <div class="btn-box">
-                                <a href="{% url 'account:login' %}" class="theme-btn">
+                                <a href="{% url 'frontend:mandates' %}" class="theme-btn">
                                     <span>View Mandates</span>
                                 </a>
                             </div>
@@ -175,14 +175,14 @@
                 <div class="service-block-one">
                     <div class="inner-box">
                         <h6>02</h6>
-                        <h3><a href="{% url 'account:login' %}">Strategic Mirroring</a></h3>
+                        <h3><a href="{% url 'frontend:mandates' %}">Strategic Mirroring</a></h3>
                         <p>Portfolio synchronization with Lead Portfolio Managers, ensuring disciplined execution and professional oversight.</p>
                         <div class="image-box">
                             <figure class="image">
                                 <img src="{% static 'frontend/assets/images/banner/mybanner/land3.jpg' %}" alt="">
                             </figure>
                             <div class="btn-box">
-                                <a href="{% url 'account:login' %}" class="theme-btn">
+                                <a href="{% url 'frontend:mandates' %}" class="theme-btn">
                                     <span>Learn More</span>
                                 </a>
                             </div>
@@ -196,14 +196,14 @@
                 <div class="service-block-one">
                     <div class="inner-box">
                         <h6>03</h6>
-                        <h3><a href="{% url 'account:login' %}">Risk Governance & Oversight</a></h3>
+                        <h3><a href="{% url 'frontend:mandates' %}">Risk Governance & Oversight</a></h3>
                         <p>Continuous monitoring, structured risk controls, and disciplined capital preservation strategies.</p>
                         <div class="image-box">
                             <figure class="image">
                                 <img src="{% static 'frontend/assets/images/banner/mybanner/land2.jpg' %}" alt="">
                             </figure>
                             <div class="btn-box">
-                                <a href="{% url 'account:login' %}" class="theme-btn">
+                                <a href="{% url 'frontend:mandates' %}" class="theme-btn">
                                     <span>Explore Framework</span>
                                 </a>
                             </div>
@@ -215,15 +215,15 @@
             <!-- Image Block -->
             <div class="col-lg-4 col-md-6 col-sm-12 image-block">
                 <div class="image-inner">
-                    <figure class="image clearfix">
+                    <!-- <figure class="image clearfix">
                         <img src="{% static 'frontend/assets/images/resource/vector-1.png' %}" alt="">
-                    </figure>
+                    </figure> -->
                 </div>
             </div>
 
             <!-- Service 4 -->
             <div class="col-lg-4 col-md-6 col-sm-12 service-block">
-                <div class="service-block-one">
+                <!-- <div class="service-block-one">
                     <div class="inner-box">
                         <h6>04</h6>
                         <h3><a href="{% url 'account:login' %}">Performance Reporting</a></h3>
@@ -239,20 +239,20 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <!-- Service 5 -->
             <div class="col-lg-4 col-md-6 col-sm-12 service-block">
                 <div class="service-block-two">
                     <div class="inner-box"
-                        style="background-image: url(/static/frontend/assets/images/service/service-5-1.jpg);">
+                        style="background-image: url(/static/frontend/assets/images/banner/mybanner/land4.jpg);">
                         <div class="icon-box">
                             <img src="{% static 'frontend/assets/images/icons/icon-5.png' %}" alt="">
                         </div>
                         <h3>Stonecrest Capital<br>Private Asset Management</h3>
                         <p>Disciplined capital stewardship designed for long term preservation and strategic growth.</p>
-                        <a href="{% url 'account:register' %}" class="theme-btn">
+                        <a href="{% url 'frontend:contact' %}" class="theme-btn">
                             <span>Request Private Access</span>
                         </a>
                     </div>
@@ -263,6 +263,8 @@
     </div>
 </section>
 <!-- service-section end -->
+
+
 
 <!-- funfact-section -->
 <section class="funfact-section bg-color-1">
@@ -279,18 +281,29 @@
                 </div>
 
                 <div class="col-lg-3 col-md-6 col-sm-12 single-column">
-                    <div class="funfact-block-one">
-                        <div class="inner-box">
+                    <div class="funfact-block-one" style="background-color: #26c48c;">
+                        <div class="inner-box" style="background-color: #26c48c;">
                             <div class="icon-box">
-                                <img src="{% static 'frontend/assets/images/icons/icon-6.png' %}" alt="">
+                                <img src="{% static 'frontend/assets/images/icons/icon-37.png' %}" alt="">
                             </div>
-                            <h2>$125M<span>+</span></h2>
-                            <p>Capital <br>Under Strategic Oversight</p>
+                            <h2 class="text-white">10<span>+</span> Years</h2>
+                            <p class="text-white" style="font-size: 20px;">Proven Expertise<br>in Strategic Asset Management</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 single-column">
+                    <div class="funfact-block-one" style="background-color: #26c48c;">
+                        <div class="inner-box" style="background-color: #26c48c;">
+                            <div class="icon-box">
+                                <img src="{% static 'frontend/assets/images/icons/icon-37.png' %}" alt="">
+                            </div>
+                            <h2 class="text-white">100<span>+</span> Billions</h2>
+                            <p class="text-white" style="font-size: 20px;">Assets<br>Under StoneCrest Management</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-3 col-md-6 col-sm-12 single-column">
+                <!-- <div class="col-lg-3 col-md-6 col-sm-12 single-column">
                     <div class="funfact-block-one">
                         <div class="inner-box">
                             <div class="icon-box">
@@ -300,9 +313,9 @@
                             <p>Risk Monitoring & <br>Portfolio Surveillance</p>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="col-lg-3 col-md-6 col-sm-12 single-column">
+                <!-- <div class="col-lg-3 col-md-6 col-sm-12 single-column">
                     <div class="funfact-block-one">
                         <div class="inner-box">
                             <div class="icon-box">
@@ -324,9 +337,9 @@
                             <p>Institutional Infrastructure <br>Development</p>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="col-lg-6 col-md-12 col-sm-12 single-column">
+                <!-- <div class="col-lg-6 col-md-12 col-sm-12 single-column">
                     <div class="tabs-box chart-one">
                         <h5>Six-Month Mandate Performance Overview</h5>
                         <div class="tab-btn-box">
@@ -415,7 +428,7 @@
                         </div>
 
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>
@@ -434,12 +447,12 @@
                         <img src="{% static 'frontend/assets/images/banner/mybanner/banner6.jpg' %}" alt="">
                         <!-- <img src="{% static 'frontend/assets/images/resource/about-1.jpg' %}" alt=""> -->
                     </figure>
-                    <!-- <figure class="image image-2">
+                    <figure class="image image-2">
                         <a href="{% static 'frontend/assets/images/resource/dashboard-1.jpg' %}"
                             class="lightbox-image" data-fancybox="gallery">
                             <img src="{% static 'frontend/assets/images/resource/dashboard-1.jpg' %}" alt="">
                         </a>
-                    </figure> -->
+                    </figure>
                 </div>
             </div>
 
@@ -471,7 +484,7 @@
                     </div>
 
                     <div class="btn-box">
-                        <a href="{% url 'account:register' %}" class="theme-btn">
+                        <a href="{% url 'frontend:mandates' %}" class="theme-btn">
                             <span>Discover Our Approach</span>
                         </a>
                     </div>
