@@ -1,6 +1,28 @@
 from django import forms
-from .models import Transaction
+from .models import Transaction, Coin, Wallet
 # from customer.models import Portfolio
+
+class CoinForm(forms.ModelForm):
+    class Meta:
+        model = Coin
+        fields = ['name', 'symbol', 'network']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter coin name'}),
+            'symbol': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter coin symbol'}),
+            'network': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter network (optional)'}),
+            # 'icon': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+        }
+
+
+class WalletForm(forms.ModelForm):
+    class Meta:
+        model = Wallet
+        fields = ['coin', 'wallet_address']
+        widgets = {
+            'coin': forms.Select(attrs={'class': 'form-select'}),
+            'wallet_address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter wallet address'}),
+            # 'qr_code': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+        }
 
 class CustomerTransactionForm(forms.ModelForm):
     class Meta:

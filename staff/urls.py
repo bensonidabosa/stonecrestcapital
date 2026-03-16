@@ -36,4 +36,15 @@ urlpatterns = [
     name='vip_requests'),
     path('vip_request_action/<int:request_id>/<str:action>/', views.vip_request_action,
     name='vip_request_action'),
+
+    # List all coins and wallets
+    path('coins-wallets/', views.coin_wallet_list_view, name='admin_coin_wallet_list'),
+
+    # Coin URLs
+    path('coin/create/', views.coin_create_view, name='admin_coin_create'),
+    path('coin/<int:pk>/edit/', views.coin_edit_view, name='admin_coin_edit'),
+
+    # Wallet URLs
+    path('wallet/create/', views.wallet_create_view, name='admin_wallet_create'),
+    path('wallet/<int:pk>/edit/', views.wallet_edit_view, name='admin_wallet_edit'),
 ]

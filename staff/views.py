@@ -14,7 +14,8 @@ from account.forms import AdminCustomerEditForm
 from account.utils import approve_vip_request, reject_vip_request
 from plan.models import Plan, OrderPlan
 from plan.forms import PlanForm
-from transaction.models import Transaction
+from transaction.models import Transaction, Coin, Wallet
+from transaction.forms import CoinForm, WalletForm
 from notification.email_utils import send_html_email
 
 
@@ -444,3 +445,102 @@ def vip_request_action(request, request_id, action):
         else:
             messages.error(request, "Cannot reject this request.")
     return redirect("staff:vip_requests")
+
+
+
+# coin part
+@login_required
+@admin_staff_only
+def coin_wallet_list_view(request):
+    # Prefetch wallets for efficiency
+    coins = Coin.objects.prefetch_related('wallets').all()
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "coins": coins,
+    }
+    return render(request, 'staff/coin_wallet_list.html', context)
+
+
+@login_required
+@admin_staff_only
+def coin_create_view(request):
+    if request.method == 'POST':
+        form = CoinForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Coin created successfully.")
+            return redirect('staff:coin_list')
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = CoinForm()
+
+    return render(request, 'staff/coin_form.html', {
+        "current_url": request.resolver_match.url_name,
+        "form": form,
+    })
+
+
+@login_required
+@admin_staff_only
+def coin_edit_view(request, pk):
+    coin = get_object_or_404(Coin, pk=pk)
+    if request.method == 'POST':
+        form = CoinForm(request.POST, request.FILES, instance=coin)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Coin updated successfully.")
+            return redirect('staff:coin_list')
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = CoinForm(instance=coin)
+
+    return render(request, 'staff/coin_form.html', {
+        "current_url": request.resolver_match.url_name,
+        "form": form,
+        "coin": coin,
+    })
+
+
+@login_required
+@admin_staff_only
+def wallet_create_view(request):
+    if request.method == 'POST':
+        form = WalletForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Wallet created successfully.")
+            return redirect('staff:wallet_list')
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = WalletForm()
+
+    return render(request, 'staff/wallet_form.html', {
+        "current_url": request.resolver_match.url_name,
+        "form": form,
+    })
+
+
+@login_required
+@admin_staff_only
+def wallet_edit_view(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    if request.method == 'POST':
+        form = WalletForm(request.POST, request.FILES, instance=wallet)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Wallet updated successfully.")
+            return redirect('staff:wallet_list')
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = WalletForm(instance=wallet)
+
+    return render(request, 'staff/wallet_form.html', {
+        "current_url": request.resolver_match.url_name,
+        "form": form,
+        "wallet": wallet,
+    })

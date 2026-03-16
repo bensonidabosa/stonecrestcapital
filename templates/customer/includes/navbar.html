@@ -124,6 +124,18 @@
           VIP Requests
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link {% if current_url == 'admin_coin_wallet_list' %}active{% endif %}" href="{% url 'staff:admin_coin_wallet_list' %}">
+          <i class="bi bi-currency-bitcoin me-2"></i>
+          Crypto
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if current_url == 'logout' %}active{% endif %}" href="{% url 'account:logout' %}">
+          <i class="bi bi-box-arrow-right"></i>
+          Logout
+        </a>
+      </li>
       {% endif %}
     </ul>
   </div>
@@ -221,6 +233,18 @@
         VIP Requests
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link {% if current_url == 'admin_coin_wallet_list' %}active{% endif %}" href="{% url 'staff:admin_coin_wallet_list' %}">
+        <i class="bi bi-currency-bitcoin me-2"></i>
+        Crypto
+      </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if current_url == 'logout' %}active{% endif %}" href="{% url 'account:logout' %}">
+          <i class="bi bi-box-arrow-right"></i>
+          Logout
+        </a>
+      </li>
     {% endif %}
   </ul>
 </div>
