@@ -246,8 +246,19 @@ def customer_deposit_view(request):
             trans = form.save(commit=False)
             trans.transaction_type = 'DEPOSIT'
             trans.portfolio = portfolio
-
             trans.balance = portfolio.cash_balance
+
+            # ✅ Get the coin from POST (from your <select id="coin-select">)
+            coin_id = request.POST.get("coin")  # this will work
+            print(coin_id)
+            if coin_id:
+                try:
+                    trans.coin = Coin.objects.get(id=coin_id)
+                except Coin.DoesNotExist:
+                    print('didnot work')
+                    form.add_error(None, "Selected coin does not exist.")
+                    return render(request, "your_template.html", {"form": form, "coins": coins})
+            print('returned none')
             trans.save()
 
             messages.success(request, "Your deposit request has been received and is currently being processed.")
