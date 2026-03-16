@@ -17,6 +17,7 @@ urlpatterns = [
     # transaction
     path('user/deposit/', views.customer_deposit_view, name='customer_deposit'),
     path('user/withdraw/', views.customer_withdraw_view, name='customer_withdraw'),
+    path("wallet/get/", views.get_wallet, name="get_wallet"),
 
     # plan
     path('active-plans/', views.active_plan_list_view, name='active_plan_list'),

@@ -63,7 +63,7 @@
                             </div>
 
                             <!-- Currency -->
-                            <div class="col-md-12">
+                            <div id="wire-currency-section" class="col-md-12">
                                 <label class="form-label">Currency</label>
                                 {{ form.currency }}
 
@@ -72,6 +72,46 @@
                                     {{ error }}
                                 </div>
                                 {% endfor %}
+                            </div>
+
+                            <!-- CRYPTO SECTION -->
+                            <div id="crypto-section" class="col-md-12" style="display:none;">
+                                <label class="form-label">Select Coin</label>
+                                <select id="coin-select" class="form-control">
+                                    <option value="">Select Coin</option>
+                                    {% for coin in coins %}
+                                    <option value="{{ coin.id }}">{{ coin.name }} ({{ coin.symbol }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div id="wallet-section" class="col-md-12 mt-3" style="display:none;">
+                                <label class="form-label">Wallet Address</label>
+                                <input type="text" id="wallet-address" class="form-control" readonly>
+
+                                <div class="mt-3 text-center">
+                                    <img id="wallet-qr" width="180">
+                                </div>
+                            </div>
+
+                            <!-- WIRE TRANSFER SECTION -->
+                            <div id="wire-section" class="col-md-12" style="display:none;">
+                                <div class="alert alert-info mt-2">
+                                    Our support team will send you bank transfer instructions
+                                    after submitting this request.
+                                </div>
+                            </div>
+
+                            <!-- CRYPTO TRANSFER SECTION -->
+                            <div id="crypto-info-section" class="col-md-12" style="display:none;">
+                                <div class="alert alert-warning mt-2">
+                                    <strong>Crypto Deposit Instructions</strong><br>
+                                    Select your preferred cryptocurrency to view the wallet address and QR code.
+                                    Send only the selected coin to the displayed wallet address. Sending a different
+                                    cryptocurrency may result in permanent loss of funds. Once your transfer is completed,
+                                    submit your deposit request and our team will verify the transaction and credit your
+                                    account accordingly.
+                                </div>
                             </div>
 
                             <!-- Reference / Note -->
@@ -168,4 +208,75 @@
         </table>
     </div>
 </div>
+
+<script>
+
+    const paymentMethod = document.getElementById("id_payment_method");
+    const cryptoSection = document.getElementById("crypto-section");
+    const cryptoInfoSection = document.getElementById("crypto-info-section");
+    const wireSection = document.getElementById("wire-section");
+    const wireCurrencySection = document.getElementById("wire-currency-section");
+
+    const coinSelect = document.getElementById("coin-select");
+    const walletSection = document.getElementById("wallet-section");
+    const walletAddress = document.getElementById("wallet-address");
+    const walletQR = document.getElementById("wallet-qr");
+
+
+    /* PAYMENT METHOD CHANGE */
+
+    paymentMethod.addEventListener("change", function () {
+
+        if (this.value === "CRYPTO") {
+
+            cryptoSection.style.display = "block";
+            cryptoInfoSection.style.display = "block";
+            wireSection.style.display = "none";
+            wireCurrencySection.style.display = "none";
+
+        }
+        else if (this.value === "WIRE") {
+
+            cryptoSection.style.display = "none";
+            walletSection.style.display = "none";
+            cryptoInfoSection.style.display = "none";
+            wireSection.style.display = "block";
+            wireCurrencySection.style.display = "block";
+            
+
+        }
+        else {
+
+            cryptoSection.style.display = "none";
+            walletSection.style.display = "none";
+            wireSection.style.display = "none";
+
+        }
+
+    });
+
+
+    /* COIN SELECTION */
+
+    coinSelect.addEventListener("change", function () {
+
+        let coinID = this.value;
+
+        if (!coinID) return;
+        const myUrl = "{% url 'customer:get_wallet' %}"
+        fetch(`${myUrl}?coin=${coinID}`)
+            .then(response => response.json())
+            .then(data => {
+
+                walletSection.style.display = "block";
+
+                walletAddress.value = data.wallet;
+
+                walletQR.src = data.qr;
+
+            });
+
+    });
+
+</script>
 {% endblock %}

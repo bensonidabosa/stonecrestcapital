@@ -1,5 +1,53 @@
 from django.db import models
 from decimal import Decimal
+import qrcode
+from io import BytesIO
+from django.core.files import File
+
+class Coin(models.Model):
+    name = models.CharField(max_length=50)
+    symbol = models.CharField(max_length=10, unique=True)
+    network = models.CharField(max_length=50, blank=True, null=True)
+    icon = models.ImageField(upload_to="coin_icons/", blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.symbol})"
+
+
+class Wallet(models.Model):
+
+    coin = models.ForeignKey(
+        Coin,
+        on_delete=models.CASCADE,
+        related_name="wallets"
+    )
+
+    wallet_address = models.CharField(max_length=200)
+
+    qr_code = models.ImageField(
+        upload_to="wallet_qr/",
+        blank=True,
+        null=True
+    )
+
+    def save(self, *args, **kwargs):
+
+        qr = qrcode.make(self.wallet_address)
+
+        buffer = BytesIO()
+        qr.save(buffer, format="PNG")
+
+        buffer.seek(0)  # VERY IMPORTANT
+
+        filename = f"{self.coin.symbol}_qr.png"
+
+        self.qr_code.save(filename, File(buffer), save=False)
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.coin.symbol} Wallet"
+
 
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
@@ -82,6 +130,12 @@ class Transaction(models.Model):
     coin_type = models.CharField(
         max_length=10,
         choices=COIN_CHOICES,
+        null=True,
+        blank=True
+    )
+    coin = models.ForeignKey(
+    Coin,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True
     )

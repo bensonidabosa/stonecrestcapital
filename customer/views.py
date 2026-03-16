@@ -18,6 +18,7 @@ from account.forms import BootstrapPasswordChangeForm, VIPRequestForm
 from plan.models import Plan, OrderPlan, OrderPlanItem
 from transaction.forms import CustomerTransactionForm
 from copytrade.models import CopyRelationship
+from transaction.models import Coin, Wallet
 
 @login_required
 def customer_dashboard_view(request):
@@ -236,6 +237,7 @@ def customer_deposit_view(request):
     deposit_transactions = portfolio.transactions.filter(
         transaction_type='DEPOSIT'
     )
+    coins = Coin.objects.all()
 
     if request.method == "POST":
         form = CustomerTransactionForm(request.POST, transaction_type="DEPOSIT")
@@ -263,7 +265,8 @@ def customer_deposit_view(request):
         "customer/transactions/customer_deposit.html",
         {
             "form": form,
-            "transactions": deposit_transactions
+            "transactions": deposit_transactions,
+            "coins": coins
         }
     )
 
@@ -522,3 +525,22 @@ def wallet_view(request):
         "mirrored_total": mirrored_total,
         "transactions": transactions,
     })
+
+
+# fetching crypto for deposit
+from django.http import JsonResponse
+def get_wallet(request):
+
+    coin_id = request.GET.get("coin")
+
+    wallet = Wallet.objects.filter(coin_id=coin_id).first()
+
+    if wallet:
+        data = {
+            "wallet": wallet.wallet_address,
+            "qr": wallet.qr_code.url if wallet.qr_code else ""
+        }
+    else:
+        data = {}
+
+    return JsonResponse(data)

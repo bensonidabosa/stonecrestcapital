@@ -7,3 +7,6 @@ django-countries
 django-anymail
 whitenoise
 pillow
+qrcode
+cloudinary 
+django-cloudinary-storage
