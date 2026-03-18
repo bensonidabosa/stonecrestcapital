@@ -47,4 +47,5 @@ urlpatterns = [
     # Wallet URLs
     path('wallet/create/', views.wallet_create_view, name='admin_wallet_create'),
     path('wallet/<int:pk>/edit/', views.wallet_edit_view, name='admin_wallet_edit'),
+    path("wallet/<int:pk>/delete/",views.wallet_delete_view,name="wallet_delete"),
 ]

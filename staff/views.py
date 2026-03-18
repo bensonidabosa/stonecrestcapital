@@ -470,7 +470,7 @@ def coin_create_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Coin created successfully.")
-            return redirect('staff:coin_list')
+            return redirect('staff:admin_coin_wallet_list')
         else:
             messages.error(request, "Please fix the errors below.")
     else:
@@ -491,7 +491,7 @@ def coin_edit_view(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Coin updated successfully.")
-            return redirect('staff:coin_list')
+            return redirect('staff:admin_coin_wallet_list')
         else:
             messages.error(request, "Please fix the errors below.")
     else:
@@ -512,7 +512,7 @@ def wallet_create_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Wallet created successfully.")
-            return redirect('staff:wallet_list')
+            return redirect('staff:admin_coin_wallet_list')
         else:
             messages.error(request, "Please fix the errors below.")
     else:
@@ -533,7 +533,7 @@ def wallet_edit_view(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Wallet updated successfully.")
-            return redirect('staff:wallet_list')
+            return redirect('staff:admin_coin_wallet_list')
         else:
             messages.error(request, "Please fix the errors below.")
     else:
@@ -542,5 +542,21 @@ def wallet_edit_view(request, pk):
     return render(request, 'staff/wallet_form.html', {
         "current_url": request.resolver_match.url_name,
         "form": form,
+        "wallet": wallet,
+    })
+
+
+@login_required
+@admin_staff_only
+def wallet_delete_view(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+
+    if request.method == "POST":
+        wallet.delete()
+        messages.success(request, "Wallet deleted successfully.")
+        return redirect('staff:admin_coin_wallet_list')
+
+    return render(request, "staff/wallet_delete_confirm.html", {
+        "current_url": request.resolver_match.url_name,
         "wallet": wallet,
     })

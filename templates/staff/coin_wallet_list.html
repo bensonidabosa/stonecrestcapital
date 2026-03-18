@@ -53,6 +53,7 @@
                   <td>
                     <!-- <a href="{% url 'staff:admin_coin_edit' coin.pk %}" class="btn btn-sm btn-outline-primary">Edit Coin</a> -->
                     <a href="{% url 'staff:admin_wallet_edit' wallet.pk %}" class="btn btn-sm btn-outline-success">Edit Wallet</a>
+                    <a href="{% url 'staff:wallet_delete' wallet.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
                   </td>
                 </tr>
               {% empty %}
