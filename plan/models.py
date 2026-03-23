@@ -46,6 +46,12 @@ class Plan(models.Model):
         help_text="A detailed description of the product."
     )
 
+    image = models.ImageField(
+        upload_to="plan_img/",
+        blank=True,
+        null=True
+    )
+
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
