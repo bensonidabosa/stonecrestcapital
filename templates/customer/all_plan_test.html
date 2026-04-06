@@ -62,11 +62,6 @@
                                 {{ plan.percent_increment|floatformat:1 }}%
                             </p>
 
-                            <p class="mb-1 small">
-                                <strong>Blueprint:</strong>
-                                {{ plan.long_description }}%
-                            </p>
-
                             <p class="small">
                                 <strong>Requirement:</strong>
 
@@ -79,6 +74,11 @@
                         </div>
 
                     </div>
+
+                    <p class="mb-1 small text-muted px-3 py-2">
+                        <strong>Blueprint:</strong>
+                        {{ plan.long_description }}
+                    </p>
 
                     <div class="activating-button px-3">
                         <a href="{% url 'customer:activate_plan' plan.id %}" class="btn btn-primary rounded-pill mt-1 w-100 fw-bold mb-2 px-0">
