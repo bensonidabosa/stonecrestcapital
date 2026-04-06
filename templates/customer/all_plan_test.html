@@ -62,6 +62,11 @@
                                 {{ plan.percent_increment|floatformat:1 }}%
                             </p>
 
+                            <p class="mb-1 small">
+                                <strong>Blueprint:</strong>
+                                {{ plan.long_description }}%
+                            </p>
+
                             <p class="small">
                                 <strong>Requirement:</strong>
 
@@ -69,7 +74,8 @@
                                     No Minimum 
                                 {% else %} 
                                     $
-                                {{ plan.min_amount|floatformat:2|intcomma }} {% endif %} </p>
+                                {{ plan.min_amount|floatformat:2|intcomma }} {% endif %}
+                            </p>
                         </div>
 
                     </div>
