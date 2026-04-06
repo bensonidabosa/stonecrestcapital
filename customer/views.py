@@ -376,6 +376,19 @@ def all_plans_view(request):
 
 
 @login_required
+def general_plans_view(request):
+    portfolio = get_object_or_404(Portfolio, user=request.user)
+    plans = Plan.objects.all()
+
+    context = {
+        "current_url": request.resolver_match.url_name,
+        "portfolio": portfolio,
+        "plans": plans,
+    }
+    return render(request, "customer/general_plan.html", context)
+
+
+@login_required
 def activate_plan_view(request, plan_id):
     portfolio = request.user.portfolio
     plan = get_object_or_404(Plan, id=plan_id)

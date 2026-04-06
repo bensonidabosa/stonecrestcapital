@@ -52,11 +52,16 @@ class Plan(models.Model):
         null=True
     )
 
+    numbering = models.IntegerField(default=1)
+
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"{self.name} - {self.get_plantype_display()} ({self.percent_increment}%)"
+    
+    class Meta:
+        ordering = ['numbering']
 
 class OrderPlan(models.Model):
     STATUS_ACTIVE = 'active'

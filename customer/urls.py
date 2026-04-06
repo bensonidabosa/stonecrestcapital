@@ -12,6 +12,7 @@ urlpatterns = [
     path('verify-kyc/', views.verify_kyc_view, name='verify_kyc'),
     path('reits/', views.reits_view, name='reits'),
     path('asset-mandates/', views.all_plans_view, name='all_plans'),
+    path('all-mandates/', views.general_plans_view, name='general_plans'),
     path('finance-hub/', views.wallet_view, name='wallet'),
 
     # transaction
