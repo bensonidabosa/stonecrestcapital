@@ -46,6 +46,22 @@ class Plan(models.Model):
         help_text="A detailed description of the product."
     )
 
+    strategy = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    blueprint = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    backing = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+
     image = models.ImageField(
         upload_to="plan_img/",
         blank=True,

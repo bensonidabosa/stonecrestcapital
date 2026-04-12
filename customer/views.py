@@ -385,7 +385,8 @@ def general_plans_view(request):
         "portfolio": portfolio,
         "plans": plans,
     }
-    return render(request, "customer/general_plan.html", context)
+    return render(request, "customer/new_plan_like_front.html", context)
+    # return render(request, "customer/general_plan.html", context)
 
 
 @login_required
