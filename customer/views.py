@@ -141,7 +141,7 @@ def customer_dashboard_view(request):
         "mirrored_plans":mirrored_plans,
     }
 
-    return render(request, "customer/dashboard.html", context)
+    return render(request, "customer/new_dashboard.html", context)
 
 
 @login_required
@@ -358,7 +358,8 @@ def reits_view(request):
         "portfolio": portfolio,
         "reit_plans": reit_plans,
     }
-    return render(request, "customer/reits.html", context)
+    return render(request, "customer/new_reit.html", context)
+    # return render(request, "customer/reits.html", context)
 
 
 @login_required
@@ -372,7 +373,8 @@ def all_plans_view(request):
         "portfolio": portfolio,
         "plans": plans,
     }
-    return render(request, "customer/all_plan_test.html", context)
+    return render(request, "customer/new_asset_mandate.html", context)
+    # return render(request, "customer/all_plan_test.html", context)
 
 
 @login_required

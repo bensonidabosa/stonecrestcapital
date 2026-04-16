@@ -3,81 +3,6 @@
 {% load humanize %}
 
 {% block content %}
-<!-- <style>
-    .single-item {
-        position: relative;
-        display: block;
-        border: 1px solid #094432;
-        border-radius: 10px;
-        padding: 16px 30px 22px 30px;
-        margin-bottom: 30px;
-        overflow: hidden;
-        color: #000;
-    }
-
-    .single-item h4 {
-        position: relative;
-        display: block;
-        font-size: 22px;
-        line-height: 32px;
-        color: #126b4c;
-        margin-bottom: 17px;
-    }
-
-    .single-item h3 {
-        position: relative;
-        display: inline-block;
-        font-size: 22px;
-        line-height: 32px;
-        padding: 10px 35px 8px 0px;
-        margin-bottom: 23px;
-        z-index: 1;
-    }
-
-    .single-item h3:before {
-        position: absolute;
-        content: '';
-        background: #c5ddd3;
-        /* background: #e2edea; */
-        width: calc(100% + 30px);
-        height: 100%;
-        left: -30px;
-        top: 0px;
-        z-index: -1;
-        border-radius: 0px 40px 40px 0px;
-    }
-
-    .single-item .overlay-content {
-        position: absolute;
-        left: 0px;
-        top: 30px;
-        width: 100%;
-        height: 100%;
-        padding: 30px 30px 30px 30px;
-        z-index: 1;
-        background: -webkit-linear-gradient(-45deg, #132720 50%, #187c59 150%);
-        color: #fff;
-        opacity: 0;
-        transition: all 500ms ease;
-    }
-
-    .single-item:hover .overlay-content {
-        top: 0px;
-        opacity: 1;
-    }
-
-    .single-item .overlay-content h3 {
-        color: #fff;
-    }
-
-    .single-item .overlay-content h3:before {
-        background: #26c48c;
-    }
-
-    .single-item .overlay-content p {
-        color: #a5b2af;
-    }
-</style> -->
 <div class="container-fluid mt-3 mb-2">
     <div class="row">
         <div class="col col-md-8">
@@ -88,9 +13,9 @@
         </div>
     </div>
 </div>
-<hr class="mt-2 pt-2 border-dark">
+<hr class="border-dark">
+<!-- <hr class="mt-2 pt-2 border-dark"> -->
 {% include "../notification/messages.html" %}
-
 <section id="all_products">
     <div class="container">
         <div class="row clearfix">
@@ -147,5 +72,4 @@
         </div>
     </div>
 </section>
-
 {% endblock %}

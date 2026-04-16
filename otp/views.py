@@ -52,6 +52,7 @@ def resend_otp_view(request):
         return redirect('otp:login_verify_otp')
 
     try:
+        # print(otp_obj.code)
         send_html_email(
             subject="Your Login OTP",
             to_email=[user.email],
