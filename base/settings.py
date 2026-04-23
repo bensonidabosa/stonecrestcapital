@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 
     # my local apps
     'frontend',
-    'account',
+    'account.apps.AccountConfig',
     'otp',
     'notification',
     'customer.apps.CustomerConfig',
@@ -160,7 +160,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'account.User'
 LOGIN_URL = 'account:login'
 ADMIN_EMAIL = 'support@stonecrestcapital.io'
-# ADMIN_EMAIL = 'tdkingzict@gmail.com'
+# ADMIN_EMAIL = 'clevelandmedcenter@gmail.com'
 
 LOGIN_OTP_ENABLED = True
 SITE_NAME = "StoneCrest Capital"
