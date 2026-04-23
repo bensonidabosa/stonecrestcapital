@@ -10,6 +10,8 @@ from django.contrib.auth import update_session_auth_hash
 import json
 from django.db.models.functions import TruncDate
 from datetime import datetime
+from django.conf import settings
+import traceback
 
 from .models import Portfolio
 from .forms import KYCForm
@@ -19,6 +21,7 @@ from plan.models import Plan, OrderPlan, OrderPlanItem
 from transaction.forms import CustomerTransactionForm
 from copytrade.models import CopyRelationship
 from transaction.models import Coin, Wallet
+from notification.email_utils import send_html_email
 
 @login_required
 def customer_dashboard_view(request):
@@ -249,17 +252,31 @@ def customer_deposit_view(request):
             trans.balance = portfolio.cash_balance
 
             # ✅ Get the coin from POST (from your <select id="coin-select">)
-            coin_id = request.POST.get("coin")  # this will work
-            print(coin_id)
+            coin_id = request.POST.get("coin")
             if coin_id:
                 try:
                     trans.coin = Coin.objects.get(id=coin_id)
                 except Coin.DoesNotExist:
-                    print('didnot work')
                     form.add_error(None, "Selected coin does not exist.")
-                    return render(request, "your_template.html", {"form": form, "coins": coins})
-            print('returned none')
+                    return render(request, "customer/transactions/customer_deposit.html", {"form": form, "coins": coins})
             trans.save()
+            print("🚀 ABOUT TO SEND ADMIN EMAIL")
+            # ✅ Send admin notification
+            try:
+                send_html_email(
+                    subject="New Deposit Request",
+                    to_email=[settings.ADMIN_EMAIL],
+                    template_name="notification/emails/admin_deposit_request.html",
+                    context={
+                        "user": request.user,
+                        "transaction": trans,
+                        "site_name": settings.SITE_NAME,
+                        "year": datetime.now().year,
+                    },
+                )
+            except Exception:
+                print("\nDEPOSIT EMAIL ERROR:")
+                traceback.print_exc()
 
             messages.success(request, "Your deposit request has been received and is currently being processed.")
             return redirect('customer:customer_deposit')
