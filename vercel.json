@@ -4,17 +4,11 @@
   "builds": [
     {
       "src": "base/wsgi.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb"
-      }
+      "use": "@vercel/python"
     }
   ],
+  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput",
   "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
     {
       "src": "/(.*)",
       "dest": "base/wsgi.py"
