@@ -49,6 +49,12 @@
     .form-group input:focus {
         border-color: var(--theme-color);
     }
+
+    .forgot-link:hover {
+        color: #0d6efd !important;
+        text-decoration: underline;
+        transition: color 0.3s ease;
+    }
 </style>
 <!-- page-title -->
 <section class="page-title">
@@ -94,12 +100,14 @@
                             </div>
                             {% endfor %}
 
-                            <button class="theme-btn btn-two w-100" type="submit" name="submit-form" 
+                            <button class="theme-btn btn-two w-100 mb-4" type="submit" name="submit-form" 
                             data-spinner-text="Authenticating..."
                             data-spinner-class="btn-secondary w-100">
                                 Login
                             </button>
                         </form>
+
+                        <a href="{% url 'account:forgot_password' %}" class="text-dark forgot-link text-center">Forgot Password?</a>
 
                     </div>
                 </div>

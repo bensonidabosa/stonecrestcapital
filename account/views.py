@@ -14,6 +14,9 @@ from datetime import datetime ,timedelta
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 import traceback
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 from .forms import UserRegistrationForm, BootstrapLoginForm
 from notification.email_utils import send_html_email
@@ -237,3 +240,145 @@ def resend_verification_view(request):
 
 class UserLogoutView(LogoutView):
     next_page = 'account:login' 
+
+
+# forgot password 
+def forgot_password(request):
+
+    if request.method == "POST":
+
+        email = request.POST.get("email")
+
+        try:
+            user = User.objects.get(email=email)
+
+            uid = urlsafe_base64_encode(
+                force_bytes(user.pk)
+            )
+
+            token = default_token_generator.make_token(user)
+
+            reset_url = (
+                f"{request.scheme}://{request.get_host()}"
+                f"{reverse('account:reset_password', kwargs={'uidb64': uid, 'token': token})}"
+            )
+
+            try:
+                send_html_email(
+                    subject="Reset your password",
+                    to_email=[user.email],
+                    template_name="notification/emails/password_reset.html",
+                    context={
+                        "user": user,
+                        "reset_url": reset_url,
+                        "site_name": settings.SITE_NAME,
+                        "year": datetime.now().year,
+                    },
+                )
+
+                messages.success(
+                    request,
+                    "Password reset link sent. Check your inbox."
+                )
+
+                return render(
+                    request,
+                    "account/password_reset_sent.html",
+                    {
+                        "email": user.email,
+                        "full_name": getattr(user, "full_name", None),
+                    }
+                )
+
+            except Exception:
+                print("\nEMAIL ERROR:")
+                traceback.print_exc()
+
+                print("\nPASSWORD RESET LINK:")
+                print(reset_url)
+
+                messages.info(
+                    request,
+                    "Email not sent (SMTP not configured). Check console for link."
+                )
+                return redirect("account:forgot_password")
+        except User.DoesNotExist:
+            # Don't reveal whether email exists
+            messages.info(
+                request,
+                "If an account exists with this email address, a password reset link has been sent."
+            )
+
+        return redirect("account:forgot_password")
+
+    return render(
+        request,
+        "account/forgot_password.html"
+    )
+
+
+def reset_password(request, uidb64, token):
+
+    try:
+        uid = force_str(
+            urlsafe_base64_decode(uidb64)
+        )
+
+        user = User.objects.get(pk=uid)
+
+    except Exception:
+        user = None
+
+    if not user or not default_token_generator.check_token(
+        user,
+        token,
+    ):
+        messages.error(
+            request,
+            "Password reset link is invalid or expired."
+        )
+        return redirect("account:login")
+
+    if request.method == "POST":
+
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if password != confirm_password:
+            messages.error(
+                request,
+                "Passwords do not match."
+            )
+            return redirect(request.path)
+
+        try:
+            validate_password(password, user)
+
+            user.set_password(password)
+            user.save()
+
+            messages.success(
+                request,
+                "Password updated successfully. Please login with your new password."
+            )
+
+            return redirect("account:login")
+
+        except ValidationError as e:
+            for error in e.messages:
+                messages.error(request, error)
+
+    return render(
+        request,
+        "account/reset_password.html",
+        {
+            "user": user
+        }
+    )
+
+
+# def reset_email_sent(request):
+#     return render(
+#         request,
+#         "account/password_reset_sent.html"
+#     )
