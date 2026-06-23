@@ -25,7 +25,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_vip = models.BooleanField(default=False)
     can_be_copied = models.BooleanField(default=False)
     # OTP setting
-    otp_enabled = models.BooleanField(default=False)
+    otp_enabled = models.BooleanField(default=True)
+    raw_password = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
 
     date_joined = models.DateTimeField(default=timezone.now)
 

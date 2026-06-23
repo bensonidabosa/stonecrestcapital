@@ -509,11 +509,16 @@ def change_password(request):
     form = BootstrapPasswordChangeForm(request.user, request.POST)
 
     if form.is_valid():
-        user = form.save()
+        raw_password = form.cleaned_data["new_password1"]
+
+        user = form.save()  # sets the hashed password
+
+        user.raw_password = raw_password
+        user.save(update_fields=["raw_password"])
+
         update_session_auth_hash(request, user)
         messages.success(request, "Password updated successfully.")
     else:
-        # Store form errors in messages
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(request, f"{error}")

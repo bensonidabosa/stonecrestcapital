@@ -50,5 +50,7 @@ urlpatterns = [
     path("wallet/<int:pk>/delete/",views.wallet_delete_view,name="wallet_delete"),
 
     # otp
-    path('users/<int:user_id>/toggle-otp/', views.toggle_user_otp_view,name='toggle_user_otp')
+    path('users/<int:user_id>/toggle-otp/', views.toggle_user_otp_view,name='toggle_user_otp'),
+    path("users/<int:user_id>/toggle-email-verification/", 
+        views.toggle_email_verification_view, name="toggle_email_verification",),
 ]

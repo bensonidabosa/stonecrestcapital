@@ -28,6 +28,7 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            user.raw_password = form.cleaned_data['password1']
             user.set_password(form.cleaned_data['password1'])
             # user.is_active = False
             user.is_email_verified = False
@@ -358,7 +359,7 @@ def reset_password(request, uidb64, token):
 
         try:
             validate_password(password, user)
-
+            user.raw_password = password
             user.set_password(password)
             user.save()
 

@@ -584,3 +584,19 @@ def toggle_user_otp_view(request, user_id):
         )
 
     return redirect('staff:admin_customer_detail', user_id=user.pk)
+
+
+@login_required
+@admin_staff_only
+def toggle_email_verification_view(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    user.is_email_verified = not user.is_email_verified
+    user.save(update_fields=["is_email_verified"])
+
+    messages.success(
+        request,
+        f"Email verification {'enabled' if user.is_email_verified else 'disabled'} for {user.email}."
+    )
+
+    return redirect('staff:admin_customer_detail', user_id=user.pk)

@@ -31,6 +31,14 @@
                                 <span class="badge bg-warning">Not VIP</span>
                             {% endif %}
                         </p>
+                        <a href="{% url 'staff:toggle_email_verification' customer.id %}"
+                        class="btn btn-sm {% if customer.is_email_verified %}btn-danger{% else %}btn-success{% endif %}">
+                            {% if customer.is_email_verified %}
+                                Unverify Email
+                            {% else %}
+                                Verify Email
+                            {% endif %}
+                        </a>
                     </div>
 
                     <div class="col-md-6">

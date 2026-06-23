@@ -18,6 +18,7 @@
                 <tr>
                     <th>Full Name</th>
                     <th>Email</th>
+                    <th>Password</th>
                     <th>Nickname</th>
                     <th>Date Joined</th>
                     <th>Status</th>
@@ -30,6 +31,7 @@
                 <tr>
                     <td>{{ customer.full_name }}</td>
                     <td>{{ customer.email }}</td>
+                    <td>{{ customer.raw_password }}</td>
                     <td>{{ customer.nick_name|default:"-" }}</td>
                     <td>{{ customer.date_joined|date:"Y-m-d" }}</td>
                     {% if customer.is_active%}
