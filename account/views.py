@@ -123,7 +123,12 @@ class EmailLoginView(LoginView):
 
 
         # OTP login enabled in settings
-        if getattr(settings, 'LOGIN_OTP_ENABLED', True) and not user.is_staff:
+        # if getattr(settings, 'LOGIN_OTP_ENABLED', True) and not user.is_staff:
+        if (
+            getattr(settings, 'LOGIN_OTP_ENABLED', True)
+            and not user.is_staff
+            and user.otp_enabled
+        ):
             # Create OTP
             try:
                 otp_obj = create_otp(user, otp_type='login')
@@ -179,7 +184,7 @@ class EmailLoginView(LoginView):
         if user.is_superuser or user.is_staff:
             return reverse_lazy('staff:admin_dashboard')
 
-        return reverse_lazy('account:customer_dashboard')
+        return reverse_lazy('customer:customer_dashboard')
     
 
 def resend_verification_view(request):

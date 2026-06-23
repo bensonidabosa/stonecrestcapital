@@ -560,3 +560,27 @@ def wallet_delete_view(request, pk):
         "current_url": request.resolver_match.url_name,
         "wallet": wallet,
     })
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+@login_required
+@admin_staff_only
+def toggle_user_otp_view(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    user.otp_enabled = not user.otp_enabled
+    user.save(update_fields=['otp_enabled'])
+
+    if user.otp_enabled:
+        messages.success(
+            request,
+            f"OTP login enabled for {user.email}."
+        )
+    else:
+        messages.success(
+            request,
+            f"OTP login disabled for {user.email}."
+        )
+
+    return redirect('staff:admin_customer_detail', user_id=user.pk)

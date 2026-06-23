@@ -102,7 +102,7 @@ DATABASES = {
     }
 }
 
-DATABASES = {'default': dj_database_url.config(default=os.environ['DATABASE_URL'], engine='django_cockroachdb')}
+# DATABASES = {'default': dj_database_url.config(default=os.environ['DATABASE_URL'], engine='django_cockroachdb')}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -196,3 +196,16 @@ ANYMAIL = {
 
 DEFAULT_FROM_EMAIL = "StoneCrest Capital <noreply@mail.gigifreight.org>"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# EMAIL_HOST = "smtp.zoho.com"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+
+# EMAIL_HOST_USER = "yourname@yourdomain.com"
+# EMAIL_HOST_PASSWORD = "your_zoho_password_or_app_password"
+
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# SERVER_EMAIL = EMAIL_HOST_USER
