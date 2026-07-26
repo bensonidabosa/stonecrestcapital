@@ -437,7 +437,8 @@ def activate_plan_view(request, plan_id):
             principal_amount=allocated_cash, 
             current_value=allocated_cash, 
             start_at=timezone.now(), 
-            status=OrderPlan.STATUS_ACTIVE, 
+            status=OrderPlan.STATUS_ACTIVE,
+            yield_percent= plan.percent_increment,
         )
 
         messages.success(request, f"'{plan.name}' activated with ${allocated_cash}.") 

@@ -88,9 +88,11 @@
                         P&amp;L: {{ s.get_pnl|floatformat:2|intcomma }}
                     </p>
 
-                    <p class="mb-0">
+                    <p class="mb-1">
                         ROI: <strong>{{ s.get_roi }}%</strong>
                     </p>
+
+                    <p class="mb-1">Started On: <span class="text-info">{{ s.start_at|date:"M d Y" }}</span></p>
 
                     <a href="" class="btn btn-sm btn-outline-danger mt-2">
                         Stop & Liquidate Strategy

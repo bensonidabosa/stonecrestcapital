@@ -100,6 +100,12 @@ class OrderPlan(models.Model):
     is_mirrowed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    yield_percent = models.DecimalField(
+        max_digits=6,
+        decimal_places=4,
+        default=4.0000,
+        help_text="Daily percent (e.g., 0.5000 for 0.5%)"
+    )
 
     class Meta:
         indexes = [

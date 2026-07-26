@@ -131,6 +131,12 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link {% if current_url == 'admin_transaction_create' %}active{% endif %}" href="{% url 'staff:admin_transaction_create' %}">
+          <i class="bi bi-currency-bitcoin me-2"></i>
+          Create Transaction
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link {% if current_url == 'logout' %}active{% endif %}" href="{% url 'account:logout' %}">
           <i class="bi bi-box-arrow-right"></i>
           Logout
@@ -239,6 +245,12 @@
         Crypto
       </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {% if current_url == 'admin_transaction_create' %}active{% endif %}" href="{% url 'staff:admin_transaction_create' %}">
+          <i class="bi bi-currency-bitcoin me-2"></i>
+          Create Transaction
+        </a>
+      </li>
     <li class="nav-item">
         <a class="nav-link {% if current_url == 'logout' %}active{% endif %}" href="{% url 'account:logout' %}">
           <i class="bi bi-box-arrow-right"></i>

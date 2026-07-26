@@ -53,4 +53,15 @@ urlpatterns = [
     path('users/<int:user_id>/toggle-otp/', views.toggle_user_otp_view,name='toggle_user_otp'),
     path("users/<int:user_id>/toggle-email-verification/", 
         views.toggle_email_verification_view, name="toggle_email_verification",),
+
+    path(
+        'transaction/create/',
+        views.transaction_create_view,
+        name='admin_transaction_create'
+    ),
+    path(
+        "order-plan/<int:pk>/edit/",
+        views.order_plan_update_view,
+        name="admin_order_plan_update",
+    ),
 ]

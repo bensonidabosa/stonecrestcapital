@@ -1,0 +1,132 @@
+{% extends "../customer/base.html" %}
+
+{% block title %}
+Add Transaction
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            {% include "../notification/messages.html" %}
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h4 class="text-center mb-4">
+                        Fund / Debit Customer
+                    </h4>
+
+                    <form method="post" class="pinner-form" novalidate>
+                        {% csrf_token %}
+
+                        {% for field in form %}
+
+                            {% if field.name == "currency" %}
+                                <div class="mb-3 wire-fields">
+                            {% elif field.name == "destination_bank" %}
+                                <div class="mb-3 wire-fields">
+                            {% elif field.name == "account_number" %}
+                                <div class="mb-3 wire-fields">
+                            {% elif field.name == "coin" %}
+                                <div class="mb-3 crypto-fields">
+                            {% elif field.name == "wallet_id" %}
+                                <div class="mb-3 crypto-fields">
+                            {% else %}
+                                <div class="mb-3">
+                            {% endif %}
+
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+
+                                {% if field.name == "action" %}
+
+                                    {% for radio in field %}
+                                        <div class="form-check">
+                                            {{ radio.tag }}
+                                            <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                                {{ radio.choice_label }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+
+                                {% else %}
+
+                                    {{ field }}
+
+                                {% endif %}
+
+                                {% if field.help_text %}
+                                    <small class="text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+
+                                {% if field.errors %}
+                                    <div class="text-danger small">
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100 fw-bold"
+                            data-spinner-text="Processing..."
+                            data-spinner-class="btn-secondary w-100">
+
+                            Save Transaction
+
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const paymentMethod = document.getElementById("id_payment_method");
+
+    const wireFields = document.querySelectorAll(".wire-fields");
+    const cryptoFields = document.querySelectorAll(".crypto-fields");
+
+    function toggleFields() {
+
+        const method = paymentMethod.value;
+
+        if (method === "WIRE") {
+
+            wireFields.forEach(field => field.style.display = "");
+            cryptoFields.forEach(field => field.style.display = "none");
+
+        } else if (method === "CRYPTO") {
+
+            wireFields.forEach(field => field.style.display = "none");
+            cryptoFields.forEach(field => field.style.display = "");
+
+        } else {
+
+            wireFields.forEach(field => field.style.display = "none");
+            cryptoFields.forEach(field => field.style.display = "none");
+
+        }
+
+    }
+
+    paymentMethod.addEventListener("change", toggleFields);
+
+    toggleFields();
+
+});
+</script>
+{% endblock %}

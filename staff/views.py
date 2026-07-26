@@ -17,6 +17,7 @@ from plan.forms import PlanForm
 from transaction.models import Transaction, Coin, Wallet
 from transaction.forms import CoinForm, WalletForm
 from notification.email_utils import send_html_email
+from .forms import StaffTransactionForm, OrderPlanUpdateForm
 
 
 @login_required
@@ -39,11 +40,16 @@ def admin_customer_detail_view(request, user_id):
     order_plan = OrderPlan.objects.filter(portfolio=customer.portfolio)
     order_plan_count = order_plan.count()
 
+    transactions = Transaction.objects.filter(
+        portfolio=customer.portfolio
+    ).order_by("-timestamp")
+
     context = {
         "current_url": request.resolver_match.url_name,
         "customer": customer,
         "order_plan":order_plan,
-        "order_plan_count":order_plan_count
+        "order_plan_count":order_plan_count,
+        "transactions": transactions,
     }
 
     return render(request, 'staff/customer_detail.html', context)
@@ -404,7 +410,7 @@ def admin_kyc_review_view(request, kyc_id):
 @admin_staff_only
 def snapshot_positive_view(request, order_id):
     order = get_object_or_404(OrderPlan, pk=order_id)
-    item = create_manual_snapshot(order_id, order.plan.percent_increment,
+    item = create_manual_snapshot(order_id, order.yield_percent,
                                   actor=request.user, reason="Staff positive toggle")
     messages.success(request, f"Positive snapshot created for {order.plan.name}: + ${item.delta_amount} gain added to the current value")
     return redirect('staff:admin_customer_detail', user_id=order.portfolio.user.id)
@@ -414,7 +420,7 @@ def snapshot_positive_view(request, order_id):
 @admin_staff_only
 def snapshot_negative_view(request, order_id):
     order = get_object_or_404(OrderPlan, pk=order_id)
-    percent = order.plan.percent_increment * Decimal('-1')
+    percent = order.yield_percent * Decimal('-1')
     item = create_manual_snapshot(order_id, percent,
                                   actor=request.user, reason="Staff negative toggle")
     messages.success(request, f"Negative snapshot created for {order.plan.name}: - ${item.delta_amount} remopved from the current value")
@@ -600,3 +606,86 @@ def toggle_email_verification_view(request, user_id):
     )
 
     return redirect('staff:admin_customer_detail', user_id=user.pk)
+
+
+@transaction.atomic
+def transaction_create_view(request):
+    if request.method == "POST":
+        form = StaffTransactionForm(request.POST)
+
+        if form.is_valid():
+            trx = form.save(commit=False)
+
+            action = form.cleaned_data["action"]
+
+            if action == "fund":
+                trx.transaction_type = "DEPOSIT"
+
+            elif action == "debit":
+                trx.transaction_type = "WITHDRAW"
+
+            portfolio = trx.portfolio
+
+            if trx.transaction_type == "DEPOSIT":
+                portfolio.cash_balance += trx.amount
+
+            elif trx.transaction_type == "WITHDRAW":
+
+                if portfolio.cash_balance < trx.amount:
+                    form.add_error(
+                        "amount",
+                        "Insufficient customer balance."
+                    )
+                    return render(
+                        request,
+                        "staff/transaction_form.html",
+                        {"form": form},
+                    )
+
+                portfolio.cash_balance -= trx.amount
+
+            portfolio.save()
+
+            trx.balance = portfolio.cash_balance
+            trx.save()
+
+            messages.success(request, "Transaction saved successfully.")
+
+            return redirect("staff:admin_transaction_create")
+
+    else:
+        form = StaffTransactionForm()
+
+    return render(
+        request,
+        "staff/transaction_form.html",
+        {"form": form},
+    )
+
+
+@login_required
+@admin_staff_only
+def order_plan_update_view(request, pk):
+    order_plan = get_object_or_404(OrderPlan, pk=pk)
+
+    if request.method == "POST":
+        form = OrderPlanUpdateForm(request.POST, instance=order_plan)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Strategy Yield updated successfully.")
+            return redirect(
+                "staff:admin_customer_detail",
+                user_id=order_plan.portfolio.user.id,
+            )
+
+    else:
+        form = OrderPlanUpdateForm(instance=order_plan)
+
+    context = {
+        "form": form,
+        "order_plan": order_plan,
+        "current_url": request.resolver_match.url_name,
+    }
+
+    return render(request, "staff/order_plan_form.html", context)
