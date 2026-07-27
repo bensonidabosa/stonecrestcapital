@@ -50,6 +50,7 @@
                             {% endif %}
                         </p>
                         <p><strong>Joined:</strong> {{customer.date_joined}}</p>
+                        <p><strong>Cash Balance:</strong> $ {{customer.portfolio.cash_balance|intcomma}}</p>
                         <p><strong>Total Active Plans:</strong> {{order_plan_count}}</p>
                         <a href="{% url 'staff:toggle_user_otp' customer.id %}"
                         class="btn btn-sm {% if customer.otp_enabled %}btn-danger{% else %}btn-primary{% endif %}">

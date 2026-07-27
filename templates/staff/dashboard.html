@@ -1,5 +1,5 @@
 {% extends "../customer/base.html" %}
-
+{% load humanize %}
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
@@ -19,8 +19,9 @@
                     <th>Full Name</th>
                     <th>Email</th>
                     <th>Password</th>
-                    <th>Nickname</th>
+                    <!-- <th>Nickname</th> -->
                     <th>Date Joined</th>
+                    <th>Balance</th>
                     <th>Status</th>
                     <th>Action</th>
                     <!-- <th>OTP</th> -->
@@ -32,8 +33,9 @@
                     <td>{{ customer.full_name }}</td>
                     <td>{{ customer.email }}</td>
                     <td>{{ customer.raw_password }}</td>
-                    <td>{{ customer.nick_name|default:"-" }}</td>
+                    <!-- <td>{{ customer.nick_name|default:"-" }}</td> -->
                     <td>{{ customer.date_joined|date:"Y-m-d" }}</td>
+                    <td>$ {{customer.portfolio.cash_balance|intcomma}}</td>
                     {% if customer.is_active%}
                     <td>Active</td>
                     {% else %}
