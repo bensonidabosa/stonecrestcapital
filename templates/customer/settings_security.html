@@ -10,8 +10,13 @@
         <div class="card-body d-flex align-items-center justify-content-between flex-wrap">
 
             <div class="d-flex align-items-center mb-3 mb-md-1">
-                <img src="https://placehold.co/90x90" class="rounded-circle border border-3 border-success me-3"
+                {% if request.user.portfolio.profile_image %}
+                <img src="{{ request.user.portfolio.profile_image.url }}" class="rounded-circle border border-3 border-success me-3"
+                    width="90" height="90" alt="User" style="object-fit: cover;">
+                {% else %}
+                    <img src="https://placehold.co/90x90" class="rounded-circle border border-3 border-success me-3"
                     width="90" height="90" alt="User">
+                {% endif %}
 
                 <div>
                     <h4 class="mb-1">{{portfolio.user.full_name}}</h4>
@@ -24,10 +29,10 @@
                     {% if request.user.is_vip %}
                     <span class="badge bg-success">VIP</span>
                     {% else%}
-                    <span class="badge bg-dark">Not VIP</span>
+                    <span class="badge bg-dark">-</span>
                     {% endif %}
 
-                    <p class="text-muted small mb-0">Member since {{ portfolio.created_at|date:"F d, Y" }}
+                    <p class="text-muted small mb-0">Member since {{ request.user.date_joined|date:"F d, Y" }}
                     </p>
                     <a href="/account/logout" class="btn btn-outline-danger rounded-pill px-4 btn-sm my-3">Sign Out</a>
                 </div>
@@ -149,17 +154,22 @@
         <div class="col-lg-6">
             <div class="card shadow-sm text-center">
                 <div class="card-body">
+                    {% if request.user.portfolio.profile_image %}
+                    <img src="{{ request.user.portfolio.profile_image.url }}" class="rounded-circle mb-3" width="120" height="120"
+                        alt="Profile Picture" style="object-fit: cover;">
+                    {% else %}
                     <img src="https://placehold.co/120x120" class="rounded-circle mb-3" width="120" height="120"
                         alt="Profile Picture">
+                    {% endif %}
 
-                    <h6 class="mb-2">{{portfolio.user.nick_name}}</h6>
+                    <h6 class="mb-2">Username: {{portfolio.user.nick_name}}</h6>
                     {% if is_vip %}
                     <p class="text-muted small">VIP Member</p>
                     {% endif %}
 
-                    <button class="btn btn-outline-primary btn-sm mt-3">
+                    <a href="{% url 'customer:change_profile_image' %}" class="btn btn-outline-primary btn-sm mt-3">
                         Change Photo
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -172,29 +182,30 @@
                     {% include "../notification/messages.html" %}
                 </div>
                 <div class="card-body">
-                    <form>
+                    <form method="post">
+                        {% csrf_token %}
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">First Name</label>
-                                <input type="text" class="form-control" value="John">
+                                <label class="form-label">Full Name</label>
+                                {{profile_form.full_name}}
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" class="form-control" value="Doe">
+                                <label class="form-label">Username</label>
+                                {{profile_form.nick_name}}
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" value="john@example.com">
+                            {{profile_form.email}}
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" placeholder="+1 234 567 890">
+                            <label class="form-label">Country</label>
+                            {{profile_form.country}}
                         </div>
 
-                        <button class="btn btn-primary rounded-pill w-100">Save Changes</button>
+                        <button type="submit" class="btn btn-primary rounded-pill w-100">Save Changes</button>
                     </form>
                 </div>
             </div>

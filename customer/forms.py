@@ -4,6 +4,8 @@ from django_countries import countries
 from django.utils import timezone
 
 from account.models import KYC
+from .models import Portfolio
+from account.models import User
 
 
 class KYCForm(forms.ModelForm):
@@ -75,3 +77,53 @@ class KYCForm(forms.ModelForm):
             kyc.save()
 
         return kyc
+    
+
+class ProfileImageForm(forms.ModelForm):
+    class Meta:
+        model = Portfolio
+        fields = ["profile_image"]
+
+        widgets = {
+            "profile_image": forms.FileInput(
+                attrs={
+                    "class": "form-control",
+                    "accept": "image/*",
+                }
+            )
+        }
+
+
+class UpdateProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            "full_name",
+            "nick_name",
+            "email",
+            "country",
+        ]
+
+        labels = {
+            "nick_name": "Username",
+            "country": "Country",
+        }
+
+        widgets = {
+            "full_name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter full name",
+            }),
+            "nick_name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter username",
+            }),
+            "email": forms.EmailInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter email address",
+            }),
+            "country": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter Your country",
+            }),
+        }

@@ -14,7 +14,7 @@ from django.conf import settings
 import traceback
 
 from .models import Portfolio
-from .forms import KYCForm
+from .forms import KYCForm, ProfileImageForm, UpdateProfileForm
 from account.models import KYC, VIPRequest
 from account.forms import BootstrapPasswordChangeForm, VIPRequestForm
 from plan.models import Plan, OrderPlan, OrderPlanItem
@@ -184,13 +184,32 @@ def copy_experts(request):
 @login_required
 def settings_security(request):
     portfolio = get_object_or_404(Portfolio, user=request.user)
+
+    if request.method == "POST":
+        profile_form = UpdateProfileForm(
+            request.POST,
+            instance=portfolio.user
+        )
+
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, "Your profile has been updated successfully.")
+            return redirect("customer:settings_security")
+
+        messages.error(request, "Please correct the errors below.")
+
+    else:
+        profile_form = UpdateProfileForm(instance=portfolio.user)
+
     password_form = BootstrapPasswordChangeForm(portfolio.user)
 
     context = {
         "current_url": request.resolver_match.url_name,
-        'portfolio': portfolio,
-        "password_form":password_form,
+        "portfolio": portfolio,
+        "password_form": password_form,
+        "profile_form": profile_form,
     }
+
     return render(request, "customer/settings_security.html", context)
 
 
@@ -594,3 +613,33 @@ def get_wallet(request):
         data = {}
 
     return JsonResponse(data)
+
+
+@login_required
+def change_profile_image(request):
+    portfolio = request.user.portfolio
+
+    if request.method == "POST":
+        form = ProfileImageForm(
+            request.POST,
+            request.FILES,
+            instance=portfolio,
+        )
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile picture has been updated successfully.")
+            return redirect("customer:change_profile_image")
+
+        messages.error(request, "Please correct the errors below and try again.")
+
+    else:
+        form = ProfileImageForm(instance=portfolio)
+
+    return render(
+        request,
+        "customer/profile/change_profile_image.html",
+        {
+            "form": form,
+        },
+    )

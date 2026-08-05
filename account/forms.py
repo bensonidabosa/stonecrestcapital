@@ -137,6 +137,7 @@ class AdminCustomerEditForm(forms.ModelForm):
             "zipcode",
             "is_active",
             "can_be_copied",
+            "date_joined",
         ]
 
         labels = {
@@ -180,4 +181,17 @@ class AdminCustomerEditForm(forms.ModelForm):
             "can_be_copied": forms.CheckboxInput(attrs={
                 "class": "form-check-input"
             }),
+            "date_joined": forms.DateTimeInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "datetime-local",
+                },
+                format="%Y-%m-%dT%H:%M",
+            ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["date_joined"].input_formats = [
+            "%Y-%m-%dT%H:%M",
+        ]

@@ -1,0 +1,76 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Change Profile Picture</h5>
+                </div>
+
+                {% include "../../notification/messages.html" %}
+
+                <div class="card-body">
+
+                    <div class="text-center mb-4">
+                        {% if request.user.portfolio.profile_image %}
+                            <img src="{{ request.user.portfolio.profile_image.url }}"
+                                 alt="Profile Image"
+                                 class="rounded-circle border shadow-sm"
+                                 width="140"
+                                 height="140"
+                                 style="object-fit: cover;">
+                        {% else %}
+                            <img src="https://placehold.co/120x120"
+                                 alt="Default Profile"
+                                 class="rounded-circle border shadow-sm"
+                                 width="140"
+                                 height="140"
+                                 style="object-fit: cover;">
+                        {% endif %}
+                    </div>
+
+                    <form method="post"
+                          enctype="multipart/form-data"
+                          class="pinner-form"
+                          novalidate>
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.profile_image.id_for_label }}" class="form-label">
+                                Select New Profile Picture
+                            </label>
+
+                            {{ form.profile_image }}
+
+                            {% if form.profile_image.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.profile_image.errors }}
+                                </div>
+                            {% endif %}
+
+                            <div class="form-text">
+                                Accepted formats: JPG, JPEG, PNG, GIF.
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100 btn-sm fw-bold"
+                                data-spinner-text="Uploading..."
+                                data-spinner-class="btn-secondary w-100">
+                            Update Profile Picture
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

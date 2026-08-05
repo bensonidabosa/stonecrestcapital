@@ -6,6 +6,11 @@ User = get_user_model()
 
 class Portfolio(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_image = models.ImageField(
+        upload_to="profile_images/",
+        blank=True,
+        null=True,
+    )
     cash_balance = models.DecimalField(
         max_digits=15,
         decimal_places=2,
