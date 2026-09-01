@@ -64,4 +64,11 @@ urlpatterns = [
         views.order_plan_update_view,
         name="admin_order_plan_update",
     ),
+
+    path(
+        "order-plan/<int:pk>/delete/",
+        views.order_plan_delete_view,
+        name="order_plan_delete",
+    ),
+
 ]

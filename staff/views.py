@@ -689,3 +689,26 @@ def order_plan_update_view(request, pk):
     }
 
     return render(request, "staff/order_plan_form.html", context)
+
+
+@login_required
+@admin_staff_only
+def order_plan_delete_view(request, pk):
+    order_plan = get_object_or_404(OrderPlan, pk=pk)
+
+    if request.method == "POST":
+        user_id = order_plan.portfolio.user.id
+        order_plan.delete()
+
+        messages.success(request, "Active strategy deleted successfully.")
+        return redirect(
+            "staff:admin_customer_detail",
+            user_id=user_id,
+        )
+
+    context = {
+        "order_plan": order_plan,
+        "current_url": request.resolver_match.url_name,
+    }
+
+    return render(request, "staff/order_plan_confirm_delete.html", context)
