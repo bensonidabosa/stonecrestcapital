@@ -23,6 +23,12 @@ urlpatterns = [
     # plan
     path('active-plans/', views.active_plan_list_view, name='active_plan_list'),
     path('activate-plan/<plan_id>/', views.activate_plan_view, name='activate_plan'),
+    path(
+        "strategy-plan/<int:order_plan_id>/liquidate/",
+        views.liquidate_order_plan_view,
+        name="liquidate_order_plan",
+    ),
+
 
     # order
     path('orderplan-detail/<order_id>/', views.orderplan_detail_view, name='orderplan_detail'),

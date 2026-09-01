@@ -56,6 +56,7 @@ class Transaction(models.Model):
         ('WITHDRAW', 'Withdraw'),
         ('DIVIDEND', 'Dividend'),
         ('REBALANCE', 'Rebalance'),
+        ('LIQUIDATION', 'Liquidation'),
     ]
 
     CURRENCY_CHOICES = [

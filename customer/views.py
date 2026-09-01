@@ -20,7 +20,7 @@ from account.forms import BootstrapPasswordChangeForm, VIPRequestForm
 from plan.models import Plan, OrderPlan, OrderPlanItem
 from transaction.forms import CustomerTransactionForm
 from copytrade.models import CopyRelationship
-from transaction.models import Coin, Wallet
+from transaction.models import Coin, Wallet, Transaction
 from notification.email_utils import send_html_email
 
 @login_required
@@ -471,6 +471,63 @@ def activate_plan_view(request, plan_id):
             "portfolio": portfolio
         }
     )
+
+
+@login_required
+def liquidate_order_plan_view(request, order_plan_id):
+    if request.method != "POST":
+        return redirect("customer:customer_dashboard")
+
+    with transaction.atomic():
+        # Lock the order plan to prevent double liquidation
+        order_plan = get_object_or_404(
+            OrderPlan.objects.select_for_update(),
+            id=order_plan_id,
+            portfolio=request.user.portfolio,
+        )
+
+        portfolio = request.user.portfolio
+
+        # Capture the value before deleting the order plan
+        liquidation_amount = Decimal(order_plan.current_value)
+
+        if liquidation_amount <= Decimal("0"):
+            messages.error(
+                request,
+                "This order plan has no value to liquidate."
+            )
+            return redirect("customer:customer_dashboard")
+
+        # Add the plan's current value back to cash
+        portfolio.cash_balance += liquidation_amount
+        portfolio.save(update_fields=["cash_balance"])
+
+        # Create transaction history BEFORE deleting the plan
+        Transaction.objects.create(
+            portfolio=portfolio,
+            transaction_type="LIQUIDATION",
+            currency="USD",
+            status="SUCCESSFUL",
+            amount=liquidation_amount,
+            balance=portfolio.cash_balance,
+            timestamp=timezone.now(),
+            note=(
+                f"Liquidated Strategy '{order_plan.plan.name}'. "
+                f"${liquidation_amount:,.2f} returned to cash balance."
+            ),
+        )
+
+        # Delete the order plan
+        order_plan.delete()
+
+    messages.success(
+        request,
+        f"Your active strategy was liquidated successfully. "
+        f"${liquidation_amount:,.2f} has been returned to your cash balance."
+    )
+
+    return redirect("customer:customer_dashboard")
+
 
 
 @login_required

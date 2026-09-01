@@ -67,7 +67,7 @@
     {% if active_plans %}
     <div class="row mb-4">
         {% for s in active_plans %}
-        <div class="col-md-4 mb-0">
+        <div class="col-md-4 mb-2">
             <div class="card shadow-sm h-100">
                 <div class="card-body">
                     <h6 class="card-title">{{ s.plan.name }}</h6>
@@ -94,9 +94,21 @@
 
                     <p class="mb-1">Started On: <span class="text-info">{{ s.start_at|date:"M d Y" }}</span></p>
 
-                    <a href="" class="btn btn-sm btn-outline-danger mt-2">
+                    <!-- <a href="" class="btn btn-sm btn-outline-danger mt-2">
                         Stop & Liquidate Strategy
-                    </a>
+                    </a> -->
+
+                    <form
+                        method="post"
+                        action="{% url 'customer:liquidate_order_plan' s.id %}"
+                        onsubmit="return confirm('Are you sure you want to liquidate this strategy?');"
+                    >
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-sm btn-outline-danger mt-2">
+                            Stop & Liquidate Strategy
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
