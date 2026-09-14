@@ -18,6 +18,7 @@ from transaction.models import Transaction, Coin, Wallet
 from transaction.forms import CoinForm, WalletForm
 from notification.email_utils import send_html_email
 from .forms import StaffTransactionForm, OrderPlanUpdateForm
+from customer.models import Portfolio
 
 
 @login_required
@@ -697,10 +698,31 @@ def order_plan_delete_view(request, pk):
     order_plan = get_object_or_404(OrderPlan, pk=pk)
 
     if request.method == "POST":
-        user_id = order_plan.portfolio.user.id
-        order_plan.delete()
+        with transaction.atomic():
+            # Lock the portfolio so concurrent balance updates don't conflict
+            portfolio = Portfolio.objects.select_for_update().get(
+                pk=order_plan.portfolio_id
+            )
 
-        messages.success(request, "Active strategy deleted successfully.")
+            # Save the amount being returned before deleting the order plan
+            amount_to_return = order_plan.current_value
+
+            # Return the current value to the user's cash balance
+            portfolio.cash_balance += amount_to_return
+            portfolio.save(update_fields=["cash_balance"])
+
+            # Get user ID before deleting the order plan
+            user_id = portfolio.user_id
+
+            # Delete the order plan
+            order_plan.delete()
+
+        messages.success(
+            request,
+            f"Active strategy deleted successfully. "
+            f"{amount_to_return} has been returned to the user's cash balance."
+        )
+
         return redirect(
             "staff:admin_customer_detail",
             user_id=user_id,
@@ -711,4 +733,30 @@ def order_plan_delete_view(request, pk):
         "current_url": request.resolver_match.url_name,
     }
 
-    return render(request, "staff/order_plan_confirm_delete.html", context)
+    return render(
+        request,
+        "staff/order_plan_confirm_delete.html",
+        context,
+    )
+
+# @login_required
+# @admin_staff_only
+# def order_plan_delete_view(request, pk):
+#     order_plan = get_object_or_404(OrderPlan, pk=pk)
+
+#     if request.method == "POST":
+#         user_id = order_plan.portfolio.user.id
+#         order_plan.delete()
+
+#         messages.success(request, "Active strategy deleted successfully.")
+#         return redirect(
+#             "staff:admin_customer_detail",
+#             user_id=user_id,
+#         )
+
+#     context = {
+#         "order_plan": order_plan,
+#         "current_url": request.resolver_match.url_name,
+#     }
+
+#     return render(request, "staff/order_plan_confirm_delete.html", context)

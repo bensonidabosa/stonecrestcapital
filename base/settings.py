@@ -188,24 +188,24 @@ MESSAGE_TAGS = {
 
 
 # email resend anymaikl
-EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+# EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
 
-ANYMAIL = {
-    "RESEND_API_KEY": os.environ.get("RESEND_API_KEY"),
-}
+# ANYMAIL = {
+#     "RESEND_API_KEY": os.environ.get("RESEND_API_KEY"),
+# }
 
-DEFAULT_FROM_EMAIL = "StoneCrest Capital <noreply@mail.gigifreight.org>"
-SERVER_EMAIL = DEFAULT_FROM_EMAIL
+# DEFAULT_FROM_EMAIL = "StoneCrest Capital <noreply@mail.gigifreight.org>"
+# SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-# EMAIL_HOST = "smtp.zoho.com"
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.zoho.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
-# EMAIL_HOST_USER = "yourname@yourdomain.com"
-# EMAIL_HOST_PASSWORD = "your_zoho_password_or_app_password"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASS")
 
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-# SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = "StoneCrest Capital <support@stonecrestcapital.io>"
+SERVER_EMAIL = EMAIL_HOST_USER
