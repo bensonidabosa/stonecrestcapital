@@ -169,11 +169,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'account.User'
 LOGIN_URL = 'account:login'
-ADMIN_EMAIL = 'support@stonecrestcapital.io'
+ADMIN_EMAIL = 'support@stonecrestfund.com'
 # ADMIN_EMAIL = 'clevelandmedcenter@gmail.com'
 
 LOGIN_OTP_ENABLED = True
-SITE_NAME = "StoneCrest Capital"
+SITE_NAME = "StoneCrest Fund"
 SITE_DOMAIN = "noveraonline.com"
 
 from django.contrib.messages import constants as messages
@@ -207,5 +207,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASS")
 
-DEFAULT_FROM_EMAIL = "StoneCrest Capital <support@stonecrestcapital.io>"
+DEFAULT_FROM_EMAIL = "StoneCrest Fund <support@stonecrestfund.com>"
 SERVER_EMAIL = EMAIL_HOST_USER
